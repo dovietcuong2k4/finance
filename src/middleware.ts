@@ -41,21 +41,18 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const isAuthRoute = request.nextUrl.pathname.startsWith('/login') || request.nextUrl.pathname.startsWith('/signup')
-  const isProtectedRoute = request.nextUrl.pathname.startsWith('/account')
+  const isAuthPage = request.nextUrl.pathname.startsWith('/login') || 
+                     request.nextUrl.pathname.startsWith('/signup') ||
+                     request.nextUrl.pathname.startsWith('/auth')
 
-  // Redirect users away from auth pages if they are already logged in
-  if (user && isAuthRoute) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/account'
-    return NextResponse.redirect(url)
+  // 1. Nếu đã đăng nhập mà cố vào trang login/signup -> Chuyển về trang chủ
+  if (user && isAuthPage) {
+    return NextResponse.redirect(new URL('/', request.url))
   }
 
-  // Redirect users to login if they try to access protected routes without being logged in
-  if (!user && isProtectedRoute) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+  // 2. Nếu chưa đăng nhập mà vào bất kỳ trang nào khác (ngoại trừ login/signup) -> Chuyển về login
+  if (!user && !isAuthPage) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
 
   return supabaseResponse

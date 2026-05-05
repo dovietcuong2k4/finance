@@ -1,67 +1,89 @@
 import Link from 'next/link'
 import { signUp } from '@/app/auth/actions'
+import { Sparkles, ArrowLeft } from 'lucide-react'
 
 export default async function SignupPage(props: { searchParams: Promise<{ message: string }> }) {
   const searchParams = await props.searchParams
   return (
-    <div className="flex-1 flex flex-col w-full px-8 sm:max-w-md justify-center gap-2 mx-auto mt-20">
-      <Link
-        href="/"
-        className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
-        >
-          <polyline points="15 18 9 12 15 6" />
-        </svg>{' '}
-        Trang chủ
-      </Link>
+    <div className="min-h-screen flex items-center justify-center bg-[#fdfdfe] p-4 relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-[0.03]">
+        <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-aura-violet rounded-full blur-[120px]" />
+        <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-aura-indigo rounded-full blur-[120px]" />
+      </div>
 
-      <form className="flex-1 flex flex-col w-full justify-center gap-2 text-foreground" action={signUp}>
-        <h1 className="text-3xl font-bold mb-6 text-center text-slate-800">Đăng Ký Tài Khoản</h1>
-        <label className="text-md text-slate-600" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border border-slate-300 mb-6 text-slate-900"
-          name="email"
-          placeholder="you@example.com"
-          required
-        />
-        <label className="text-md text-slate-600" htmlFor="password">
-          Mật khẩu
-        </label>
-        <input
-          className="rounded-md px-4 py-2 bg-inherit border border-slate-300 mb-6 text-slate-900"
-          type="password"
-          name="password"
-          placeholder="••••••••"
-          required
-        />
-        <button className="bg-indigo-600 text-white rounded-md px-4 py-2 text-foreground mb-2 hover:bg-indigo-700 transition-colors">
-          Đăng Ký
-        </button>
-        <p className="text-sm text-center text-slate-600">
-          Đã có tài khoản?{' '}
-          <Link href="/login" className="text-indigo-600 hover:underline">
-            Đăng nhập ngay
-          </Link>
+      <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-1000 pt-8">
+
+        <div className="bento-card p-8 md:p-10 border border-border bg-white shadow-2xl shadow-black/[0.02]">
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Bắt đầu cùng Aura</h1>
+            <p className="text-muted-foreground text-sm mt-2 text-center">
+              Trải nghiệm quản lý tài chính thế hệ mới với sức mạnh AI
+            </p>
+          </div>
+
+          <form action={signUp} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="email">
+                Địa chỉ Email
+              </label>
+              <input
+                className="w-full minimal-input bg-slate-50/50"
+                name="email"
+                type="email"
+                placeholder="name@example.com"
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="password">
+                Mật khẩu
+              </label>
+              <input
+                className="w-full minimal-input bg-slate-50/50"
+                type="password"
+                name="password"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <div className="pt-2">
+              <p className="text-[10px] text-muted-foreground text-center mb-4 leading-relaxed">
+                Bằng cách đăng ký, bạn đồng ý với Điều khoản dịch vụ và Chính sách bảo mật của chúng tôi.
+              </p>
+              <button className="w-full bg-primary text-white h-11 rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/10 active:scale-[0.98]">
+                Tạo tài khoản miễn phí
+              </button>
+            </div>
+            
+            <div className="pt-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                Đã có tài khoản?{' '}
+                <Link href="/login" className="text-aura-indigo font-semibold hover:underline">
+                  Đăng nhập
+                </Link>
+              </p>
+            </div>
+
+            {searchParams?.message && (
+              <div className="mt-6 p-4 bg-amber-50/50 border border-amber-100 rounded-xl animate-in fade-in zoom-in duration-300">
+                <p className="text-xs font-medium text-amber-800 text-center">
+                  {searchParams.message}
+                </p>
+              </div>
+            )}
+          </form>
+        </div>
+        
+        <p className="mt-8 text-center text-xs text-muted-foreground/60">
+          © 2026 Aura Finance. All rights reserved.
         </p>
-        {searchParams?.message && (
-          <p className="mt-4 p-4 bg-amber-50 text-amber-800 text-center rounded-md">
-            {searchParams.message}
-          </p>
-        )}
-      </form>
+      </div>
     </div>
   )
 }

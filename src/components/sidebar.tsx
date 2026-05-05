@@ -1,78 +1,80 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Wallet, 
-  TrendingUp, 
+  PieChart, 
   Settings, 
-  LogOut,
-  HelpCircle,
-  PieChart,
-  Target
+  User,
+  Shield,
+  LogOut
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
-const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', active: true },
-  { icon: Wallet, label: 'Giao dịch', active: false },
-  { icon: PieChart, label: 'Ngân sách', active: false },
-  { icon: Target, label: 'Mục tiêu', active: false },
-  { icon: TrendingUp, label: 'Đầu tư', active: false },
+const menuItems = [
+  { icon: LayoutDashboard, label: 'Bảng điều khiển', href: '/' },
+  { icon: Wallet, label: 'Giao dịch', href: '/transactions' },
+  { icon: PieChart, label: 'Báo cáo', href: '/reports' },
+  { icon: User, label: 'Tài khoản', href: '/account' },
+  { icon: Settings, label: 'Cài đặt', href: '/settings' },
 ];
 
-const bottomItems = [
-  { icon: HelpCircle, label: 'Trợ giúp' },
-  { icon: Settings, label: 'Cài đặt' },
-];
+const Sidebar = () => {
+  const pathname = usePathname();
 
-export default function Sidebar() {
+  // Hide sidebar on auth pages
+  if (pathname === '/login' || pathname === '/signup') return null;
+
   return (
-    <aside className="w-64 border-r border-border bg-card h-screen flex flex-col sticky top-0">
-      <div className="p-6">
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <TrendingUp className="text-white w-5 h-5" />
+    <aside className="w-64 border-r border-border h-screen flex flex-col bg-card sticky top-0">
+      <div className="p-6 mb-4">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20">
+            <Shield className="w-5 h-5 text-white" />
           </div>
-          <span className="text-xl font-bold tracking-tight text-foreground">Aura Finance</span>
-        </div>
-
-        <nav className="space-y-1">
-          {navItems.map((item) => (
-            <button
-              key={item.label}
-              className={cn(
-                "w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-                item.active 
-                  ? "bg-primary/10 text-primary" 
-                  : "text-secondary hover:bg-muted hover:text-foreground"
-              )}
-            >
-              <item.icon className="w-4 h-4" />
-              {item.label}
-            </button>
-          ))}
-        </nav>
+          <span className="font-bold text-xl tracking-tight">Aura</span>
+        </Link>
       </div>
-
-      <div className="mt-auto p-6 border-t border-border">
-        <div className="space-y-1 mb-4">
-          {bottomItems.map((item) => (
-            <button
-              key={item.label}
-              className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-secondary hover:bg-muted hover:text-foreground transition-colors"
+      
+      <nav className="flex-1 px-4 space-y-1">
+        {menuItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link 
+              key={item.href}
+              href={item.href}
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 group ${
+                isActive 
+                  ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/10' 
+                  : 'text-muted-foreground hover:bg-secondary hover:text-foreground'
+              }`}
             >
-              <item.icon className="w-4 h-4" />
+              <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'group-hover:scale-110 transition-transform'}`} />
               {item.label}
-            </button>
-          ))}
+            </Link>
+          );
+        })}
+      </nav>
+      
+      <div className="p-4 mt-auto">
+        <div className="p-4 bg-muted/50 rounded-2xl border border-border">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-slate-200 animate-pulse"></div>
+            <div>
+              <p className="text-xs font-bold truncate w-24">Admin User</p>
+              <p className="text-[10px] text-muted-foreground">Pro Member</p>
+            </div>
+          </div>
+          <button className="w-full flex items-center justify-center gap-2 text-xs font-bold text-red-500 hover:bg-red-50 py-2 rounded-lg transition-colors">
+            <LogOut className="w-3 h-3" />
+            Đăng xuất
+          </button>
         </div>
-        
-        <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
-          <LogOut className="w-4 h-4" />
-          Đăng xuất
-        </button>
       </div>
     </aside>
   );
-}
+};
+
+export default Sidebar;

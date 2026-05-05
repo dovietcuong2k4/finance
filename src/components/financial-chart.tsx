@@ -12,87 +12,86 @@ import {
 } from 'recharts';
 
 const data = [
-  { name: 'T2', income: 4000, expense: 2400 },
-  { name: 'T3', income: 3000, expense: 1398 },
-  { name: 'T4', income: 2000, expense: 9800 },
-  { name: 'T5', income: 2780, expense: 3908 },
-  { name: 'T6', income: 1890, expense: 4800 },
-  { name: 'T7', income: 2390, expense: 3800 },
-  { name: 'CN', income: 3490, expense: 4300 },
+  { name: 'Th 1', income: 4000, expenses: 2400 },
+  { name: 'Th 2', income: 3000, expenses: 1398 },
+  { name: 'Th 3', income: 2000, expenses: 9800 },
+  { name: 'Th 4', income: 2780, expenses: 3908 },
+  { name: 'Th 5', income: 1890, expenses: 4800 },
+  { name: 'Th 6', income: 2390, expenses: 3800 },
+  { name: 'Th 7', income: 3490, expenses: 4300 },
 ];
 
-export default function FinancialChart() {
+const FinancialChart = () => {
   return (
-    <div className="corporate-card p-6 h-[400px]">
+    <div className="bento-card h-[400px] flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-bold text-foreground">Xu hướng tài chính</h3>
-          <p className="text-sm text-secondary">So sánh thu nhập và chi tiêu trong tuần này.</p>
+          <h3 className="text-lg font-bold">Xu hướng Tài chính</h3>
+          <p className="text-sm text-muted-foreground">Phân tích thu chi hàng tháng</p>
         </div>
-        <div className="flex gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-primary"></div>
-            <span className="text-xs text-secondary font-medium">Thu nhập</span>
+        <div className="flex items-center gap-4 text-xs font-medium">
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-aura-indigo" />
+            <span>Thu nhập</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-red-400"></div>
-            <span className="text-xs text-secondary font-medium">Chi tiêu</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded-full bg-slate-300" />
+            <span>Chi tiêu</span>
           </div>
         </div>
       </div>
       
-      <div className="w-full h-[300px]">
+      <div className="flex-1 w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data}>
+          <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1}/>
-                <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
-              </linearGradient>
-              <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#f87171" stopOpacity={0.1}/>
-                <stop offset="95%" stopColor="#f87171" stopOpacity={0}/>
+                <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1}/>
+                <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
             <XAxis 
               dataKey="name" 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fontSize: 12, fill: '#64748b' }} 
+              tick={{ fill: '#94a3b8', fontSize: 12 }} 
               dy={10}
             />
             <YAxis 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fontSize: 12, fill: '#64748b' }}
+              tick={{ fill: '#94a3b8', fontSize: 12 }} 
+              tickFormatter={(value) => `$${value}`}
             />
             <Tooltip 
               contentStyle={{ 
-                borderRadius: '8px', 
+                backgroundColor: '#fff', 
                 border: 'none', 
-                boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' 
+                borderRadius: '12px', 
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' 
               }} 
             />
             <Area 
               type="monotone" 
               dataKey="income" 
-              stroke="#2563eb" 
-              strokeWidth={2}
+              stroke="#6366f1" 
+              strokeWidth={3}
               fillOpacity={1} 
               fill="url(#colorIncome)" 
             />
             <Area 
               type="monotone" 
-              dataKey="expense" 
-              stroke="#f87171" 
+              dataKey="expenses" 
+              stroke="#e2e8f0" 
               strokeWidth={2}
-              fillOpacity={1} 
-              fill="url(#colorExpense)" 
+              fill="transparent" 
             />
           </AreaChart>
         </ResponsiveContainer>
       </div>
     </div>
   );
-}
+};
+
+export default FinancialChart;
