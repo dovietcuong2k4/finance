@@ -126,3 +126,61 @@ export async function updateProfile(formData: FormData) {
   revalidatePath('/account')
   redirect(`/account?success=${encodeURIComponent('Cập nhật thông tin thành công')}`)
 }
+
+export async function changePassword(formData: FormData) {
+  const oldPassword = formData.get('oldPassword') as string
+  const newPassword = formData.get('newPassword') as string
+  const confirmPassword = formData.get('confirmPassword') as string
+
+  if (newPassword !== confirmPassword) {
+    return redirect(`/account/security?error=${encodeURIComponent('Mật khẩu mới không khớp')}`)
+  }
+
+  const cookieStore = await cookies()
+  const token = cookieStore.get('auth_token')?.value
+
+  if (!token) {
+    return redirect('/login')
+  }
+
+  const payload = await verifyToken(token)
+  if (!payload || !payload.userId) {
+    return redirect('/login')
+  }
+
+  const supabase = getAdminClient()
+  
+  // Lấy user hiện tại để kiểm tra mật khẩu cũ
+  const { data: user, error: fetchError } = await supabase
+    .from('users')
+    .select('password_hash')
+    .eq('id', payload.userId)
+    .single()
+
+  if (fetchError || !user) {
+    return redirect(`/account/security?error=${encodeURIComponent('Không tìm thấy người dùng')}`)
+  }
+
+  // Kiểm tra mật khẩu cũ
+  const isValid = await bcrypt.compare(oldPassword, user.password_hash)
+  if (!isValid) {
+    return redirect(`/account/security?error=${encodeURIComponent('Mật khẩu cũ không chính xác')}`)
+  }
+
+  // Hash mật khẩu mới
+  const salt = await bcrypt.genSalt(10)
+  const passwordHash = await bcrypt.hash(newPassword, salt)
+
+  // Cập nhật mật khẩu
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ password_hash: passwordHash, updated_at: new Date().toISOString() })
+    .eq('id', payload.userId)
+
+  if (updateError) {
+    return redirect(`/account/security?error=${encodeURIComponent('Có lỗi xảy ra khi cập nhật mật khẩu')}`)
+  }
+
+  revalidatePath('/account/security')
+  redirect(`/account/security?success=${encodeURIComponent('Đổi mật khẩu thành công')}`)
+}
