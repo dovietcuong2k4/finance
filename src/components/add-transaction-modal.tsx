@@ -163,7 +163,7 @@ export default function AddTransactionModal() {
     formData.append('type', values.type);
     formData.append('title', values.title);
     formData.append('amount', values.amount.toString());
-    formData.append('transactionDate', values.transactionDate.toISOString());
+    formData.append('transactionDate', values.transactionDate.format('YYYY-MM-DD'));
     formData.append('category', values.category);
     if (values.description) formData.append('description', values.description);
     
@@ -260,7 +260,7 @@ export function EditTransactionModal({
         title: values.title,
         category: values.category,
         amount: values.amount,
-        transaction_date: values.transactionDate.toISOString(),
+        transaction_date: values.transactionDate.format('YYYY-MM-DD'),
         description: values.description || null,
       });
       if (result.error) {

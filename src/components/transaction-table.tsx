@@ -1,10 +1,15 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import { getCategoryIcon, getCategoryColor } from '@/constants/categories';
 import Link from 'next/link';
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
 dayjs.locale('vi');
+dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
 
 interface Transaction {
   id: string | number;
@@ -56,7 +61,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => 
                     {formatCurrency(tx.amount, tx.type)}
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase tracking-tight font-medium">
-                    {dayjs(tx.transaction_date).format('DD [Th] MM, YYYY')}
+                    {dayjs.tz(tx.transaction_date).format('DD [Th] MM, YYYY')}
                   </p>
                 </div>
               </div>

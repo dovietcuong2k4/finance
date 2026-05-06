@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { cookies } from 'next/headers'
 import { verifyToken } from '@/utils/auth'
 import { createAdminClient } from '@/utils/supabase/admin'
+import dayjs from 'dayjs'
 
 export async function getTransactions({
   page = 1,
@@ -149,7 +150,7 @@ export async function updateTransaction(id: string, data: {
       title: data.title,
       category: data.category,
       amount: data.amount,
-      transaction_date: new Date(data.transaction_date).toISOString(),
+      transaction_date: dayjs(data.transaction_date).format('YYYY-MM-DD'),
       description: data.description || null,
     })
     .eq('id', id)
@@ -201,7 +202,7 @@ export async function createTransaction(formData: FormData) {
         title: title,
         category: category,
         amount: amount,
-        transaction_date: new Date(transactionDate).toISOString(),
+        transaction_date: dayjs(transactionDate).format('YYYY-MM-DD'),
         description: description || null
       }
     ])

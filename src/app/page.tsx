@@ -6,6 +6,12 @@ import AddTransactionModal from '@/components/add-transaction-modal';
 import DashboardSearch from '@/components/dashboard-search';
 import DashboardChartSection from '@/components/dashboard-chart-section';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
 import { 
   Wallet, 
   ArrowUpRight, 
@@ -37,7 +43,7 @@ export default async function Home({ searchParams }: PageProps) {
   const { user, stats, recentTransactions, chartData } = data;
 
   const getGreeting = () => {
-    const hour = dayjs().hour();
+    const hour = dayjs().tz().hour();
     const greetings = {
       morning: ['Chào buổi sáng', 'Ngày mới tốt lành', 'Khởi đầu ngày mới rực rỡ', 'Sáng an lành'],
       afternoon: ['Chào buổi chiều', 'Chúc bạn buổi chiều năng suất', 'Năng lượng cho buổi chiều'],
@@ -72,7 +78,7 @@ export default async function Home({ searchParams }: PageProps) {
         <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto mt-4 md:mt-0">
           <div className="hidden lg:flex items-center gap-2 bg-white border border-border px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground shrink-0">
             <Calendar className="w-5 h-5" />
-            <span>{dayjs().format('DD [Th] MM, YYYY')}</span>
+            <span>{dayjs().tz().format('DD [Th] MM, YYYY')}</span>
           </div>
           
           <DashboardSearch />
