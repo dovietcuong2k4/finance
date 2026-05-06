@@ -21,7 +21,7 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
   const totalPages = Math.ceil(total / pageSize);
 
   return (
-    <div className="max-w-[1400px] mx-auto p-4 md:p-8 animate-in fade-in duration-700">
+    <div className="max-w-[1600px] mx-auto p-4 md:p-8 animate-in fade-in duration-700">
       {/* Header */}
       <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>

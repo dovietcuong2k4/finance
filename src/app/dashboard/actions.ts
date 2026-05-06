@@ -1,18 +1,12 @@
 'use server';
 
-import { cookies } from 'next/headers';
-import { verifyToken } from '@/utils/auth';
 import { createAdminClient } from '@/utils/supabase/admin';
 import dayjs from 'dayjs';
+import { getUser } from '../auth/actions';
 
 export async function getDashboardData() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get('auth_token')?.value;
-  
-  if (!token) return null;
-  
-  const payload = await verifyToken(token);
-  if (!payload || !payload.userId) return null;
+  const user = await getUser();
+  if (!user) return null;
 
   const supabase = createAdminClient();
 
@@ -20,7 +14,7 @@ export async function getDashboardData() {
   const { data: transactions, error } = await supabase
     .from('transactions')
     .select('*')
-    .eq('user_id', payload.userId)
+    .eq('user_id', user.id)
     .order('transaction_date', { ascending: false });
 
   if (error || !transactions) {
@@ -62,9 +56,9 @@ export async function getDashboardData() {
 
   return {
     user: {
-      id: payload.userId,
-      email: payload.email,
-      fullName: 'Admin', // In a real app, you might fetch this from the users table
+      id: user.id,
+      email: user.email,
+      fullName: user.full_name || 'Admin',
     },
     stats: {
       balance,

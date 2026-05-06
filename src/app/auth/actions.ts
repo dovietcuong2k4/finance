@@ -12,6 +12,27 @@ const getAdminClient = () => createSupabaseClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 )
 
+export async function getUser() {
+  const cookieStore = await cookies()
+  const token = cookieStore.get('auth_token')?.value
+  
+  if (!token) return null
+  
+  const payload = await verifyToken(token)
+  if (!payload || !payload.userId) return null
+  
+  const supabase = getAdminClient()
+  const { data: user, error } = await supabase
+    .from('users')
+    .select('id, email, full_name, avatar_url, created_at')
+    .eq('id', payload.userId)
+    .single()
+    
+  if (error || !user) return null
+  
+  return user
+}
+
 export async function signIn(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string

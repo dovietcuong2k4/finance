@@ -35,19 +35,23 @@ const FinancialChart: React.FC<FinancialChartProps> = ({ data }) => {
             <span>Thu nhập</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <div className="w-3 h-3 rounded-full bg-slate-300" />
+            <div className="w-3 h-3 rounded-full bg-red-400" />
             <span>Chi tiêu</span>
           </div>
         </div>
       </div>
       
-      <div className="flex-1 w-full">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+      <div className="flex-1 w-full outline-none">
+        <ResponsiveContainer width="100%" height="100%" style={{ outline: 'none' }}>
+          <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }} style={{ outline: 'none' }}>
             <defs>
               <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#6366f1" stopOpacity={0.1}/>
                 <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+              </linearGradient>
+              <linearGradient id="colorExpenses" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#f87171" stopOpacity={0.1}/>
+                <stop offset="95%" stopColor="#f87171" stopOpacity={0}/>
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -88,9 +92,10 @@ const FinancialChart: React.FC<FinancialChartProps> = ({ data }) => {
               name="Chi tiêu"
               type="monotone" 
               dataKey="expenses" 
-              stroke="#e2e8f0" 
-              strokeWidth={2}
-              fill="transparent" 
+              stroke="#f87171" 
+              strokeWidth={3}
+              fillOpacity={1} 
+              fill="url(#colorExpenses)" 
             />
           </AreaChart>
         </ResponsiveContainer>

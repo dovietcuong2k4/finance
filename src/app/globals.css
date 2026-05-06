@@ -144,3 +144,11 @@
 ::-webkit-scrollbar-thumb:hover {
   background: var(--muted-foreground);
 }
+
+/* Fix Recharts focus border */
+.recharts-wrapper, 
+.recharts-surface, 
+.recharts-legend-wrapper, 
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
