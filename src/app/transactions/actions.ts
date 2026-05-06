@@ -10,11 +10,17 @@ export async function getTransactions({
   pageSize = 10,
   type,
   search,
+  category,
+  startDate,
+  endDate,
 }: {
   page?: number
   pageSize?: number
   type?: 'income' | 'expense'
   search?: string
+  category?: string
+  startDate?: string
+  endDate?: string
 } = {}) {
   const cookieStore = await cookies()
   const token = cookieStore.get('auth_token')?.value

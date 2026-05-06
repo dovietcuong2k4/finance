@@ -25,7 +25,7 @@ export default async function Home() {
   const { user, stats, recentTransactions, chartData } = data;
 
   return (
-    <div className="max-w-[1600px] mx-auto p-4 md:p-8 animate-in fade-in duration-1000">
+    <div className="max-w-none mx-auto p-4 md:p-8 animate-in fade-in duration-1000">
       {/* Premium Header */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>
