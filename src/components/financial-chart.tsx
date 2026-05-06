@@ -55,11 +55,11 @@ const FinancialChart: React.FC<FinancialChartProps> = ({ data, currentRange, onR
           </ConfigProvider>
         </div>
         <div className="hidden lg:flex items-center gap-4 text-xs font-medium">
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 text-nowrap">
             <div className="w-3 h-3 rounded-full bg-aura-indigo" />
             <span>Thu nhập</span>
           </div>
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1.5 text-nowrap">
             <div className="w-3 h-3 rounded-full bg-red-400" />
             <span>Chi tiêu</span>
           </div>
