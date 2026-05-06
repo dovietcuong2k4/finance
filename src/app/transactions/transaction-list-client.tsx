@@ -13,7 +13,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
 import { deleteTransaction } from './actions';
 import { toast } from 'react-hot-toast';
-import { DatePicker, Select, ConfigProvider } from 'antd';
+import { DatePicker, Select, ConfigProvider, Modal } from 'antd';
 import { EditTransactionModal, TransactionData, default as AddTransactionModal } from '@/components/add-transaction-modal';
 import { getCategoryIcon, getCategoryColor, categorySelectOptions } from '@/constants/categories';
 
@@ -99,15 +99,35 @@ export default function TransactionListClient({
   };
 
   const handleDelete = (id: string) => {
-    if (!confirm('Bạn có chắc chắn muốn xóa giao dịch này?')) return;
-    startTransition(async () => {
-      const result = await deleteTransaction(id);
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        toast.success('Đã xóa giao dịch');
-        router.refresh();
-      }
+    Modal.confirm({
+      title: 'Xóa giao dịch?',
+      icon: <Trash2 className="w-6 h-6 text-red-500 mb-2 me-2" />,
+      content: 'Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa giao dịch này không?',
+      okText: 'Xóa ngay',
+      cancelText: 'Hủy',
+      okButtonProps: { 
+        danger: true, 
+        className: 'bg-red-500 hover:bg-red-600! border-none h-10! px-6! font-bold rounded-xl!' 
+      },
+      cancelButtonProps: { 
+        className: 'h-10! px-6! font-bold rounded-xl! border-slate-200' 
+      },
+      centered: true,
+      maskClosable: true,
+      onOk: () => {
+        return new Promise((resolve) => {
+          startTransition(async () => {
+            const result = await deleteTransaction(id);
+            if (result.error) {
+              toast.error(result.error);
+            } else {
+              toast.success('Đã xóa giao dịch');
+              router.refresh();
+            }
+            resolve(true);
+          });
+        });
+      },
     });
   };
 
