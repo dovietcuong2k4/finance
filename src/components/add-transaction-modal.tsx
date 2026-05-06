@@ -7,6 +7,35 @@ import { createTransaction } from '@/app/transactions/actions';
 import { toast } from 'react-hot-toast';
 import dayjs from 'dayjs';
 
+function TypeSelector({ value, onChange }: { value?: string, onChange?: (val: string) => void }) {
+  return (
+    <div className="flex p-1 bg-slate-100 rounded-xl w-full">
+      <button
+        type="button"
+        onClick={() => onChange?.('income')}
+        className={`flex-1 py-3 font-bold rounded-xl transition-all duration-200 ${
+          value === 'income' 
+            ? 'bg-white text-green-600 shadow-sm' 
+            : 'text-slate-500 hover:text-green-600'
+        }`}
+      >
+        Thu nhập
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange?.('expense')}
+        className={`flex-1 py-3 font-bold rounded-xl transition-all duration-200 ${
+          value === 'expense' 
+            ? 'bg-white text-red-600 shadow-sm' 
+            : 'text-slate-500 hover:text-red-600'
+        }`}
+      >
+        Chi tiêu
+      </button>
+    </div>
+  );
+}
+
 export default function AddTransactionModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -108,19 +137,16 @@ export default function AddTransactionModal() {
         >
           <Form.Item
             name="type"
-            label={<span className="font-bold text-slate-500 uppercase tracking-[0.1em] text-[10px]">Loại giao dịch</span>}
+            label={<span className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">Loại giao dịch</span>}
             rules={[{ required: true }]}
           >
-            <Radio.Group className="w-full flex p-1 bg-slate-100 rounded-2xl" optionType="button">
-              <Radio.Button value="income" className="flex-1 text-center h-10 leading-9 font-bold border-none rounded-xl bg-transparent hover:text-green-600 transition-all">Thu nhập</Radio.Button>
-              <Radio.Button value="expense" className="flex-1 text-center h-10 leading-9 font-bold border-none rounded-xl bg-transparent hover:text-red-600 transition-all">Chi tiêu</Radio.Button>
-            </Radio.Group>
+            <TypeSelector />
           </Form.Item>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mt-6">
             <Form.Item
               name="title"
-              label={<span className="font-bold text-slate-500 uppercase tracking-[0.1em] text-[10px]">Tên giao dịch</span>}
+              label={<span className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">Tên giao dịch</span>}
               rules={[{ required: true, message: 'Vui lòng nhập tên giao dịch!' }]}
             >
               <Input size="large" placeholder="VD: Lương tháng, Mua sắm..." className="bg-slate-50 border-slate-200 hover:border-aura-indigo focus:border-aura-indigo transition-all" />
@@ -128,7 +154,7 @@ export default function AddTransactionModal() {
 
             <Form.Item
               name="category"
-              label={<span className="font-bold text-slate-500 uppercase tracking-[0.1em] text-[10px]">Danh mục</span>}
+              label={<span className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">Danh mục</span>}
               rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
             >
               <Select 
@@ -153,7 +179,7 @@ export default function AddTransactionModal() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
             <Form.Item
               name="amount"
-              label={<span className="font-bold text-slate-500 uppercase tracking-[0.1em] text-[10px]">Số tiền (VNĐ)</span>}
+              label={<span className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">Số tiền (VNĐ)</span>}
               rules={[{ required: true, message: 'Vui lòng nhập số tiền!' }]}
             >
               <InputNumber
@@ -172,7 +198,7 @@ export default function AddTransactionModal() {
 
             <Form.Item
               name="transactionDate"
-              label={<span className="font-bold text-slate-500 uppercase tracking-[0.1em] text-[10px]">Thời gian</span>}
+              label={<span className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">Thời gian</span>}
               rules={[{ required: true, message: 'Vui lòng chọn thời gian!' }]}
             >
               <DatePicker 
@@ -186,7 +212,7 @@ export default function AddTransactionModal() {
 
           <Form.Item
             name="description"
-            label={<span className="font-bold text-slate-500 uppercase tracking-[0.1em] text-[10px]">Mô tả thêm</span>}
+            label={<span className="font-bold text-slate-500 uppercase tracking-widest text-[10px]">Mô tả thêm</span>}
           >
             <Input.TextArea 
               rows={3} 
@@ -197,7 +223,7 @@ export default function AddTransactionModal() {
           </Form.Item>
 
           <div className="flex justify-end gap-3 mt-10">
-            <Button size="large" onClick={() => setIsOpen(false)} disabled={isPending} className="border-none bg-slate-100 text-slate-600 hover:!bg-slate-200 transition-all">
+            <Button size="large" onClick={() => setIsOpen(false)} disabled={isPending} className="border-none bg-slate-100 text-slate-600 hover:bg-slate-200! transition-all">
               Hủy
             </Button>
             <Button 
@@ -205,7 +231,7 @@ export default function AddTransactionModal() {
               htmlType="submit" 
               size="large"
               loading={isPending}
-              className="bg-slate-900 hover:!bg-slate-800 shadow-xl shadow-slate-900/10 border-none min-w-[140px]"
+              className="bg-slate-900 hover:bg-slate-800! shadow-xl shadow-slate-900/10 border-none min-w-[140px]"
             >
               Lưu giao dịch
             </Button>
