@@ -7,19 +7,19 @@ import {
   ChevronLeft,
   ChevronRight,
   Trash2,
+  Pencil,
   ArrowUpRight,
-  ArrowDownLeft,
   Coffee,
   ShoppingBag,
   Home,
   Car,
   MoreHorizontal,
-  Filter,
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
 import { deleteTransaction } from './actions';
 import { toast } from 'react-hot-toast';
+import { EditTransactionModal, TransactionData } from '@/components/add-transaction-modal';
 
 dayjs.locale('vi');
 
@@ -80,16 +80,14 @@ export default function TransactionListClient({
   const pathname = usePathname();
   const [search, setSearch] = useState(currentSearch);
   const [isPending, startTransition] = useTransition();
+  const [editingTx, setEditingTx] = useState<TransactionData | null>(null);
 
   const updateParams = (updates: Record<string, string | undefined>) => {
     const params = new URLSearchParams();
-    
-    // Carry current values
     if (currentType) params.set('type', currentType);
     if (currentSearch) params.set('search', currentSearch);
     params.set('page', String(currentPage));
 
-    // Apply updates
     for (const [key, value] of Object.entries(updates)) {
       if (value === undefined || value === '') {
         params.delete(key);
@@ -98,7 +96,6 @@ export default function TransactionListClient({
       }
     }
 
-    // Reset page to 1 on filter/search change unless page is explicitly set
     if ('type' in updates || 'search' in updates) {
       params.set('page', '1');
     }
@@ -132,10 +129,20 @@ export default function TransactionListClient({
 
   return (
     <div className="space-y-6">
+      {/* Edit Modal (shared component) */}
+      <EditTransactionModal
+        transaction={editingTx}
+        open={!!editingTx}
+        onClose={() => setEditingTx(null)}
+        onSaved={() => {
+          setEditingTx(null);
+          router.refresh();
+        }}
+      />
+
       {/* Filters & Search Bar */}
       <div className="bento-card">
         <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search */}
           <form onSubmit={handleSearch} className="relative flex-1">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input
@@ -147,7 +154,6 @@ export default function TransactionListClient({
             />
           </form>
 
-          {/* Type Filters */}
           <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl">
             {typeFilters.map((filter) => (
               <button
@@ -168,7 +174,6 @@ export default function TransactionListClient({
 
       {/* Transaction List */}
       <div className="bento-card p-0 overflow-hidden">
-        {/* Table Header */}
         <div className="hidden sm:grid grid-cols-12 gap-4 px-6 py-3 bg-slate-50/80 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
           <div className="col-span-5">Giao dịch</div>
           <div className="col-span-2">Danh mục</div>
@@ -177,7 +182,6 @@ export default function TransactionListClient({
           <div className="col-span-1"></div>
         </div>
 
-        {/* Rows */}
         {transactions.length === 0 ? (
           <div className="text-center py-16 text-muted-foreground">
             <div className="text-4xl mb-3">📭</div>
@@ -194,7 +198,6 @@ export default function TransactionListClient({
                   key={tx.id}
                   className="grid grid-cols-12 gap-4 items-center px-6 py-4 hover:bg-slate-50/50 transition-colors duration-150 group"
                 >
-                  {/* Title + Icon */}
                   <div className="col-span-12 sm:col-span-5 flex items-center gap-3">
                     <div className={`p-2 rounded-xl ${colorClass} shrink-0`}>
                       <Icon className="w-4 h-4" />
@@ -207,33 +210,36 @@ export default function TransactionListClient({
                     </div>
                   </div>
 
-                  {/* Category */}
                   <div className="hidden sm:block col-span-2">
                     <span className={`inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider ${colorClass}`}>
                       {tx.category}
                     </span>
                   </div>
 
-                  {/* Date */}
                   <div className="hidden sm:block col-span-2">
                     <p className="text-xs text-muted-foreground font-medium">
                       {dayjs(tx.transaction_date).format('DD/MM/YYYY')}
                     </p>
                   </div>
 
-                  {/* Amount */}
                   <div className="col-span-8 sm:col-span-2 text-right">
                     <p className={`text-sm font-bold ${tx.type === 'income' ? 'text-green-600' : 'text-foreground'}`}>
                       {tx.type === 'income' ? '+' : '-'}{formatCurrency(tx.amount)}
                     </p>
                   </div>
 
-                  {/* Actions */}
-                  <div className="col-span-4 sm:col-span-1 flex justify-end">
+                  <div className="col-span-4 sm:col-span-1 flex justify-end gap-1">
+                    <button
+                      onClick={() => setEditingTx(tx as TransactionData)}
+                      className="p-2 text-slate-400 hover:text-aura-indigo hover:bg-indigo-50 rounded-lg transition-all duration-200"
+                      title="Chỉnh sửa"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </button>
                     <button
                       onClick={() => handleDelete(tx.id)}
                       disabled={isPending}
-                      className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 disabled:opacity-50"
+                      className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all duration-200 disabled:opacity-50"
                       title="Xóa giao dịch"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -264,12 +270,8 @@ export default function TransactionListClient({
               <ChevronLeft className="w-4 h-4" />
             </button>
 
-            {/* Page numbers */}
             {Array.from({ length: totalPages }, (_, i) => i + 1)
-              .filter((p) => {
-                // Show first, last, current, and neighbors
-                return p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1;
-              })
+              .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
               .reduce<(number | 'dots')[]>((acc, p, i, arr) => {
                 if (i > 0 && p - (arr[i - 1] as number) > 1) acc.push('dots');
                 acc.push(p);

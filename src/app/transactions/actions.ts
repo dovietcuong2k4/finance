@@ -99,6 +99,51 @@ export async function deleteTransaction(id: string) {
   return { success: true }
 }
 
+export async function updateTransaction(id: string, data: {
+  type: string
+  title: string
+  category: string
+  amount: number
+  transaction_date: string
+  description?: string | null
+}) {
+  const cookieStore = await cookies()
+  const token = cookieStore.get('auth_token')?.value
+
+  if (!token) return { error: 'Không tìm thấy phiên đăng nhập' }
+
+  const payload = await verifyToken(token)
+  if (!payload || !payload.userId) return { error: 'Phiên đăng nhập không hợp lệ' }
+
+  if (!data.title || !data.amount || !data.transaction_date || !data.type || !data.category) {
+    return { error: 'Vui lòng điền đầy đủ các thông tin bắt buộc' }
+  }
+
+  const supabase = createAdminClient()
+
+  const { error } = await supabase
+    .from('transactions')
+    .update({
+      type: data.type,
+      title: data.title,
+      category: data.category,
+      amount: data.amount,
+      transaction_date: new Date(data.transaction_date).toISOString(),
+      description: data.description || null,
+    })
+    .eq('id', id)
+    .eq('user_id', payload.userId)
+
+  if (error) {
+    console.error('Error updating transaction:', error)
+    return { error: 'Có lỗi xảy ra khi cập nhật giao dịch' }
+  }
+
+  revalidatePath('/')
+  revalidatePath('/transactions')
+  return { success: true }
+}
+
 export async function createTransaction(formData: FormData) {
   const cookieStore = await cookies()
   const token = cookieStore.get('auth_token')?.value
