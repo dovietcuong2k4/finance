@@ -2,15 +2,20 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { createClient } from '@/utils/supabase/server'
+import { createClient as createSupabaseClient } from '@supabase/supabase-js'
 import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
-import { signToken } from '@/utils/auth'
+import { signToken, verifyToken } from '@/utils/auth'
+
+const getAdminClient = () => createSupabaseClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+)
 
 export async function signIn(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  const supabase = await createClient()
+  const supabase = getAdminClient()
 
   // Find user in public.users
   const { data: user, error } = await supabase
@@ -20,13 +25,13 @@ export async function signIn(formData: FormData) {
     .single()
 
   if (error || !user) {
-    return redirect(`/login?message=${encodeURIComponent('Invalid login credentials')}`)
+    return redirect(`/login?error=${encodeURIComponent('Email hoặc mật khẩu không chính xác')}`)
   }
 
   // Verify password
   const isValid = await bcrypt.compare(password, user.password_hash)
   if (!isValid) {
-    return redirect(`/login?message=${encodeURIComponent('Invalid login credentials')}`)
+    return redirect(`/login?error=${encodeURIComponent('Email hoặc mật khẩu không chính xác')}`)
   }
 
   // Create token
@@ -48,7 +53,7 @@ export async function signIn(formData: FormData) {
 export async function signUp(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  const supabase = await createClient()
+  const supabase = getAdminClient()
 
   // Hash password
   const salt = await bcrypt.genSalt(10)
@@ -62,7 +67,13 @@ export async function signUp(formData: FormData) {
     .single()
 
   if (error) {
-    return redirect(`/signup?message=${encodeURIComponent(error.message)}`)
+    let errorMessage = 'Đã có lỗi xảy ra. Vui lòng thử lại.'
+    if (error.code === '23505') {
+      errorMessage = 'Email này đã được sử dụng.'
+    } else {
+      errorMessage = error.message
+    }
+    return redirect(`/signup?error=${encodeURIComponent(errorMessage)}`)
   }
 
   // Create token
@@ -86,4 +97,32 @@ export async function signOut() {
   cookieStore.delete('auth_token')
   revalidatePath('/', 'layout')
   redirect('/login')
+}
+
+export async function updateProfile(formData: FormData) {
+  const fullName = formData.get('fullName') as string
+  const cookieStore = await cookies()
+  const token = cookieStore.get('auth_token')?.value
+
+  if (!token) {
+    return redirect('/login')
+  }
+
+  const payload = await verifyToken(token)
+  if (!payload || !payload.userId) {
+    return redirect('/login')
+  }
+
+  const supabase = getAdminClient()
+  const { error } = await supabase
+    .from('users')
+    .update({ full_name: fullName, updated_at: new Date().toISOString() })
+    .eq('id', payload.userId)
+
+  if (error) {
+    return redirect(`/account?error=${encodeURIComponent(error.message)}`)
+  }
+
+  revalidatePath('/account')
+  redirect(`/account?success=${encodeURIComponent('Cập nhật thông tin thành công')}`)
 }

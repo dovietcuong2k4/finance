@@ -1,11 +1,13 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { signUp } from '@/app/auth/actions'
+import ErrorToast from '@/components/error-toast'
 
-export default async function SignupPage(props: { searchParams: Promise<{ message: string }> }) {
+export default async function SignupPage(props: { searchParams: Promise<{ error?: string, message?: string }> }) {
   const searchParams = await props.searchParams
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#fdfdfe] p-4 relative overflow-hidden">
+      <ErrorToast message={searchParams?.error || searchParams?.message} />
       {/* Background decoration */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-[0.03]">
         <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-aura-violet rounded-full blur-[120px]" />
@@ -70,13 +72,6 @@ export default async function SignupPage(props: { searchParams: Promise<{ messag
               </p>
             </div>
 
-            {searchParams?.message && (
-              <div className="mt-6 p-4 bg-amber-50/50 border border-amber-100 rounded-xl animate-in fade-in zoom-in duration-300">
-                <p className="text-xs font-medium text-amber-800 text-center">
-                  {searchParams.message}
-                </p>
-              </div>
-            )}
           </form>
         </div>
         
