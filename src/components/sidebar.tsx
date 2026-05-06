@@ -28,13 +28,14 @@ const Sidebar = () => {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Hide sidebar on auth pages
-  if (pathname === '/login' || pathname === '/signup') return null;
-
   // Close sidebar on navigation on mobile
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
+
+  // Hide sidebar on auth pages - Move this AFTER all hooks
+  const isAuthPage = pathname === '/login' || pathname === '/signup';
+  if (isAuthPage) return null;
 
   return (
     <>
