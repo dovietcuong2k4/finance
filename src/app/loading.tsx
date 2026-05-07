@@ -1,6 +1,6 @@
 export default function DashboardLoading() {
   return (
-    <div className="max-w-none mx-auto p-4 md:p-8 animate-in fade-in duration-500">
+    <div className="max-w-none p-4 md:p-8 animate-in fade-in duration-500">
       {/* Premium Header Skeleton */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
         <div>

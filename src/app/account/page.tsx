@@ -49,7 +49,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
         <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-aura-indigo rounded-full blur-[120px]" />
       </div>
 
-      <div className="max-w-5xl mx-auto w-full relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 pt-6">
+      <div className="max-w-none w-full relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 pt-6">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -68,8 +68,8 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Profile Card (Large) */}
-          <div className="bento-card p-6 md:p-8 col-span-1 md:col-span-2 bg-white shadow-xl shadow-black/[0.02] border border-border flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden relative shadow-lg shadow-primary/10 bg-slate-100 flex-shrink-0 flex items-center justify-center border-4 border-white">
+          <div className="bento-card p-6 md:p-8 col-span-1 md:col-span-2 bg-white shadow-xl shadow-black/2 border border-border flex flex-col sm:flex-row items-center sm:items-start gap-6">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden relative shadow-lg shadow-primary/10 bg-slate-100 shrink-0 flex items-center justify-center border-4 border-white">
               {user.avatar_url ? (
                 <Image src={user.avatar_url} alt="Avatar" fill className="object-cover" />
               ) : (
@@ -94,7 +94,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
           </div>
 
           {/* Security Card */}
-          <div className="bento-card p-6 bg-white shadow-xl shadow-black/[0.02] border border-border flex flex-col justify-between">
+          <div className="bento-card p-6 bg-white shadow-xl shadow-black/2 border border-border flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-500">
@@ -104,7 +104,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
               </div>
               <p className="text-xs text-muted-foreground mb-2">ID Tài khoản (Mã nội bộ)</p>
               <div className="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
-                <Key size={14} className="text-slate-400 flex-shrink-0" />
+                <Key size={14} className="text-slate-400 shrink-0" />
                 <p className="font-mono text-xs text-slate-600 truncate">{user.id}</p>
               </div>
             </div>
@@ -116,7 +116,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
           </div>
 
           {/* Settings Form Card */}
-          <div className="bento-card p-6 md:p-8 col-span-1 md:col-span-2 bg-white shadow-xl shadow-black/[0.02] border border-border">
+          <div className="bento-card p-6 md:p-8 col-span-1 md:col-span-2 bg-white shadow-xl shadow-black/2 border border-border">
              <div className="flex items-center gap-2 mb-6">
                 <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
                   <Settings size={16} />
@@ -148,7 +148,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
           </div>
 
           {/* Activity Card */}
-          <div className="bento-card p-6 bg-white shadow-xl shadow-black/[0.02] border border-border flex flex-col justify-between">
+          <div className="bento-card p-6 bg-white shadow-xl shadow-black/2 border border-border flex flex-col justify-between">
              <div>
                <div className="flex items-center gap-2 mb-4">
                   <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">

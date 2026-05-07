@@ -7,7 +7,7 @@ export default function AccountLoading() {
         <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-aura-indigo rounded-full blur-[120px]" />
       </div>
 
-      <div className="max-w-5xl mx-auto w-full relative z-10 animate-in fade-in duration-500 pt-6">
+      <div className="max-w-none w-full relative z-10 animate-in fade-in duration-500 pt-6">
         {/* Header Skeleton */}
         <div className="flex justify-between items-center mb-8">
           <div>
@@ -22,7 +22,7 @@ export default function AccountLoading() {
           
           {/* Profile Card Skeleton */}
           <div className="bento-card p-6 md:p-8 col-span-1 md:col-span-2 bg-white border border-slate-100 flex flex-col sm:flex-row items-center sm:items-start gap-6">
-            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-slate-200 animate-pulse flex-shrink-0"></div>
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl bg-slate-200 animate-pulse shrink-0"></div>
             <div className="flex-1 w-full text-center sm:text-left pt-2 flex flex-col items-center sm:items-start">
               <div className="h-8 w-48 bg-slate-200 rounded animate-pulse mb-4"></div>
               <div className="h-8 w-64 bg-slate-100 rounded-lg animate-pulse mb-4"></div>
