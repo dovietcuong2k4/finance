@@ -7,10 +7,10 @@ import SubmitButton from '@/components/submit-button'
 export default async function SignupPage(props: { searchParams: Promise<{ error?: string, message?: string }> }) {
   const searchParams = await props.searchParams
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#fdfdfe] p-4 relative overflow-x-hidden">
+    <div className="flex-1 flex items-center justify-center bg-[#fdfdfe] p-4 relative">
       <ErrorToast message={searchParams?.error || searchParams?.message} />
       {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-[0.03]">
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] overflow-hidden">
         <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-aura-violet rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-aura-indigo rounded-full blur-[120px]" />
       </div>

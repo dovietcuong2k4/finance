@@ -10,9 +10,7 @@ import {
   PieChart, 
   Settings, 
   User,
-  LogOut,
-  Menu,
-  X
+  LogOut
 } from 'lucide-react';
 import { signOut, getUser, updateAvatarUrl } from '@/app/auth/actions';
 import { toast } from 'react-hot-toast';
@@ -27,7 +25,6 @@ const menuItems = [
 
 const Sidebar = () => {
   const pathname = usePathname();
-  const [isOpen, setIsOpen] = useState(false);
   const [userData, setUserData] = useState<any>(null);
 
   useEffect(() => {
@@ -38,47 +35,13 @@ const Sidebar = () => {
     fetchUser();
   }, []);
 
-  // Close sidebar on navigation on mobile
-  useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
-
   // Hide sidebar on auth pages - Move this AFTER all hooks
   const isAuthPage = pathname === '/login' || pathname === '/signup';
   if (isAuthPage) return null;
 
   return (
     <>
-      {/* Mobile Topbar */}
-      <div className="md:hidden flex items-center justify-between p-4 border-b border-border bg-white z-40 sticky top-0 shadow-sm shadow-black/2">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg overflow-hidden relative shadow-sm">
-            <Image src="/logo.png" alt="Aura Logo" fill className="object-cover" />
-          </div>
-          <span className="font-bold text-base tracking-tight">Aura</span>
-        </Link>
-        <button 
-          onClick={() => setIsOpen(true)}
-          className="p-2 -mr-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
-        >
-          <Menu className="w-6 h-6" />
-        </button>
-      </div>
-
-      {/* Overlay background for mobile */}
-      {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/20 z-40 md:hidden backdrop-blur-sm transition-opacity"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
-
-      {/* Desktop Sidebar & Mobile Overlay */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex flex-col transition-transform duration-300 ease-in-out
-        md:static md:translate-x-0
-        ${isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full'}
-      `}>
+      <aside className="hidden md:flex inset-y-0 left-0 z-50 w-64 bg-card border-r border-border flex-col">
         <div className="p-6 mb-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl overflow-hidden shadow-lg shadow-primary/20 relative">
@@ -86,12 +49,6 @@ const Sidebar = () => {
             </div>
             <span className="font-bold text-lg tracking-tight">Aura</span>
           </Link>
-          <button 
-            onClick={() => setIsOpen(false)} 
-            className="md:hidden p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-lg transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
         
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto">

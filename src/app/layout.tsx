@@ -1,8 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { Toaster } from "react-hot-toast";
 import "./globals.css";
 import Sidebar from "@/components/sidebar";
+import BottomNav from "@/components/bottom-nav";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover",
+};
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +30,10 @@ export default function RootLayout({
       <body className={`${inter.className} h-screen flex flex-col md:flex-row bg-background overflow-hidden`}>
         <Toaster position="top-center" />
         <Sidebar />
-        <main className="flex-1 flex flex-col min-w-0 overflow-auto">
+        <main className="flex-1 flex flex-col min-w-0 overflow-auto pb-[calc(env(safe-area-inset-bottom)+4rem)] md:pb-0">
           {children}
         </main>
+        <BottomNav />
       </body>
     </html>
   );
