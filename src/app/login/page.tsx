@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { signIn } from '@/app/auth/actions'
 import ErrorToast from '@/components/error-toast'
+import SubmitButton from '@/components/submit-button'
 
 export default async function LoginPage(props: { searchParams: Promise<{ error?: string, message?: string }> }) {
   const searchParams = await props.searchParams
@@ -16,7 +17,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
 
       <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-1000 pt-8">
 
-        <div className="bento-card p-8 md:p-10 border border-border bg-white shadow-2xl shadow-black/[0.02]">
+        <div className="bento-card p-8 md:p-10 border border-border bg-white shadow-2xl shadow-black/2">
           <div className="flex flex-col items-center mb-8">
             <div className="w-16 h-16 rounded-2xl overflow-hidden relative mb-4 shadow-lg shadow-primary/20">
               <Image src="/logo.png" alt="Aura Logo" fill className="object-cover" />
@@ -56,9 +57,9 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
               />
             </div>
 
-            <button className="w-full bg-primary text-white h-11 rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/10 active:scale-[0.98] mt-2">
+            <SubmitButton className="w-full bg-primary text-white h-11 rounded-xl font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/10 active:scale-[0.98] mt-2" pendingText="Đang đăng nhập...">
               Đăng nhập
-            </button>
+            </SubmitButton>
             
             <div className="pt-4 text-center">
               <p className="text-sm text-muted-foreground">

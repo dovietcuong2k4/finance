@@ -90,7 +90,9 @@ export default function TransactionListClient({
       params.set('page', '1');
     }
 
-    router.push(`${pathname}?${params.toString()}`);
+    startTransition(() => {
+      router.push(`${pathname}?${params.toString()}`);
+    });
   };
 
   const handleSearch = (e: React.FormEvent) => {
@@ -253,7 +255,7 @@ export default function TransactionListClient({
       </div>
 
       {/* Transaction List Table */}
-      <div className="bento-card p-0 overflow-hidden border-none shadow-xl shadow-slate-200/50">
+      <div className={`bento-card p-0 overflow-hidden border-none shadow-xl shadow-slate-200/50 transition-opacity duration-300 ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
         <div className="hidden sm:grid grid-cols-12 gap-4 px-8 py-4 bg-slate-50/50 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
           <div className="col-span-3">Giao dịch</div>
           <div className="col-span-2">Danh mục</div>
