@@ -3,7 +3,7 @@ import { cookies } from 'next/headers'
 import { verifyToken } from '@/utils/auth'
 import { changePassword } from '@/app/auth/actions'
 import Link from 'next/link'
-import { Shield, Key, ArrowLeft, Save } from 'lucide-react'
+import { Shield, Key, ArrowLeft, ChevronLeft, Save } from 'lucide-react'
 import ErrorToast from '@/components/error-toast'
 
 export default async function SecurityPage(props: { searchParams: Promise<{ error?: string, success?: string }> }) {
@@ -21,32 +21,40 @@ export default async function SecurityPage(props: { searchParams: Promise<{ erro
   }
 
   return (
-    <div className="min-h-screen bg-[#fdfdfe] p-4 lg:p-8 relative overflow-hidden flex flex-col">
+    <div className="flex-1 bg-[#fdfdfe] p-4 lg:p-8 relative flex flex-col">
       <ErrorToast message={searchParams?.error} type="error" />
       <ErrorToast message={searchParams?.success} type="success" />
       
       {/* Background decoration */}
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-[0.03]">
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] overflow-hidden">
         <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-aura-violet rounded-full blur-[120px]" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-aura-indigo rounded-full blur-[120px]" />
       </div>
 
       <div className="max-w-3xl mx-auto w-full relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 pt-6">
         
-        {/* Navigation */}
-        <Link href="/account" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6">
+        {/* Desktop Navigation */}
+        <Link href="/account" className="hidden md:inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6">
           <ArrowLeft size={16} />
           Quay lại Hồ sơ
         </Link>
 
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 shadow-sm border border-orange-100">
+        {/* Mobile Header */}
+        <div className="md:hidden flex items-center gap-3 mb-6">
+          <Link href="/account" className="p-1 -ml-1 text-foreground transition-colors shrink-0">
+            <ChevronLeft size={28} strokeWidth={2.5} />
+          </Link>
+          <h1 className="text-xl font-bold tracking-tight text-foreground">Bảo mật</h1>
+        </div>
+
+        {/* Desktop Header */}
+        <div className="hidden md:flex items-center gap-4 mb-8">
+          <div className="w-12 h-12 rounded-2xl bg-orange-50 flex items-center justify-center text-orange-500 shadow-sm border border-orange-100 shrink-0">
             <Shield size={24} />
           </div>
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-foreground">Bảo mật</h1>
-            <p className="text-muted-foreground mt-1 text-sm">Cập nhật mật khẩu để bảo vệ tài khoản của bạn</p>
+            <p className="text-muted-foreground mt-1 text-sm">Cập nhật mật khẩu để bảo vệ tài khoản</p>
           </div>
         </div>
 

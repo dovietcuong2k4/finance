@@ -145,6 +145,17 @@
   background: var(--muted-foreground);
 }
 
+/* Hide scrollbar completely on mobile devices */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+  * {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+  }
+}
+
 /* Fix Recharts focus border */
 .recharts-wrapper, 
 .recharts-surface, 
