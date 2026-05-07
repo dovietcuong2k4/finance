@@ -1,4 +1,3 @@
-import React from 'react';
 import { Sparkles, ArrowRight, Zap } from 'lucide-react';
 
 const AIAdvisor = () => {

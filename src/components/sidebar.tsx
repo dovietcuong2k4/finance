@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -12,8 +12,7 @@ import {
   User,
   LogOut
 } from 'lucide-react';
-import { signOut, getUser, updateAvatarUrl } from '@/app/auth/actions';
-import { toast } from 'react-hot-toast';
+import { signOut, getUser } from '@/app/auth/actions';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Bảng điều khiển', href: '/' },
