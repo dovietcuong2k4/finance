@@ -115,7 +115,7 @@ export default function TransactionListClient({
         className: 'h-10! px-6! font-bold rounded-xl! border-slate-200' 
       },
       centered: true,
-      maskClosable: true,
+      mask: { closable: true },
       onOk: () => {
         return new Promise((resolve) => {
           startTransition(async () => {

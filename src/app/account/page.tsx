@@ -7,7 +7,7 @@ import Link from 'next/link'
 import { User, Shield, Activity, LogOut, Settings, Save, Mail, Key, Crown, AlertTriangle, RefreshCw, Trash2 } from 'lucide-react'
 import ErrorToast from '@/components/error-toast'
 import SubmitButton from '@/components/submit-button'
-import { resetData, deleteAccount } from '@/app/account/actions'
+import AccountDangerActions from './account-danger-actions'
 import Image from 'next/image'
 
 export default async function AccountPage(props: { searchParams: Promise<{ error?: string, success?: string }> }) {
@@ -209,33 +209,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
                 Những hành động dưới đây không thể hoàn tác. Vui lòng cân nhắc kỹ trước khi thực hiện.
               </p>
               
-              <div className="space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-red-50/50 rounded-xl border border-red-100 gap-4">
-                  <div>
-                    <p className="font-semibold text-red-900 text-sm">Xóa toàn bộ dữ liệu</p>
-                    <p className="text-xs text-red-700/70 mt-1">Xóa sạch tất cả giao dịch để bắt đầu lại từ đầu.</p>
-                  </div>
-                  <form action={resetData}>
-                    <SubmitButton className="bg-white text-red-600 border border-red-200 hover:bg-red-50 h-9 px-4 rounded-lg text-sm font-semibold transition-all shrink-0" pendingText="Đang xóa...">
-                      <RefreshCw size={14} />
-                      Reset dữ liệu
-                    </SubmitButton>
-                  </form>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-red-50/50 rounded-xl border border-red-100 gap-4">
-                  <div>
-                    <p className="font-semibold text-red-900 text-sm">Xóa tài khoản vĩnh viễn</p>
-                    <p className="text-xs text-red-700/70 mt-1">Xóa tài khoản và toàn bộ dữ liệu ra khỏi hệ thống.</p>
-                  </div>
-                  <form action={deleteAccount}>
-                    <SubmitButton className="bg-red-600 text-white hover:bg-red-700 h-9 px-4 rounded-lg text-sm font-semibold transition-all shrink-0 shadow-sm" pendingText="Đang xóa...">
-                      <Trash2 size={14} />
-                      Xóa tài khoản
-                    </SubmitButton>
-                  </form>
-                </div>
-              </div>
+              <AccountDangerActions />
             </div>
           </div>
           
