@@ -51,7 +51,7 @@ export default async function SecurityPage(props: { searchParams: Promise<{ erro
         </div>
 
         {/* Form Card */}
-        <div className="bento-card p-6 md:p-8 bg-white shadow-xl shadow-black/[0.02] border border-border">
+        <div className="bento-card p-6 md:p-8 bg-white shadow-xl shadow-black/2 border border-border">
           <div className="flex items-center gap-2 mb-6">
             <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-500">
               <Key size={16} />

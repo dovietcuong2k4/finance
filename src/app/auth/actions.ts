@@ -2,15 +2,10 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { createClient as createSupabaseClient } from '@supabase/supabase-js'
+import { createAdminClient } from '@/utils/supabase/admin'
 import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
 import { signToken, verifyToken } from '@/utils/auth'
-
-const getAdminClient = () => createSupabaseClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
 
 export async function getUser() {
   const cookieStore = await cookies()
@@ -21,7 +16,7 @@ export async function getUser() {
   const payload = await verifyToken(token)
   if (!payload || !payload.userId) return null
   
-  const supabase = getAdminClient()
+  const supabase = createAdminClient()
   const { data: user, error } = await supabase
     .from('users')
     .select('id, email, full_name, avatar_url, created_at')
@@ -36,7 +31,7 @@ export async function getUser() {
 export async function signIn(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  const supabase = getAdminClient()
+  const supabase = createAdminClient()
 
   // Find user in public.users
   const { data: user, error } = await supabase
@@ -74,7 +69,7 @@ export async function signIn(formData: FormData) {
 export async function signUp(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  const supabase = getAdminClient()
+  const supabase = createAdminClient()
 
   // Hash password
   const salt = await bcrypt.genSalt(10)
@@ -134,7 +129,7 @@ export async function updateProfile(formData: FormData) {
     return redirect('/login')
   }
 
-  const supabase = getAdminClient()
+  const supabase = createAdminClient()
   const { error } = await supabase
     .from('users')
     .update({ full_name: fullName, updated_at: new Date().toISOString() })
@@ -169,7 +164,7 @@ export async function changePassword(formData: FormData) {
     return redirect('/login')
   }
 
-  const supabase = getAdminClient()
+  const supabase = createAdminClient()
   
   // Lấy user hiện tại để kiểm tra mật khẩu cũ
   const { data: user, error: fetchError } = await supabase
@@ -215,7 +210,7 @@ export async function updateAvatarUrl(avatarUrl: string) {
   const payload = await verifyToken(token)
   if (!payload || !payload.userId) return { error: 'Phiên đăng nhập không hợp lệ' }
 
-  const supabase = getAdminClient()
+  const supabase = createAdminClient()
   const { error } = await supabase
     .from('users')
     .update({ avatar_url: avatarUrl, updated_at: new Date().toISOString() })
