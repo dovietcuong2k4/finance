@@ -167,3 +167,101 @@
 .recharts-tooltip-wrapper {
   outline: none !important;
 }
+
+/* Transaction Fullscreen Modal for Mobile */
+@media (max-width: 768px) {
+  .transaction-modal {
+    max-width: 100vw !important;
+    top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+  }
+  
+  .transaction-modal .ant-modal {
+    max-width: 100vw !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin: 0 !important;
+    top: 0 !important;
+  }
+
+  .transaction-modal .ant-modal-container {
+    border-radius: 0;
+  }
+  
+  .transaction-modal .ant-modal-content {
+    height: 100vh !important;
+    border-radius: 0 !important;
+    display: flex;
+    flex-direction: column;
+    padding: 20px !important;
+  }
+
+  .transaction-modal .ant-modal-header {
+    padding-top: calc(env(safe-area-inset-top, 0px) + 24px) !important;
+    margin-bottom: 24px !important;
+    border: none !important;
+  }
+
+  .transaction-modal .ant-modal-close {
+    display: none !important;
+  }
+
+  .transaction-modal .ant-modal-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 0 !important;
+    overflow: hidden; /* We handle scrolling inside the form in TSX */
+  }
+  
+  /* Adjust form spacing for mobile fullscreen */
+  .transaction-modal form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    height: 100%;
+  }
+
+  .transaction-modal .flex.justify-end.gap-3 {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    background: var(--background) !important;
+    border-top: 1px solid var(--border) !important;
+    z-index: 1000 !important;
+    margin: 0 !important;
+    padding: 12px 20px !important;
+    padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 16px) !important;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.05);
+  }
+
+  .transaction-modal .flex.justify-end.gap-3 button {
+    width: 100%;
+  }
+
+  /* Compact fields on mobile - Perfectly Even Spacing */
+  .transaction-modal .ant-form-item {
+    margin-bottom: 12px !important;
+  }
+
+  .transaction-modal .ant-form-item-label {
+    padding-bottom: 6px !important;
+  }
+
+  .transaction-modal .ant-form-item-label > label {
+    margin-bottom: 0 !important;
+    height: auto !important;
+  }
+
+  /* Reset redundant gaps/margins from TSX on mobile */
+  .transaction-modal .mt-6 {
+    margin-top: 0 !important;
+  }
+
+  .transaction-modal .gap-y-2 {
+    gap: 0 !important;
+  }
+}

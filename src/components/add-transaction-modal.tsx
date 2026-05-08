@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition, useEffect } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, ChevronLeft } from 'lucide-react';
 import { Modal, Form, Input, InputNumber, DatePicker, Button, Select, ConfigProvider } from 'antd';
 import { createTransaction, updateTransaction } from '@/app/transactions/actions';
 import { toast } from 'react-hot-toast';
@@ -196,26 +196,35 @@ export default function AddTransactionModal() {
       </button>
 
       <Modal
-        title={<span className="text-xl font-bold tracking-tight text-slate-900">Thêm Giao Dịch Mới</span>}
+        title={
+          <div className="flex items-center gap-3">
+            <button onClick={() => !isPending && setIsOpen(false)} className="md:hidden p-1 -ml-1 text-foreground transition-colors shrink-0 border-none bg-transparent cursor-pointer flex items-center justify-center">
+              <ChevronLeft size={28} strokeWidth={2.5} />
+            </button>
+            <span className="text-xl font-bold tracking-tight text-slate-900">Thêm Giao Dịch Mới</span>
+          </div>
+        }
         open={isOpen}
         onCancel={() => !isPending && setIsOpen(false)}
         footer={null}
         destroyOnHidden
         centered
         width={600}
-        className="premium-modal"
+        className="transaction-modal"
       >
         <Form
           form={form}
           layout="vertical"
           onFinish={handleFinish}
           initialValues={{ type: 'expense', transactionDate: dayjs() }}
-          className="mt-8"
+          className="flex flex-col h-full"
           requiredMark={false}
         >
-          <TransactionFormFields />
+          <div className="flex-1 overflow-y-auto pt-4 px-1 pb-32 md:pb-0">
+            <TransactionFormFields />
+          </div>
 
-          <div className="flex justify-end gap-3 mt-10">
+          <div className="flex justify-end gap-3 mt-auto pt-6 pb-2 md:pb-0 border-t md:border-t-0 border-slate-100 bg-white">
             <Button onClick={() => setIsOpen(false)} disabled={isPending} className="h-10! border-none bg-slate-100 text-slate-600 hover:bg-slate-200! transition-all">
               Hủy
             </Button>
@@ -287,25 +296,34 @@ export function EditTransactionModal({
   return (
     <ConfigProvider theme={antdTheme}>
       <Modal
-        title={<span className="text-2xl font-bold tracking-tight text-slate-900">Chỉnh sửa Giao dịch</span>}
+        title={
+          <div className="flex items-center gap-3">
+            <button onClick={() => !isPending && onClose()} className="md:hidden p-1 -ml-1 text-foreground transition-colors shrink-0 border-none bg-transparent cursor-pointer flex items-center justify-center">
+              <ChevronLeft size={28} strokeWidth={2.5} />
+            </button>
+            <span className="text-2xl font-bold tracking-tight text-slate-900">Chỉnh sửa Giao dịch</span>
+          </div>
+        }
         open={open}
         onCancel={() => !isPending && onClose()}
         footer={null}
         destroyOnHidden
         centered
         width={600}
-        className="premium-modal"
+        className="transaction-modal"
       >
         <Form
           form={form}
           layout="vertical"
           onFinish={handleFinish}
-          className="mt-8"
+          className="flex flex-col h-full"
           requiredMark={false}
         >
-          <TransactionFormFields />
+          <div className="flex-1 overflow-y-auto pt-4 px-1 pb-32 md:pb-0">
+            <TransactionFormFields />
+          </div>
 
-          <div className="flex justify-end gap-3 mt-10">
+          <div className="flex justify-end gap-3 mt-auto pt-6 pb-2 md:pb-0 border-t md:border-t-0 border-slate-100 bg-white">
             <Button size="large" onClick={onClose} disabled={isPending} className="h-10! border-none bg-slate-100 text-slate-600 hover:bg-slate-200! transition-all">
               Hủy
             </Button>
