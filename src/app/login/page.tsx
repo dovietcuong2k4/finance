@@ -17,9 +17,9 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
 
       <div className="w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-1000 pt-8">
 
-        <div className="bento-card p-8 md:p-10 border border-border bg-white shadow-2xl shadow-black/2">
+        <div className="bento-card static-card p-8 md:p-10 border border-border bg-white shadow-2xl shadow-black/2">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 rounded-2xl overflow-hidden relative mb-4 shadow-lg shadow-primary/20">
+            <div className="w-16 h-16 overflow-hidden relative mb-4">
               <Image src="/logo.png" alt="Aura Logo" fill className="object-cover" />
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Chào mừng trở lại</h1>
