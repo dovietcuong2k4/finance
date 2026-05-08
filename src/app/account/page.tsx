@@ -45,11 +45,11 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
         <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-aura-indigo rounded-full blur-[120px]" />
       </div>
 
-      <div className="max-w-none w-full relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 pt-6">
+      <div className="max-w-none w-full relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Hồ sơ cá nhân</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Hồ sơ cá nhân</h1>
             <p className="text-muted-foreground mt-1 text-sm">Quản lý thông tin và bảo mật tài khoản Aura của bạn</p>
           </div>
           <form action={signOut}>

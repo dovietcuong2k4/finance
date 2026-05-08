@@ -31,7 +31,7 @@ export default async function SecurityPage(props: { searchParams: Promise<{ erro
         <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-aura-indigo rounded-full blur-[120px]" />
       </div>
 
-      <div className="max-w-3xl mx-auto w-full relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 pt-6">
+      <div className="max-w-3xl w-full relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         
         {/* Desktop Navigation */}
         <Link href="/account" className="hidden md:inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6">
@@ -53,7 +53,7 @@ export default async function SecurityPage(props: { searchParams: Promise<{ erro
             <Shield size={24} />
           </div>
           <div>
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">Bảo mật</h1>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">Bảo mật</h1>
             <p className="text-muted-foreground mt-1 text-sm">Cập nhật mật khẩu để bảo vệ tài khoản</p>
           </div>
         </div>

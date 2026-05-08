@@ -7,11 +7,11 @@ export default function AccountLoading() {
         <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-aura-indigo rounded-full blur-[120px]" />
       </div>
 
-      <div className="max-w-none w-full relative z-10 animate-in fade-in duration-500 pt-6">
+      <div className="max-w-none w-full relative z-10 animate-in fade-in duration-500">
         {/* Header Skeleton */}
         <div className="flex justify-between items-center mb-8">
           <div>
-            <div className="h-8 w-48 bg-slate-200 rounded animate-pulse mb-2"></div>
+            <div className="h-8 w-48 bg-slate-200 rounded-xl animate-pulse mb-2"></div>
             <div className="h-4 w-64 bg-slate-100 rounded animate-pulse"></div>
           </div>
           <div className="h-10 w-32 bg-slate-100 rounded-xl animate-pulse"></div>
