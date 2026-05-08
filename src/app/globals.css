@@ -198,7 +198,7 @@
   }
 
   .transaction-modal .ant-modal-header {
-    padding-top: calc(env(safe-area-inset-top, 0px) + 24px) !important;
+    padding-top: 24px;
     margin-bottom: 24px !important;
     border: none !important;
   }
