@@ -162,7 +162,7 @@ export default function TransactionListClient({
             </p>
           </div>
 
-          <div className="flex-1 flex flex-col md:flex-row items-center gap-3 max-w-4xl">
+          <div className="flex-1 flex items-center gap-3 max-w-4xl">
             {/* Search Bar */}
             <form onSubmit={handleSearch} className="relative w-full">
               <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -195,12 +195,12 @@ export default function TransactionListClient({
         >
           <div className="flex flex-wrap items-center gap-3 p-3 bg-white/50 border border-slate-100 rounded-2xl shadow-sm backdrop-blur-sm">
             {/* Type Toggle */}
-            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg">
+            <div className="w-full md:w-auto flex items-center gap-1 p-1 bg-slate-100 rounded-lg">
               {typeFilters.map((filter) => (
                 <button
                   key={filter.label}
                   onClick={() => updateParams({ type: filter.value })}
-                  className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${
+                  className={`w-full md:w-auto px-4 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${
                     currentType === filter.value
                       ? 'bg-white text-foreground shadow-sm'
                       : 'text-muted-foreground hover:text-foreground'
@@ -214,7 +214,7 @@ export default function TransactionListClient({
             <div className="h-6 w-px bg-slate-200 mx-2 hidden md:block" />
 
             {/* Category Filter */}
-            <div className="flex items-center gap-2">
+            <div className="w-full md:w-auto flex items-center gap-2 justify-between md:justify-start">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Danh mục:</span>
               <Select
                 placeholder="Tất cả danh mục"
@@ -231,7 +231,7 @@ export default function TransactionListClient({
             <div className="h-6 w-px bg-slate-200 mx-2 hidden md:block" />
 
             {/* Date Range Filter */}
-            <div className="flex items-center gap-2">
+            <div className="w-full md:w-auto flex items-center gap-2">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Khoảng thời gian:</span>
               <RangePicker
                 className="w-56"
@@ -255,7 +255,7 @@ export default function TransactionListClient({
       </div>
 
       {/* Transaction List Table */}
-      <div className={`bento-card p-0 overflow-hidden border-none shadow-xl shadow-slate-200/50 transition-opacity duration-300 ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
+      <div className={`bento-card p-2! md:p-6! overflow-hidden border-none shadow-xl shadow-slate-200/50 transition-opacity duration-300 ${isPending ? 'opacity-50 pointer-events-none' : ''}`}>
         <div className="hidden sm:grid grid-cols-12 gap-4 px-8 py-4 bg-slate-50/50 border-b border-slate-100 text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">
           <div className="col-span-3">Giao dịch</div>
           <div className="col-span-2">Danh mục</div>
@@ -281,7 +281,7 @@ export default function TransactionListClient({
               return (
                 <div
                   key={tx.id}
-                  className="grid grid-cols-12 gap-4 items-center px-8 py-5 hover:bg-slate-50/50 transition-all duration-200 group"
+                  className="grid grid-cols-12 gap-2 px-4 py-3 md:gap-4 items-center md:px-8 md:py-5 hover:bg-slate-50/50 transition-all duration-200 group"
                 >
                   {/* Title + Icon */}
                   <div className="col-span-12 sm:col-span-3 flex items-center gap-4">
@@ -290,6 +290,7 @@ export default function TransactionListClient({
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-bold text-slate-900 truncate">{tx.title}</p>
+                      <p className="md:hidden text-xs text-slate-500 truncate">{tx.description}</p>
                     </div>
                   </div>
 
@@ -348,7 +349,7 @@ export default function TransactionListClient({
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-8 px-2">
+        <div className="flex flex-col md:flex-row gap-3 items-center justify-between mt-8 px-2">
           <p className="text-sm text-slate-400 font-medium">
             Trang <span className="font-bold text-slate-900">{currentPage}</span> trên {totalPages}
             <span className="mx-2 text-slate-200">|</span>
@@ -364,7 +365,7 @@ export default function TransactionListClient({
               <ChevronLeft className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-1.5">
+            <div className="hidden md:flex items-center gap-1.5">
               {Array.from({ length: totalPages }, (_, i) => i + 1)
                 .filter((p) => p === 1 || p === totalPages || Math.abs(p - currentPage) <= 1)
                 .reduce<(number | 'dots')[]>((acc, p, i, arr) => {

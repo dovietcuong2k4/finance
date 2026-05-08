@@ -9,7 +9,7 @@ export default function TransactionsLoading() {
             <div className="h-4 w-32 bg-slate-100 rounded-lg animate-pulse" />
           </div>
 
-          <div className="flex-1 flex flex-col md:flex-row items-center gap-3 max-w-4xl w-full">
+          <div className="flex-1 flex items-center gap-3 max-w-4xl w-full">
             <div className="h-10 w-full bg-slate-100 rounded-xl animate-pulse" />
             <div className="h-10 w-28 bg-slate-200 rounded-xl animate-pulse shrink-0" />
           </div>

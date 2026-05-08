@@ -158,6 +158,12 @@ export default function AddTransactionModal() {
   const [isPending, startTransition] = useTransition();
   const [form] = Form.useForm();
 
+  useEffect(() => {
+    const handleClose = () => setIsOpen(false);
+    window.addEventListener('closeAllModals', handleClose);
+    return () => window.removeEventListener('closeAllModals', handleClose);
+  }, []);
+
   const handleFinish = (values: any) => {
     const formData = new FormData();
     formData.append('type', values.type);
@@ -237,6 +243,12 @@ export function EditTransactionModal({
 }) {
   const [isPending, startTransition] = useTransition();
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    const handleClose = () => onClose();
+    window.addEventListener('closeAllModals', handleClose);
+    return () => window.removeEventListener('closeAllModals', handleClose);
+  }, [onClose]);
 
   // Populate form when transaction changes
   useEffect(() => {
