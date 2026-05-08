@@ -20,7 +20,7 @@ async function fetchReportDataRaw(
   // Fetch transactions based on period
   let query = supabase
     .from('transactions')
-    .select('*')
+    .select('amount, type, category, transaction_date, note')
     .eq('user_id', userId);
 
   if (period !== 'all_time') {
@@ -70,10 +70,10 @@ async function fetchReportDataRaw(
     };
   }).reverse();
 
-  // Fetch all transactions for the trend to ensure accuracy across months
+  // Fetch only necessary columns for the trend
   const { data: allTxForTrend } = await supabase
     .from('transactions')
-    .select('*')
+    .select('amount, type, transaction_date')
     .eq('user_id', userId)
     .gte('transaction_date', dayjs().tz().subtract(6, 'month').startOf('month').format('YYYY-MM-DD'));
 

@@ -20,10 +20,10 @@ async function fetchDashboardDataRaw(
 ) {
   const supabase = createAdminClient();
 
-  // Fetch ALL transactions for balance and global stats
+  // Fetch only necessary columns for balance and global stats
   const { data: allTransactions, error: allErr } = await supabase
     .from('transactions')
-    .select('*')
+    .select('amount, type, category, transaction_date, title, description')
     .eq('user_id', userId)
     .order('transaction_date', { ascending: false });
 
