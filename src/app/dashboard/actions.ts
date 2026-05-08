@@ -23,7 +23,7 @@ async function fetchDashboardDataRaw(
   // Fetch only necessary columns for balance and global stats
   const { data: allTransactions, error: allErr } = await supabase
     .from('transactions')
-    .select('amount, type, category, transaction_date, title, description')
+    .select('id, amount, type, category, transaction_date, title, description')
     .eq('user_id', userId)
     .order('transaction_date', { ascending: false });
 
@@ -32,11 +32,16 @@ async function fetchDashboardDataRaw(
     return null;
   }
 
+  const transactions = allTransactions.map(tx => ({
+    ...tx,
+    amount: Number(tx.amount)
+  }));
+
   // Calculate Balance (All time)
-  const totalIncomeAll = allTransactions
+  const totalIncomeAll = transactions
     .filter(tx => tx.type === 'income')
     .reduce((sum, tx) => sum + Number(tx.amount), 0);
-  const totalExpenseAll = allTransactions
+  const totalExpenseAll = transactions
     .filter(tx => tx.type === 'expense')
     .reduce((sum, tx) => sum + Number(tx.amount), 0);
   const balance = totalIncomeAll - totalExpenseAll;
@@ -59,7 +64,7 @@ async function fetchDashboardDataRaw(
     endDate = dayjs().tz().endOf('year');
   }
 
-  const periodTransactions = allTransactions.filter(tx => {
+  const periodTransactions = transactions.filter(tx => {
     const txDate = dayjs.tz(tx.transaction_date);
     return txDate.isAfter(startDate.subtract(1, 'ms')) && txDate.isBefore(endDate.add(1, 'ms'));
   });
@@ -75,11 +80,11 @@ async function fetchDashboardDataRaw(
   const savings = totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome) * 100 : 0;
 
   // Chart Data logic (Keep as is but using range)
-  let transactionsForChart = allTransactions;
+  let transactionsForChart = transactions;
   if (range === 'month') {
     const startOfMonth = dayjs().tz().startOf('month');
     const endOfMonth = dayjs().tz().endOf('month');
-    transactionsForChart = allTransactions.filter(tx => {
+    transactionsForChart = transactions.filter(tx => {
       const txDate = dayjs.tz(tx.transaction_date);
       return txDate.isAfter(startOfMonth.subtract(1, 'ms')) && txDate.isBefore(endOfMonth.add(1, 'ms'));
     });
@@ -97,7 +102,7 @@ async function fetchDashboardDataRaw(
       };
     }).reverse();
 
-    allTransactions.forEach(tx => {
+    transactions.forEach(tx => {
       const txMonth = dayjs.tz(tx.transaction_date).format('YYYY-MM');
       const monthData = chartData.find(m => m.month === txMonth);
       if (monthData) {
@@ -139,7 +144,7 @@ async function fetchDashboardDataRaw(
       totalExpense,
       savings: Math.max(0, Math.round(savings))
     },
-    recentTransactions: allTransactions.slice(0, 5),
+    recentTransactions: transactions.slice(0, 5),
     chartData,
   };
 }

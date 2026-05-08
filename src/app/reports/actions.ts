@@ -20,7 +20,7 @@ async function fetchReportDataRaw(
   // Fetch transactions based on period
   let query = supabase
     .from('transactions')
-    .select('amount, type, category, transaction_date, note')
+    .select('amount, type, category, transaction_date, description')
     .eq('user_id', userId);
 
   if (period !== 'all_time') {
@@ -111,7 +111,7 @@ async function fetchReportDataRaw(
       largestExpense: largestExpense ? {
         amount: Number(largestExpense.amount),
         category: largestExpense.category,
-        note: largestExpense.note
+        note: largestExpense.description
       } : null,
       averageDaily: Math.round(averageDaily)
     }
