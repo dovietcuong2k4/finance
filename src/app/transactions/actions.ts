@@ -1,6 +1,6 @@
 'use server'
 
-import { revalidatePath } from 'next/cache'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
 import { verifyToken } from '@/utils/auth'
 import { createAdminClient } from '@/utils/supabase/admin'
@@ -118,6 +118,8 @@ export async function deleteTransaction(id: string) {
 
   revalidatePath('/')
   revalidatePath('/transactions')
+  revalidateTag('reports', 'max')
+  revalidateTag('dashboard', 'max')
   return { success: true }
 }
 
@@ -163,6 +165,8 @@ export async function updateTransaction(id: string, data: {
 
   revalidatePath('/')
   revalidatePath('/transactions')
+  revalidateTag('reports', 'max')
+  revalidateTag('dashboard', 'max')
   return { success: true }
 }
 
@@ -214,6 +218,8 @@ export async function createTransaction(formData: FormData) {
 
   revalidatePath('/')
   revalidatePath('/transactions')
+  revalidateTag('reports', 'max')
+  revalidateTag('dashboard', 'max')
   
   return { success: true }
 }

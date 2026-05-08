@@ -5,24 +5,23 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { getUser } from '../auth/actions';
+import { unstable_cache } from 'next/cache';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
 
-export async function getReportData(
+async function fetchReportDataRaw(
+  userId: string,
   period: 'this_month' | 'last_month' | 'this_year' | 'all_time' = 'this_month'
 ) {
-  const user = await getUser();
-  if (!user) return null;
-
   const supabase = createAdminClient();
 
   // Fetch transactions based on period
   let query = supabase
     .from('transactions')
     .select('*')
-    .eq('user_id', user.id);
+    .eq('user_id', userId);
 
   if (period !== 'all_time') {
     let startDate = dayjs().tz().startOf('month');
@@ -75,7 +74,7 @@ export async function getReportData(
   const { data: allTxForTrend } = await supabase
     .from('transactions')
     .select('*')
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
     .gte('transaction_date', dayjs().tz().subtract(6, 'month').startOf('month').format('YYYY-MM-DD'));
 
   allTxForTrend?.forEach(tx => {
@@ -118,3 +117,19 @@ export async function getReportData(
     }
   };
 }
+
+export const getReportData = async (
+  period: 'this_month' | 'last_month' | 'this_year' | 'all_time' = 'this_month'
+) => {
+  const user = await getUser();
+  if (!user) return null;
+
+  return unstable_cache(
+    () => fetchReportDataRaw(user.id, period),
+    [`reports-${user.id}-${period}`],
+    {
+      revalidate: 3600, // Cache for 1 hour
+      tags: ['reports']
+    }
+  )();
+};

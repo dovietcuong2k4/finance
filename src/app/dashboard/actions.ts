@@ -5,25 +5,26 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
 import { getUser } from '../auth/actions';
+import { unstable_cache } from 'next/cache';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
 
-export async function getDashboardData(
+async function fetchDashboardDataRaw(
+  userId: string,
+  userEmail: string,
+  userFullName: string,
   range: 'recent' | 'month' = 'recent',
   period: 'this_month' | 'this_week' | 'last_week' | 'last_month' | 'this_year' = 'this_month'
 ) {
-  const user = await getUser();
-  if (!user) return null;
-
   const supabase = createAdminClient();
 
   // Fetch ALL transactions for balance and global stats
   const { data: allTransactions, error: allErr } = await supabase
     .from('transactions')
     .select('*')
-    .eq('user_id', user.id)
+    .eq('user_id', userId)
     .order('transaction_date', { ascending: false });
 
   if (allErr || !allTransactions) {
@@ -128,9 +129,9 @@ export async function getDashboardData(
 
   return {
     user: {
-      id: user.id,
-      email: user.email,
-      fullName: user.full_name || 'Admin',
+      id: userId,
+      email: userEmail,
+      fullName: userFullName,
     },
     stats: {
       balance,
@@ -142,3 +143,20 @@ export async function getDashboardData(
     chartData,
   };
 }
+
+export const getDashboardData = async (
+  range: 'recent' | 'month' = 'recent',
+  period: 'this_month' | 'this_week' | 'last_week' | 'last_month' | 'this_year' = 'this_month'
+) => {
+  const user = await getUser();
+  if (!user) return null;
+
+  return unstable_cache(
+    () => fetchDashboardDataRaw(user.id, user.email, user.full_name || 'Admin', range, period),
+    [`dashboard-${user.id}-${range}-${period}`],
+    {
+      revalidate: 3600, // Cache for 1 hour
+      tags: ['dashboard']
+    }
+  )();
+};
