@@ -220,7 +220,7 @@ export default function AddTransactionModal() {
           className="flex flex-col h-full"
           requiredMark={false}
         >
-          <div className="flex-1 overflow-y-auto pt-4 px-1 pb-32 md:pb-0">
+          <div className="flex-1 overflow-y-auto pt-4 px-5 pb-32 md:pb-0">
             <TransactionFormFields />
           </div>
 
@@ -319,7 +319,7 @@ export function EditTransactionModal({
           className="flex flex-col h-full"
           requiredMark={false}
         >
-          <div className="flex-1 overflow-y-auto pt-4 px-1 pb-32 md:pb-0">
+          <div className="flex-1 overflow-y-auto pt-4 px-5 pb-32 md:pb-0">
             <TransactionFormFields />
           </div>
 
