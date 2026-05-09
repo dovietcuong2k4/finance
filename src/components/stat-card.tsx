@@ -26,9 +26,9 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, trend, icon: 
 
   return (
     <div className="bento-card group">
-      <div className="flex justify-between items-start mb-4">
-        <div className={`p-1.5 rounded-lg ${variants[variant]} transition-colors duration-300`}>
-          <Icon className="w-4.5 h-4.5" />
+      <div className="flex justify-between items-start mb-3 md:mb-4">
+        <div className={`p-1 md:p-1.5 rounded-lg ${variants[variant]} transition-colors duration-300`}>
+          <Icon className="w-4 h-4 md:w-4.5 md:h-4.5" />
         </div>
         {change && (
           <div className={`flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -41,8 +41,8 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, trend, icon: 
       </div>
       
       <div>
-        <p className="text-[11px] font-bold text-muted-foreground mb-1 uppercase tracking-widest">{title}</p>
-        <h3 className="text-xl font-bold tracking-tight">{formattedValue}</h3>
+        <p className="text-[10px] md:text-[11px] font-bold text-muted-foreground mb-0.5 md:mb-1 uppercase tracking-widest truncate">{title}</p>
+        <h3 className="text-lg md:text-xl font-bold tracking-tight truncate">{formattedValue}</h3>
       </div>
       
       {/* Decorative background shape */}

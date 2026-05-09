@@ -31,8 +31,8 @@ const FinancialChart: React.FC<FinancialChartProps> = ({ data, currentRange, onR
       <div className="flex items-center justify-between mb-6">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">
           <div>
-            <h3 className="text-lg font-bold">Xu hướng Tài chính</h3>
-            <p className="text-sm text-muted-foreground">Phân tích thu chi</p>
+            <h3 className="text-base md:text-lg font-bold">Xu hướng Tài chính</h3>
+            <p className="text-xs md:text-sm text-muted-foreground">Phân tích thu chi</p>
           </div>
           
           <ConfigProvider

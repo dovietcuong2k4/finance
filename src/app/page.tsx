@@ -61,9 +61,9 @@ export default async function Home({ searchParams }: PageProps) {
   const greeting = getGreeting();
 
   return (
-    <div className="max-w-none mx-auto p-4 md:p-8 animate-in fade-in duration-1000">
+    <div className="max-w-none mx-auto p-3 md:p-8 animate-in fade-in duration-1000">
       {/* Premium Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pt-6 md:pt-0">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6 md:mb-10 pt-4 md:pt-0">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
@@ -72,7 +72,7 @@ export default async function Home({ searchParams }: PageProps) {
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
             {greeting}, <span className="text-aura-indigo">{user.fullName || 'Admin'}</span>
           </h1>
-          <p className="text-muted-foreground text-[13px] mt-1">Dưới đây là tóm lược tình hình tài chính của bạn.</p>
+          <p className="text-muted-foreground text-[13px] mt-1 hidden md:block">Dưới đây là tóm lược tình hình tài chính của bạn.</p>
         </div>
         
         <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto mt-4 md:mt-0">
@@ -93,13 +93,13 @@ export default async function Home({ searchParams }: PageProps) {
       </header>
 
       {/* Bento Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 auto-rows-min">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 auto-rows-min">
         
         {/* Section Header */}
-        <div className="lg:col-span-4 flex items-center justify-between">
+        <div className="col-span-2 lg:col-span-4 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">Tổng quan tài chính</h2>
-            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Thống kê theo thời gian</p>
+            <h2 className="text-base md:text-lg font-bold text-slate-900">Tổng quan tài chính</h2>
+            <p className="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Thống kê theo thời gian</p>
           </div>
           <DashboardPeriodSelector />
         </div>
@@ -134,16 +134,16 @@ export default async function Home({ searchParams }: PageProps) {
         />
 
         {/* Main Content Bento Area */}
-        <div className="lg:col-span-3 lg:row-span-2">
+        <div className="col-span-2 lg:col-span-3 lg:row-span-2">
           <DashboardChartSection data={chartData} />
         </div>
         
-        <div className="lg:col-span-1">
+        <div className="col-span-2 lg:col-span-1">
           <AIAdvisor />
         </div>
         
         {/* Goals or Quick Action Bento Card */}
-        <div className="bento-card lg:col-span-1 bg-linear-to-br from-indigo-50 to-white">
+        <div className="bento-card col-span-2 lg:col-span-1 bg-linear-to-br from-indigo-50 to-white">
           <h3 className="text-sm font-bold mb-4 uppercase tracking-wider text-indigo-900/60">Mục tiêu tiết kiệm</h3>
           <div className="flex justify-between items-end mb-2">
             <span className="text-2xl font-bold text-indigo-900">{stats.savings}%</span>
@@ -158,7 +158,7 @@ export default async function Home({ searchParams }: PageProps) {
         </div>
 
         {/* Full width Transaction Table */}
-        <div className="lg:col-span-4 mt-2">
+        <div className="col-span-2 lg:col-span-4 mt-2">
           <TransactionTable transactions={recentTransactions} />
         </div>
 

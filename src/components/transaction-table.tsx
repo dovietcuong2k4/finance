@@ -34,7 +34,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => 
   return (
     <div className="bento-card">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-lg font-bold">Giao dịch gần đây</h3>
+        <h3 className="text-base md:text-lg font-bold">Giao dịch gần đây</h3>
         <Link href={'/transactions'} className="text-xs font-bold text-aura-indigo hover:underline">Xem tất cả</Link>
       </div>
       

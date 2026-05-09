@@ -33,8 +33,8 @@ const formatCurrency = (value: number) => {
 
 const ReportSummaryCards: React.FC<Props> = ({ stats }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div className="bento-card bg-linear-to-br from-indigo-50/50 to-white">
+    <div className="flex overflow-x-auto snap-x snap-mandatory md:grid md:grid-cols-3 gap-4 md:gap-6 pb-2 md:pb-0">
+      <div className="bento-card min-w-[85vw] md:min-w-0 shrink-0 snap-center bg-linear-to-br from-indigo-50/50 to-white">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-1.5 bg-indigo-50 text-indigo-600 rounded-lg">
             <TrendingUp className="w-4.5 h-4.5" />
@@ -55,7 +55,7 @@ const ReportSummaryCards: React.FC<Props> = ({ stats }) => {
         </div>
       </div>
 
-      <div className="bento-card bg-linear-to-br from-rose-50/50 to-white">
+      <div className="bento-card min-w-[85vw] md:min-w-0 shrink-0 snap-center bg-linear-to-br from-rose-50/50 to-white">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-1.5 bg-rose-50 text-rose-600 rounded-lg">
             <AlertCircle className="w-4.5 h-4.5" />
@@ -77,7 +77,7 @@ const ReportSummaryCards: React.FC<Props> = ({ stats }) => {
         )}
       </div>
 
-      <div className="bento-card bg-linear-to-br from-amber-50/50 to-white">
+      <div className="bento-card min-w-[85vw] md:min-w-0 shrink-0 snap-center bg-linear-to-br from-amber-50/50 to-white">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-1.5 bg-amber-50 text-amber-600 rounded-lg">
             <Zap className="w-4.5 h-4.5" />

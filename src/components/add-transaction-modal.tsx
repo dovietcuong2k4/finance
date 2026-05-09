@@ -256,13 +256,13 @@ export default function AddTransactionModal() {
         <Drawer
           title={headerContent}
           placement="right"
-          height="100%"
+          size="100%"
           onClose={() => !isPending && setIsOpen(false)}
           open={isOpen}
           closable={false}
           className="transaction-drawer"
           styles={{ body: { padding: 0 } }}
-          destroyOnClose
+          destroyOnHidden
         >
           {formContent}
         </Drawer>
@@ -272,7 +272,7 @@ export default function AddTransactionModal() {
           open={isOpen}
           onCancel={() => !isPending && setIsOpen(false)}
           footer={null}
-          destroyOnClose
+          destroyOnHidden
           centered
           width={600}
           className="transaction-modal"
@@ -389,13 +389,13 @@ export function EditTransactionModal({
         <Drawer
           title={headerContent}
           placement="right"
-          height="100%"
+          size="100%"
           onClose={onClose}
           open={open}
           closable={false}
           className="transaction-drawer"
           styles={{ body: { padding: 0 } }}
-          destroyOnClose
+          destroyOnHidden
         >
           {formContent}
         </Drawer>
@@ -405,7 +405,7 @@ export function EditTransactionModal({
           open={open}
           onCancel={() => !isPending && onClose()}
           footer={null}
-          destroyOnClose
+          destroyOnHidden
           centered
           width={600}
           className="transaction-modal"

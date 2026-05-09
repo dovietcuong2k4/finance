@@ -11,11 +11,11 @@ const AIAdvisor = () => {
           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400/80">Aura AI Advisor</span>
         </div>
         
-        <h3 className="text-2xl font-bold mb-4 leading-tight text-gray-700 tracking-tight">
+        <h3 className="text-base md:text-2xl font-bold mb-4 leading-tight text-gray-700 tracking-tight">
           Bạn có thể tiết kiệm thêm <span className="text-indigo-400">2.5tr</span> trong tháng tới.
         </h3>
         
-        <p className="text-sm text-slate-400 mb-8 leading-relaxed font-medium">
+        <p className="text-xs md:text-sm text-slate-400 mb-8 leading-relaxed font-medium">
           Dựa trên phân tích chi tiêu ăn uống, chúng tôi khuyên bạn nên điều chỉnh thói quen vào cuối tuần.
         </p>
         
