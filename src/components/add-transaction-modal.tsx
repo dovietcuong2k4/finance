@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect } from 'react';
 import { Plus, ChevronLeft } from 'lucide-react';
-import { Modal, Form, Input, InputNumber, DatePicker, Button, Select, ConfigProvider } from 'antd';
+import { Modal, Drawer, Form, Input, InputNumber, DatePicker, Button, Select, ConfigProvider } from 'antd';
 import { createTransaction, updateTransaction } from '@/app/transactions/actions';
 import { toast } from 'react-hot-toast';
 import dayjs from 'dayjs';
@@ -152,11 +152,24 @@ function TransactionFormFields() {
   );
 }
 
+/* ──────── Shared Hook for Responsive ──────── */
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth <= 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  return isMobile;
+}
+
 /* ──────── Add Transaction (with trigger button) ──────── */
 export default function AddTransactionModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [form] = Form.useForm();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleClose = () => setIsOpen(false);
@@ -185,6 +198,50 @@ export default function AddTransactionModal() {
     });
   };
 
+  const headerContent = (
+    <div className="flex items-center justify-between w-full pr-1">
+      <div className="flex items-center gap-3">
+        <button onClick={() => !isPending && setIsOpen(false)} className="md:hidden p-1 -ml-1 text-foreground transition-colors shrink-0 border-none bg-transparent cursor-pointer flex items-center justify-center">
+          <ChevronLeft size={28} strokeWidth={2.5} />
+        </button>
+        <span className="text-xl font-bold tracking-tight text-foreground">Thêm giao dịch mới</span>
+      </div>
+      {isMobile && (
+        <button 
+          onClick={() => form.submit()} 
+          disabled={isPending}
+          className="text-primary font-bold text-sm px-3 bg-indigo-500 text-white rounded-lg border-none p-1 cursor-pointer active:opacity-70 transition-opacity"
+        >
+          Lưu
+        </button>
+      )}
+    </div>
+  );
+
+  const formContent = (
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={handleFinish}
+      initialValues={{ type: 'expense', transactionDate: dayjs() }}
+      className="flex flex-col h-full"
+      requiredMark={false}
+    >
+      <div className="flex-1 overflow-y-auto pt-4 px-4 pb-8 md:pb-0">
+        <TransactionFormFields />
+      </div>
+
+      <div className="hidden md:flex justify-end gap-3 mt-auto pt-6 pb-2 md:pb-0 border-t md:border-t-0 border-slate-100 bg-white">
+        <Button onClick={() => setIsOpen(false)} disabled={isPending} className="h-10! border-none text-slate-600 transition-all">
+          Hủy
+        </Button>
+        <Button type="primary" htmlType="submit" loading={isPending} className="h-10! shadow-xl shadow-slate-900/10 border-none min-w-[140px]">
+          Lưu giao dịch
+        </Button>
+      </div>
+    </Form>
+  );
+
   return (
     <ConfigProvider theme={antdTheme}>
       <button 
@@ -195,45 +252,34 @@ export default function AddTransactionModal() {
         <span className="hidden sm:inline">Thêm mới</span>
       </button>
 
-      <Modal
-        title={
-          <div className="flex items-center gap-3">
-            <button onClick={() => !isPending && setIsOpen(false)} className="md:hidden p-1 -ml-1 text-foreground transition-colors shrink-0 border-none bg-transparent cursor-pointer flex items-center justify-center">
-              <ChevronLeft size={28} strokeWidth={2.5} />
-            </button>
-            <span className="text-xl font-bold tracking-tight text-foreground">Thêm giao dịch mới</span>
-          </div>
-        }
-        open={isOpen}
-        onCancel={() => !isPending && setIsOpen(false)}
-        footer={null}
-        destroyOnHidden
-        centered
-        width={600}
-        className="transaction-modal"
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleFinish}
-          initialValues={{ type: 'expense', transactionDate: dayjs() }}
-          className="flex flex-col h-full"
-          requiredMark={false}
+      {isMobile ? (
+        <Drawer
+          title={headerContent}
+          placement="right"
+          height="100%"
+          onClose={() => !isPending && setIsOpen(false)}
+          open={isOpen}
+          closable={false}
+          className="transaction-drawer"
+          styles={{ body: { padding: 0 } }}
+          destroyOnClose
         >
-          <div className="flex-1 overflow-y-auto pt-4 px-4 pb-32 md:pb-0">
-            <TransactionFormFields />
-          </div>
-
-          <div className="flex justify-end gap-3 mt-auto pt-6 pb-2 md:pb-0 border-t md:border-t-0 border-slate-100 bg-white">
-            <Button onClick={() => setIsOpen(false)} disabled={isPending} className="h-10! border-none bg-slate-100 text-slate-600 hover:bg-slate-200! transition-all">
-              Hủy
-            </Button>
-            <Button type="primary" htmlType="submit" loading={isPending} className="h-10! bg-slate-900 hover:bg-slate-800! shadow-xl shadow-slate-900/10 border-none min-w-[140px]">
-              Lưu giao dịch
-            </Button>
-          </div>
-        </Form>
-      </Modal>
+          {formContent}
+        </Drawer>
+      ) : (
+        <Modal
+          title={headerContent}
+          open={isOpen}
+          onCancel={() => !isPending && setIsOpen(false)}
+          footer={null}
+          destroyOnClose
+          centered
+          width={600}
+          className="transaction-modal"
+        >
+          {formContent}
+        </Modal>
+      )}
     </ConfigProvider>
   );
 }
@@ -252,6 +298,7 @@ export function EditTransactionModal({
 }) {
   const [isPending, startTransition] = useTransition();
   const [form] = Form.useForm();
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleClose = () => onClose();
@@ -293,46 +340,79 @@ export function EditTransactionModal({
     });
   };
 
+  const headerContent = (
+    <div className="flex items-center justify-between w-full pr-1">
+      <div className="flex items-center gap-3">
+        <button onClick={() => !isPending && onClose()} className="md:hidden p-1 -ml-1 text-foreground transition-colors shrink-0 border-none bg-transparent cursor-pointer flex items-center justify-center">
+          <ChevronLeft size={28} strokeWidth={2.5} />
+        </button>
+        <span className="text-xl font-bold tracking-tight text-foreground">Chỉnh sửa giao dịch</span>
+      </div>
+      {isMobile && (
+        <button 
+          onClick={() => form.submit()} 
+          disabled={isPending}
+          className="text-primary font-bold text-sm px-3 bg-indigo-500 text-white rounded-lg border-none p-1 cursor-pointer active:opacity-70 transition-opacity"
+        >
+          Lưu
+        </button>
+      )}
+    </div>
+  );
+
+  const formContent = (
+    <Form
+      form={form}
+      layout="vertical"
+      onFinish={handleFinish}
+      className="flex flex-col h-full"
+      requiredMark={false}
+    >
+      <div className="flex-1 overflow-y-auto pt-4 px-4 pb-8 md:pb-0">
+        <TransactionFormFields />
+      </div>
+
+      <div className="hidden md:flex justify-end gap-3 mt-auto pt-6 pb-2 md:pb-0 border-t md:border-t-0 border-slate-100 bg-white">
+        <Button size="large" onClick={onClose} disabled={isPending} className="h-10! border-none text-slate-600 transition-all">
+          Hủy
+        </Button>
+        <Button type="primary" htmlType="submit" size="large" loading={isPending} className="h-10! shadow-xl shadow-slate-900/10 border-none min-w-[140px]">
+          Lưu thay đổi
+        </Button>
+      </div>
+    </Form>
+  );
+
   return (
     <ConfigProvider theme={antdTheme}>
-      <Modal
-        title={
-          <div className="flex items-center gap-3">
-            <button onClick={() => !isPending && onClose()} className="md:hidden p-1 -ml-1 text-foreground transition-colors shrink-0 border-none bg-transparent cursor-pointer flex items-center justify-center">
-              <ChevronLeft size={28} strokeWidth={2.5} />
-            </button>
-            <span className="text-xl font-bold tracking-tight text-foreground">Chỉnh sửa giao dịch</span>
-          </div>
-        }
-        open={open}
-        onCancel={() => !isPending && onClose()}
-        footer={null}
-        destroyOnHidden
-        centered
-        width={600}
-        className="transaction-modal"
-      >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleFinish}
-          className="flex flex-col h-full"
-          requiredMark={false}
+      {isMobile ? (
+        <Drawer
+          title={headerContent}
+          placement="right"
+          height="100%"
+          onClose={onClose}
+          open={open}
+          closable={false}
+          className="transaction-drawer"
+          styles={{ body: { padding: 0 } }}
+          destroyOnClose
         >
-          <div className="flex-1 overflow-y-auto pt-4 px-4 pb-32 md:pb-0">
-            <TransactionFormFields />
-          </div>
-
-          <div className="flex justify-end gap-3 mt-auto pt-6 pb-2 md:pb-0 border-t md:border-t-0 border-slate-100 bg-white">
-            <Button size="large" onClick={onClose} disabled={isPending} className="h-10! border-none bg-slate-100 text-slate-600 hover:bg-slate-200! transition-all">
-              Hủy
-            </Button>
-            <Button type="primary" htmlType="submit" size="large" loading={isPending} className="h-10! bg-slate-900 hover:bg-slate-800! shadow-xl shadow-slate-900/10 border-none min-w-[140px]">
-              Lưu thay đổi
-            </Button>
-          </div>
-        </Form>
-      </Modal>
+          {formContent}
+        </Drawer>
+      ) : (
+        <Modal
+          title={headerContent}
+          open={open}
+          onCancel={() => !isPending && onClose()}
+          footer={null}
+          destroyOnClose
+          centered
+          width={600}
+          className="transaction-modal"
+        >
+          {formContent}
+        </Modal>
+      )}
     </ConfigProvider>
   );
 }
