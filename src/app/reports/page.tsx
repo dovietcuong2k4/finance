@@ -132,7 +132,7 @@ export default async function ReportsPage({ searchParams }: PageProps) {
 
       {/* Summary Row */}
       <div className="mb-6 md:mb-10">
-        <ReportSummaryCards stats={stats} />
+        <ReportSummaryCards stats={stats} dailyLimit={metadata?.dailyLimit} monthlyLimit={metadata?.monthlyLimit} />
       </div>
 
       {/* Main Charts Grid */}
