@@ -121,6 +121,10 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
              </div>
              
              <form action={updateProfile} className="space-y-4">
+              <div className="mt-8 mb-4 pt-6 border-t border-slate-100">
+                 <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-800 mb-1">Thông tin cá nhân</h4>
+                 <p className="text-xs text-muted-foreground">Thiết lập thông tin cá nhân.</p>
+               </div>
                <div className="space-y-2">
                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="fullName">
                    Họ và tên
@@ -134,6 +138,11 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
                  />
                </div>
                
+               <div className="mt-8 mb-4 pt-6 border-t border-slate-100">
+                 <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-800 mb-1">Cấu hình giới hạn chi tiêu</h4>
+                 <p className="text-xs text-muted-foreground">Thiết lập hạn mức để nhận cảnh báo khi chi tiêu vượt quá kế hoạch.</p>
+               </div>
+               
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <div className="space-y-2">
                    <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="dailyLimit">
@@ -142,10 +151,10 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
                    <input
                      className="w-full minimal-input bg-slate-50/50"
                      name="dailyLimit"
-                     type="number"
-                     min="0"
-                     defaultValue={user.metadata?.dailyLimit || ''}
-                     placeholder="Ví dụ: 200000"
+                     type="text"
+                     inputMode="numeric"
+                     defaultValue={user.metadata?.dailyLimit ? new Intl.NumberFormat('vi-VN').format(user.metadata.dailyLimit) : ''}
+                     placeholder="Ví dụ: 200.000"
                    />
                  </div>
 
@@ -156,10 +165,10 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
                    <input
                      className="w-full minimal-input bg-slate-50/50"
                      name="monthlyLimit"
-                     type="number"
-                     min="0"
-                     defaultValue={user.metadata?.monthlyLimit || ''}
-                     placeholder="Ví dụ: 5000000"
+                     type="text"
+                     inputMode="numeric"
+                     defaultValue={user.metadata?.monthlyLimit ? new Intl.NumberFormat('vi-VN').format(user.metadata.monthlyLimit) : ''}
+                     placeholder="Ví dụ: 5.000.000"
                    />
                  </div>
                </div>

@@ -117,8 +117,14 @@ export async function signOut() {
 
 export async function updateProfile(formData: FormData) {
   const fullName = formData.get('fullName') as string
-  const dailyLimit = formData.get('dailyLimit') as string
-  const monthlyLimit = formData.get('monthlyLimit') as string
+  const parseLimit = (val: string) => {
+    if (!val) return null;
+    const cleanVal = val.replace(/\D/g, '');
+    return cleanVal ? Number(cleanVal) : null;
+  }
+
+  const dailyLimit = parseLimit(formData.get('dailyLimit') as string)
+  const monthlyLimit = parseLimit(formData.get('monthlyLimit') as string)
 
   const cookieStore = await cookies()
   const token = cookieStore.get('auth_token')?.value
@@ -139,8 +145,8 @@ export async function updateProfile(formData: FormData) {
   const existingMetadata = user?.metadata || {}
   const newMetadata = {
     ...existingMetadata,
-    dailyLimit: dailyLimit ? Number(dailyLimit) : null,
-    monthlyLimit: monthlyLimit ? Number(monthlyLimit) : null
+    dailyLimit,
+    monthlyLimit
   }
 
   const { error } = await supabase
