@@ -134,6 +134,36 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
                  />
                </div>
                
+               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                 <div className="space-y-2">
+                   <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="dailyLimit">
+                     Giới hạn chi tiêu / ngày (VNĐ)
+                   </label>
+                   <input
+                     className="w-full minimal-input bg-slate-50/50"
+                     name="dailyLimit"
+                     type="number"
+                     min="0"
+                     defaultValue={user.metadata?.dailyLimit || ''}
+                     placeholder="Ví dụ: 200000"
+                   />
+                 </div>
+
+                 <div className="space-y-2">
+                   <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="monthlyLimit">
+                     Giới hạn chi tiêu / tháng (VNĐ)
+                   </label>
+                   <input
+                     className="w-full minimal-input bg-slate-50/50"
+                     name="monthlyLimit"
+                     type="number"
+                     min="0"
+                     defaultValue={user.metadata?.monthlyLimit || ''}
+                     placeholder="Ví dụ: 5000000"
+                   />
+                 </div>
+               </div>
+               
                <div className="pt-4 flex justify-end">
                  <button className="flex items-center gap-2 bg-slate-900 text-white h-10 px-6 rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 active:scale-[0.98]">
                    <Save size={16} />

@@ -99,6 +99,7 @@ async function fetchReportDataRaw(
     .reduce((prev, curr) => (Number(prev?.amount || 0) > Number(curr.amount) ? prev : curr), transactions.find(t => t.type === 'expense') || null);
 
   const averageDaily = totalExpense / (period === 'this_month' ? dayjs().tz().date() : 30);
+  const estimatedMonthlyExpense = averageDaily * (period === 'this_month' ? dayjs().tz().daysInMonth() : 30);
 
   return {
     categoryData,
@@ -113,7 +114,8 @@ async function fetchReportDataRaw(
         category: largestExpense.category,
         note: largestExpense.description
       } : null,
-      averageDaily: Math.round(averageDaily)
+      averageDaily: Math.round(averageDaily),
+      estimatedMonthlyExpense: Math.round(estimatedMonthlyExpense)
     }
   };
 }
@@ -124,12 +126,17 @@ export const getReportData = async (
   const user = await getUser();
   if (!user) return null;
 
-  return unstable_cache(
+  const data = await unstable_cache(
     () => fetchReportDataRaw(user.id, period),
-    [`reports-${user.id}-${period}`],
+    [`reports-v2-${user.id}-${period}`],
     {
       revalidate: 3600, // Cache for 1 hour
       tags: ['reports']
     }
   )();
+
+  if (data) {
+    return { ...data, metadata: user.metadata || {} };
+  }
+  return null;
 };

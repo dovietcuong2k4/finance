@@ -19,7 +19,7 @@ export async function getUser() {
   const supabase = createAdminClient()
   const { data: user, error } = await supabase
     .from('users')
-    .select('id, email, full_name, avatar_url, created_at')
+    .select('id, email, full_name, avatar_url, created_at, metadata')
     .eq('id', payload.userId)
     .single()
     
@@ -117,6 +117,9 @@ export async function signOut() {
 
 export async function updateProfile(formData: FormData) {
   const fullName = formData.get('fullName') as string
+  const dailyLimit = formData.get('dailyLimit') as string
+  const monthlyLimit = formData.get('monthlyLimit') as string
+
   const cookieStore = await cookies()
   const token = cookieStore.get('auth_token')?.value
 
@@ -130,15 +133,30 @@ export async function updateProfile(formData: FormData) {
   }
 
   const supabase = createAdminClient()
+
+  // Fetch existing metadata to preserve other settings
+  const { data: user } = await supabase.from('users').select('metadata').eq('id', payload.userId).single()
+  const existingMetadata = user?.metadata || {}
+  const newMetadata = {
+    ...existingMetadata,
+    dailyLimit: dailyLimit ? Number(dailyLimit) : null,
+    monthlyLimit: monthlyLimit ? Number(monthlyLimit) : null
+  }
+
   const { error } = await supabase
     .from('users')
-    .update({ full_name: fullName, updated_at: new Date().toISOString() })
+    .update({ 
+      full_name: fullName, 
+      metadata: newMetadata,
+      updated_at: new Date().toISOString() 
+    })
     .eq('id', payload.userId)
 
   if (error) {
     return redirect(`/account?error=${encodeURIComponent(error.message)}`)
   }
 
+  revalidatePath('/reports')
   revalidatePath('/account')
   redirect(`/account?success=${encodeURIComponent('Cập nhật thông tin thành công')}`)
 }

@@ -21,6 +21,7 @@ interface ReportStats {
     note?: string;
   } | null;
   averageDaily: number;
+  estimatedMonthlyExpense: number;
 }
 
 interface Props {
@@ -33,7 +34,7 @@ const formatCurrency = (value: number) => {
 
 const ReportSummaryCards: React.FC<Props> = ({ stats }) => {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6">
       <div className="bento-card bg-linear-to-br from-indigo-50/50 to-white">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
           <div className="p-1 md:p-1.5 bg-indigo-50 text-indigo-600 rounded-lg">
@@ -78,7 +79,7 @@ const ReportSummaryCards: React.FC<Props> = ({ stats }) => {
         )}
       </div>
 
-      <div className="bento-card col-span-2 md:col-span-1 bg-linear-to-br from-amber-50/50 to-white">
+      <div className="bento-card bg-linear-to-br from-amber-50/50 to-white">
         <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
           <div className="p-1 md:p-1.5 bg-amber-50 text-amber-600 rounded-lg">
             <Zap className="w-4 h-4 md:w-4.5 md:h-4.5" />
@@ -95,6 +96,25 @@ const ReportSummaryCards: React.FC<Props> = ({ stats }) => {
                 className={`h-1 flex-1 rounded-full ${i <= 3 ? 'bg-amber-400' : 'bg-amber-100'}`}
               ></div>
             ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="bento-card bg-linear-to-br from-emerald-50/50 to-white">
+        <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+          <div className="p-1 md:p-1.5 bg-emerald-50 text-emerald-600 rounded-lg">
+            <TrendingDown className="w-4 h-4 md:w-4.5 md:h-4.5" />
+          </div>
+          <span className="text-[10px] md:text-[11px] font-bold text-muted-foreground uppercase tracking-widest truncate">Dự kiến hết tháng</span>
+        </div>
+        <div>
+          <h4 className="text-lg md:text-xl font-bold tracking-tight text-emerald-900 truncate">{formatCurrency(stats.estimatedMonthlyExpense || 0)}</h4>
+          <p className="text-[10px] text-emerald-600 font-medium mt-1 truncate">Dựa trên tốc độ hiện tại</p>
+          <div className="mt-3 md:mt-4 w-full h-1.5 bg-emerald-100 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-emerald-500 rounded-full transition-all duration-1000" 
+              style={{ width: `${Math.min(100, (stats.estimatedMonthlyExpense || 0) > 0 ? (stats.totalExpense / (stats.estimatedMonthlyExpense || 1)) * 100 : 0)}%` }}
+            ></div>
           </div>
         </div>
       </div>

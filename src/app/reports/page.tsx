@@ -7,7 +7,9 @@ import {
   Calendar,
   Filter,
   Download,
-  Info
+  Info,
+  AlertTriangle,
+  CheckCircle2
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import Link from 'next/link';
@@ -27,7 +29,11 @@ export default async function ReportsPage({ searchParams }: PageProps) {
     return <div className="p-8 text-center">Đang tải dữ liệu hoặc lỗi xác thực...</div>;
   }
 
-  const { categoryData, monthlyTrend, stats } = data;
+  const { categoryData, monthlyTrend, stats, metadata } = data;
+
+  const formatCurrency = (value: number) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+  };
 
   const periodLabels: Record<string, string> = {
     'this_month': 'Tháng này',
@@ -74,6 +80,55 @@ export default async function ReportsPage({ searchParams }: PageProps) {
           </button>
         </div>
       </header>
+
+      {/* Reminders / Alerts */}
+      {(metadata?.dailyLimit || metadata?.monthlyLimit) && period === 'this_month' && (
+        <div className="mb-6 md:mb-10 space-y-3">
+          {metadata.monthlyLimit > 0 && stats.totalExpense > metadata.monthlyLimit ? (
+            <div className="p-4 rounded-xl flex items-start gap-3 border bg-red-50 border-red-100 text-red-800 shadow-sm">
+              <AlertTriangle className="w-5 h-5 shrink-0 text-red-500" />
+              <div>
+                <p className="text-sm font-bold">Vượt ngân sách tháng!</p>
+                <p className="text-xs mt-1">Tổng chi tiêu ({formatCurrency(stats.totalExpense)}) đã vượt quá giới hạn tháng của bạn ({formatCurrency(metadata.monthlyLimit)}).</p>
+              </div>
+            </div>
+          ) : metadata.monthlyLimit > 0 && stats.estimatedMonthlyExpense > metadata.monthlyLimit ? (
+            <div className="p-4 rounded-xl flex items-start gap-3 border bg-orange-50 border-orange-100 text-orange-800 shadow-sm">
+              <AlertTriangle className="w-5 h-5 shrink-0 text-orange-500" />
+              <div>
+                <p className="text-sm font-bold">Nguy cơ vượt ngân sách tháng</p>
+                <p className="text-xs mt-1">Dự kiến chi tiêu ({formatCurrency(stats.estimatedMonthlyExpense)}) có thể vượt giới hạn ({formatCurrency(metadata.monthlyLimit)}). Hãy chú ý!</p>
+              </div>
+            </div>
+          ) : metadata.monthlyLimit > 0 && (
+            <div className="p-4 rounded-xl flex items-start gap-3 border bg-emerald-50 border-emerald-100 text-emerald-800 shadow-sm">
+              <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-500" />
+              <div>
+                <p className="text-sm font-bold">Ngân sách tháng an toàn</p>
+                <p className="text-xs mt-1">Chi tiêu tháng của bạn đang trong tầm kiểm soát (Giới hạn: {formatCurrency(metadata.monthlyLimit)}).</p>
+              </div>
+            </div>
+          )}
+
+          {metadata.dailyLimit > 0 && stats.averageDaily > metadata.dailyLimit ? (
+            <div className="p-4 rounded-xl flex items-start gap-3 border bg-orange-50 border-orange-100 text-orange-800 shadow-sm">
+              <AlertTriangle className="w-5 h-5 shrink-0 text-orange-500" />
+              <div>
+                <p className="text-sm font-bold">Chi tiêu ngày cao</p>
+                <p className="text-xs mt-1">Trung bình ngày ({formatCurrency(stats.averageDaily)}) đang vượt giới hạn cho phép ({formatCurrency(metadata.dailyLimit)}).</p>
+              </div>
+            </div>
+          ) : metadata.dailyLimit > 0 && (
+            <div className="p-4 rounded-xl flex items-start gap-3 border bg-emerald-50 border-emerald-100 text-emerald-800 shadow-sm">
+              <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-500" />
+              <div>
+                <p className="text-sm font-bold">Chi tiêu ngày tốt</p>
+                <p className="text-xs mt-1">Trung bình ngày của bạn đang rất ổn (Giới hạn: {formatCurrency(metadata.dailyLimit)}).</p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Summary Row */}
       <div className="mb-6 md:mb-10">
