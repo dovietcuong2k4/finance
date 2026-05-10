@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { User, Shield, Activity, LogOut, Settings, Save, Mail, Key, Crown, AlertTriangle } from 'lucide-react'
 import ErrorToast from '@/components/error-toast'
 import AccountDangerActions from './account-danger-actions'
+import LogoutButton from './logout-button'
 import Image from 'next/image'
 
 export default async function AccountPage(props: { searchParams: Promise<{ error?: string, success?: string }> }) {
@@ -38,7 +39,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
     <div className="flex-1 bg-[#fdfdfe] p-4 lg:p-8 relative flex flex-col">
       <ErrorToast message={searchParams?.error} type="error" />
       <ErrorToast message={searchParams?.success} type="success" />
-      
+
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] overflow-hidden">
         <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-aura-violet rounded-full blur-[120px]" />
@@ -52,17 +53,14 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Hồ sơ cá nhân</h1>
             <p className="text-muted-foreground mt-1 text-sm">Quản lý thông tin và bảo mật tài khoản Aura của bạn</p>
           </div>
-          <form action={signOut}>
-            <button className="flex items-center gap-2 bg-white hover:bg-slate-50 text-red-600 border border-red-100 font-medium py-2 px-4 rounded-xl transition-all shadow-sm active:scale-[0.98]">
-              <LogOut size={16} />
-              <span className="hidden sm:inline">Đăng xuất</span>
-            </button>
-          </form>
+          <div className="hidden md:block">
+            <LogoutButton variant="desktop" />
+          </div>
         </div>
 
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
+
           {/* Profile Card (Large) */}
           <div className="bento-card p-6 md:p-8 col-span-1 md:col-span-2 bg-white shadow-xl shadow-black/2 border border-border flex flex-col sm:flex-row items-center sm:items-start gap-6">
             <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl overflow-hidden relative shadow-lg shadow-primary/10 bg-slate-100 shrink-0 flex items-center justify-center border-4 border-white">
@@ -113,105 +111,105 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
 
           {/* Settings Form Card */}
           <div className="bento-card p-6 md:p-8 col-span-1 md:col-span-2 bg-white shadow-xl shadow-black/2 border border-border">
-             <div className="flex items-center gap-2 mb-6">
-                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
-                  <Settings size={16} />
-                </div>
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Cập nhật thông tin</h3>
-             </div>
-             
-             <form action={updateProfile} className="space-y-4">
-              <div className="mt-8 mb-4 pt-6 border-t border-slate-100">
-                 <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-800 mb-1">Thông tin cá nhân</h4>
-                 <p className="text-xs text-muted-foreground">Thiết lập thông tin cá nhân.</p>
-               </div>
-               <div className="space-y-2">
-                 <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="fullName">
-                   Họ và tên
-                 </label>
-                 <input
-                   className="w-full minimal-input bg-slate-50/50"
-                   name="fullName"
-                   type="text"
-                   defaultValue={user.full_name || ''}
-                   placeholder="Nhập họ và tên của bạn"
-                 />
-               </div>
-               
-               <div className="mt-8 mb-4 pt-6 border-t border-slate-100">
-                 <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-800 mb-1">Cấu hình giới hạn chi tiêu</h4>
-                 <p className="text-xs text-muted-foreground">Thiết lập hạn mức để nhận cảnh báo khi chi tiêu vượt quá kế hoạch.</p>
-               </div>
-               
-               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                 <div className="space-y-2">
-                   <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="dailyLimit">
-                     Giới hạn chi tiêu / ngày (VNĐ)
-                   </label>
-                   <input
-                     className="w-full minimal-input bg-slate-50/50"
-                     name="dailyLimit"
-                     type="text"
-                     inputMode="numeric"
-                     defaultValue={user.metadata?.dailyLimit ? new Intl.NumberFormat('vi-VN').format(user.metadata.dailyLimit) : ''}
-                     placeholder="Ví dụ: 200.000"
-                   />
-                 </div>
+            <div className="flex items-center gap-2 mb-6">
+              <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-500">
+                <Settings size={16} />
+              </div>
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Cập nhật thông tin</h3>
+            </div>
 
-                 <div className="space-y-2">
-                   <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="monthlyLimit">
-                     Giới hạn chi tiêu / tháng (VNĐ)
-                   </label>
-                   <input
-                     className="w-full minimal-input bg-slate-50/50"
-                     name="monthlyLimit"
-                     type="text"
-                     inputMode="numeric"
-                     defaultValue={user.metadata?.monthlyLimit ? new Intl.NumberFormat('vi-VN').format(user.metadata.monthlyLimit) : ''}
-                     placeholder="Ví dụ: 5.000.000"
-                   />
-                 </div>
-               </div>
-               
-               <div className="pt-4 flex justify-end">
-                 <button className="flex items-center gap-2 bg-slate-900 text-white h-10 px-6 rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 active:scale-[0.98]">
-                   <Save size={16} />
-                   Lưu thay đổi
-                 </button>
-               </div>
-             </form>
+            <form action={updateProfile} className="space-y-4">
+              <div className="mt-8 mb-4 pt-6 border-t border-slate-100">
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-800 mb-1">Thông tin cá nhân</h4>
+                <p className="text-xs text-muted-foreground">Thiết lập thông tin cá nhân.</p>
+              </div>
+              <div className="space-y-2">
+                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="fullName">
+                  Họ và tên
+                </label>
+                <input
+                  className="w-full minimal-input bg-slate-50/50"
+                  name="fullName"
+                  type="text"
+                  defaultValue={user.full_name || ''}
+                  placeholder="Nhập họ và tên của bạn"
+                />
+              </div>
+
+              <div className="mt-8 mb-4 pt-6 border-t border-slate-100">
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-800 mb-1">Cấu hình giới hạn chi tiêu</h4>
+                <p className="text-xs text-muted-foreground">Thiết lập hạn mức để nhận cảnh báo khi chi tiêu vượt quá kế hoạch.</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="dailyLimit">
+                    Giới hạn chi tiêu / ngày (VNĐ)
+                  </label>
+                  <input
+                    className="w-full minimal-input bg-slate-50/50"
+                    name="dailyLimit"
+                    type="text"
+                    inputMode="numeric"
+                    defaultValue={user.metadata?.dailyLimit ? new Intl.NumberFormat('vi-VN').format(user.metadata.dailyLimit) : ''}
+                    placeholder="Ví dụ: 200.000"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="monthlyLimit">
+                    Giới hạn chi tiêu / tháng (VNĐ)
+                  </label>
+                  <input
+                    className="w-full minimal-input bg-slate-50/50"
+                    name="monthlyLimit"
+                    type="text"
+                    inputMode="numeric"
+                    defaultValue={user.metadata?.monthlyLimit ? new Intl.NumberFormat('vi-VN').format(user.metadata.monthlyLimit) : ''}
+                    placeholder="Ví dụ: 5.000.000"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 flex justify-end">
+                <button className="flex items-center gap-2 bg-slate-900 text-white h-10 px-6 rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 active:scale-[0.98]">
+                  <Save size={16} />
+                  Lưu thay đổi
+                </button>
+              </div>
+            </form>
           </div>
 
           {/* Activity Card */}
           <div className="bento-card p-6 bg-white shadow-xl shadow-black/2 border border-border flex flex-col justify-between">
-             <div>
-               <div className="flex items-center gap-2 mb-4">
-                  <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
-                    <Activity size={16} />
-                  </div>
-                  <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Hoạt động</h3>
-               </div>
-               <div className="space-y-4">
-                 <div>
-                   <p className="text-[10px] uppercase text-muted-foreground mb-1 font-medium">Ngày tham gia</p>
-                   <p className="font-medium text-sm text-foreground">
-                     {new Date(user.created_at).toLocaleDateString('vi-VN', {
-                       year: 'numeric', month: 'long', day: 'numeric'
-                     })}
-                   </p>
-                 </div>
-                 <div>
-                   <p className="text-[10px] uppercase text-muted-foreground mb-1 font-medium">Cập nhật lần cuối</p>
-                   <p className="font-medium text-sm text-foreground">
-                     {new Date(user.updated_at || user.created_at).toLocaleDateString('vi-VN', {
-                       year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                     })}
-                   </p>
-                 </div>
-               </div>
-             </div>
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-500">
+                  <Activity size={16} />
+                </div>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Hoạt động</h3>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <p className="text-[10px] uppercase text-muted-foreground mb-1 font-medium">Ngày tham gia</p>
+                  <p className="font-medium text-sm text-foreground">
+                    {new Date(user.created_at).toLocaleDateString('vi-VN', {
+                      year: 'numeric', month: 'long', day: 'numeric'
+                    })}
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[10px] uppercase text-muted-foreground mb-1 font-medium">Cập nhật lần cuối</p>
+                  <p className="font-medium text-sm text-foreground">
+                    {new Date(user.updated_at || user.created_at).toLocaleDateString('vi-VN', {
+                      year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                    })}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-          
+
           {/* Subscription Card */}
           <div className="bento-card p-6 bg-white shadow-xl shadow-black/2 border border-border flex flex-col justify-between">
             <div>
@@ -246,9 +244,14 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
               <p className="text-sm text-muted-foreground mb-6">
                 Những hành động dưới đây không thể hoàn tác. Vui lòng cân nhắc kỹ trước khi thực hiện.
               </p>
-              
+
               <AccountDangerActions />
             </div>
+          </div>
+
+          {/* Mobile Logout Card */}
+          <div className="md:hidden col-span-1">
+            <LogoutButton variant="mobile" />
           </div>
         </div>
       </div>

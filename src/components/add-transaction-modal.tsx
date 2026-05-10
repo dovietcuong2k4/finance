@@ -23,22 +23,20 @@ function TypeSelector({ value, onChange }: { value?: string, onChange?: (val: st
       <button
         type="button"
         onClick={() => onChange?.('income')}
-        className={`flex-1 py-3 font-bold rounded-[12px] transition-all duration-200 ${
-          value === 'income' 
-            ? 'bg-white text-green-600 shadow-sm' 
-            : 'text-slate-500 hover:text-green-600'
-        }`}
+        className={`flex-1 py-3 font-bold rounded-[12px] transition-all duration-200 ${value === 'income'
+          ? 'bg-white text-green-600 shadow-sm'
+          : 'text-slate-500 hover:text-green-600'
+          }`}
       >
         Thu nhập
       </button>
       <button
         type="button"
         onClick={() => onChange?.('expense')}
-        className={`flex-1 py-3 font-bold rounded-[12px] transition-all duration-200 ${
-          value === 'expense' 
-            ? 'bg-white text-red-600 shadow-sm' 
-            : 'text-slate-500 hover:text-red-600'
-        }`}
+        className={`flex-1 py-3 font-bold rounded-[12px] transition-all duration-200 ${value === 'expense'
+          ? 'bg-white text-red-600 shadow-sm'
+          : 'text-slate-500 hover:text-red-600'
+          }`}
       >
         Chi tiêu
       </button>
@@ -92,9 +90,9 @@ function TransactionFormFields() {
           label={<span className={labelClass}>Danh mục</span>}
           rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
         >
-          <Select 
-            size="large" 
-            placeholder="Chọn danh mục" 
+          <Select
+            size="large"
+            placeholder="Chọn danh mục"
             className="w-full"
             styles={{ popup: { root: { borderRadius: '8px' } } }}
             classNames={{ popup: { root: 'shadow-2xl' } }}
@@ -128,9 +126,9 @@ function TransactionFormFields() {
           label={<span className={labelClass}>Thời gian</span>}
           rules={[{ required: true, message: 'Vui lòng chọn thời gian!' }]}
         >
-          <DatePicker 
+          <DatePicker
             size="large"
-            className="w-full bg-slate-50 border-slate-200" 
+            className="w-full bg-slate-50 border-slate-200"
             format="DD/MM/YYYY"
             classNames={{ popup: { root: 'rounded-lg shadow-2xl' } }}
           />
@@ -141,9 +139,9 @@ function TransactionFormFields() {
         name="description"
         label={<span className={labelClass}>Mô tả thêm</span>}
       >
-        <Input.TextArea 
-          rows={3} 
-          placeholder="Ghi chú thêm về giao dịch này..." 
+        <Input.TextArea
+          rows={3}
+          placeholder="Ghi chú thêm về giao dịch này..."
           size="large"
           className="bg-slate-50 border-slate-200 hover:border-aura-indigo focus:border-aura-indigo transition-all rounded-xl"
         />
@@ -165,7 +163,7 @@ function useIsMobile() {
 }
 
 /* ──────── Add Transaction (with trigger button) ──────── */
-export default function AddTransactionModal() {
+export default function AddTransactionModal({ trigger }: { trigger?: React.ReactNode } = {}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [form] = Form.useForm();
@@ -185,7 +183,7 @@ export default function AddTransactionModal() {
     formData.append('transactionDate', values.transactionDate.format('YYYY-MM-DD'));
     formData.append('category', values.category);
     if (values.description) formData.append('description', values.description);
-    
+
     startTransition(async () => {
       const result = await createTransaction(formData);
       if (result.error) {
@@ -207,10 +205,10 @@ export default function AddTransactionModal() {
         <span className="text-xl font-bold tracking-tight text-foreground">Thêm giao dịch mới</span>
       </div>
       {isMobile && (
-        <button 
-          onClick={() => form.submit()} 
+        <button
+          onClick={() => form.submit()}
           disabled={isPending}
-          className="text-primary font-bold text-sm px-3 bg-indigo-500 text-white rounded-lg border-none p-1 cursor-pointer active:opacity-70 transition-opacity"
+          className="font-bold text-sm px-3 bg-indigo-500 text-white rounded-lg border-none p-1 cursor-pointer active:opacity-70 transition-opacity"
         >
           Lưu
         </button>
@@ -244,13 +242,19 @@ export default function AddTransactionModal() {
 
   return (
     <ConfigProvider theme={antdTheme}>
-      <button 
-        onClick={() => setIsOpen(true)}
-        className="bg-primary text-white px-3 py-2 rounded-xl text-[12px] font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/10 flex items-center justify-center gap-2 active:scale-95 shrink-0 border-none outline-none cursor-pointer"
-      >
-        <Plus className="w-5 h-5" />
-        <span className="hidden sm:inline">Thêm mới</span>
-      </button>
+      {trigger ? (
+        <div onClick={() => setIsOpen(true)} className="cursor-pointer">
+          {trigger}
+        </div>
+      ) : (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="bg-primary text-white px-3 py-2 rounded-xl text-[12px] font-bold hover:bg-primary/90 transition-all shadow-xl shadow-primary/10 flex items-center justify-center gap-2 active:scale-95 shrink-0 border-none outline-none cursor-pointer"
+        >
+          <Plus className="w-5 h-5" />
+          <span className="hidden sm:inline">Thêm mới</span>
+        </button>
+      )}
 
       {isMobile ? (
         <Drawer
@@ -349,10 +353,10 @@ export function EditTransactionModal({
         <span className="text-xl font-bold tracking-tight text-foreground">Chỉnh sửa giao dịch</span>
       </div>
       {isMobile && (
-        <button 
-          onClick={() => form.submit()} 
+        <button
+          onClick={() => form.submit()}
           disabled={isPending}
-          className="text-primary font-bold text-sm px-3 bg-indigo-500 text-white rounded-lg border-none p-1 cursor-pointer active:opacity-70 transition-opacity"
+          className="font-bold text-sm px-3 bg-indigo-500 text-white rounded-lg border-none p-1 cursor-pointer active:opacity-70 transition-opacity"
         >
           Lưu
         </button>
