@@ -66,6 +66,21 @@ const labelClass = "font-bold text-slate-500 uppercase tracking-widest text-[10p
 
 /* ──────── Shared Form Content ──────── */
 function TransactionFormFields() {
+  const form = Form.useFormInstance();
+  const amount = Form.useWatch('amount', form);
+
+  const getAmountSuggestions = () => {
+    if (!amount || amount >= 10000000) return [];
+    return Array.from(new Set([
+      amount * 1000,
+      amount * 10000,
+      amount * 100000,
+      amount * 1000000
+    ])).filter(val => val >= 1000 && val <= 10000000000).slice(0, 3);
+  };
+
+  const suggestions = getAmountSuggestions();
+
   return (
     <>
       <Form.Item
@@ -102,24 +117,41 @@ function TransactionFormFields() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
-        <Form.Item
-          name="amount"
-          label={<span className={labelClass}>Số tiền (VNĐ)</span>}
-          rules={[{ required: true, message: 'Vui lòng nhập số tiền!' }]}
-        >
-          <InputNumber
-            size="large"
-            className="w-full bg-slate-50 border-slate-200"
-            style={{ width: '100%' }}
-            min={0}
-            controls={false}
-            keyboard={false}
-            changeOnWheel={false}
-            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-            parser={(value) => value ? value.replace(/,/g, '') as any : ''}
-            placeholder="0"
-          />
-        </Form.Item>
+        <div>
+          <Form.Item
+            name="amount"
+            label={<span className={labelClass}>Số tiền (VNĐ)</span>}
+            rules={[{ required: true, message: 'Vui lòng nhập số tiền!' }]}
+            style={suggestions.length > 0 ? { marginBottom: '8px' } : undefined}
+          >
+            <InputNumber
+              size="large"
+              className="w-full bg-slate-50 border-slate-200 hover:border-aura-indigo focus:border-aura-indigo transition-all"
+              style={{ width: '100%' }}
+              min={0}
+              controls={false}
+              keyboard={false}
+              changeOnWheel={false}
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={(value) => value ? value.replace(/,/g, '') as any : ''}
+              placeholder="0"
+            />
+          </Form.Item>
+          {suggestions.length > 0 && (
+            <div className="flex gap-2 mb-4 overflow-x-auto pb-1 no-scrollbar" style={{ scrollbarWidth: 'none' }}>
+              {suggestions.map((val) => (
+                <button
+                  key={val}
+                  type="button"
+                  onClick={() => form.setFieldValue('amount', val)}
+                  className="whitespace-nowrap px-3 py-1.5 text-xs font-semibold text-gray-800 bg-white hover:bg-gray-50 rounded-lg transition-colors border border-gray-100"
+                >
+                  {new Intl.NumberFormat('vi-VN').format(val)}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
 
         <Form.Item
           name="transactionDate"
