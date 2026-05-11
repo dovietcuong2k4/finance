@@ -42,7 +42,7 @@ export async function getTransactions({
   // Build query for data
   let dataQuery = supabase
     .from('transactions')
-    .select('*')
+    .select('id, title, category, amount, transaction_date, type, description, created_at')
     .eq('user_id', payload.userId)
     .order('created_at', { ascending: false })
 
@@ -116,7 +116,6 @@ export async function deleteTransaction(id: string) {
     return { error: 'Có lỗi xảy ra khi xóa giao dịch' }
   }
 
-  revalidatePath('/')
   revalidatePath('/transactions')
   updateTag('reports')
   updateTag('dashboard')
@@ -163,7 +162,6 @@ export async function updateTransaction(id: string, data: {
     return { error: 'Có lỗi xảy ra khi cập nhật giao dịch' }
   }
 
-  revalidatePath('/')
   revalidatePath('/transactions')
   updateTag('reports')
   updateTag('dashboard')
@@ -216,7 +214,6 @@ export async function createTransaction(formData: FormData) {
     return { error: 'Có lỗi xảy ra khi tạo giao dịch. Vui lòng đảm bảo bạn đã tạo bảng transactions trong database.' }
   }
 
-  revalidatePath('/')
   revalidatePath('/transactions')
   updateTag('reports')
   updateTag('dashboard')

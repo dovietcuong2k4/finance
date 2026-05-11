@@ -11,42 +11,8 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
 
-async function fetchDashboardDataRaw(
-  userId: string,
-  userEmail: string,
-  userFullName: string,
-  range: 'recent' | 'month' = 'recent',
-  period: 'this_month' | 'this_week' | 'last_week' | 'last_month' | 'this_year' = 'this_month'
-) {
-  const supabase = createAdminClient();
-
-  // Fetch only necessary columns for balance and global stats
-  const { data: allTransactions, error: allErr } = await supabase
-    .from('transactions')
-    .select('id, amount, type, category, transaction_date, title, description')
-    .eq('user_id', userId)
-    .order('transaction_date', { ascending: false });
-
-  if (allErr || !allTransactions) {
-    console.error('Error fetching transactions:', allErr);
-    return null;
-  }
-
-  const transactions = allTransactions.map(tx => ({
-    ...tx,
-    amount: Number(tx.amount)
-  }));
-
-  // Calculate Balance (All time)
-  const totalIncomeAll = transactions
-    .filter(tx => tx.type === 'income')
-    .reduce((sum, tx) => sum + Number(tx.amount), 0);
-  const totalExpenseAll = transactions
-    .filter(tx => tx.type === 'expense')
-    .reduce((sum, tx) => sum + Number(tx.amount), 0);
-  const balance = totalIncomeAll - totalExpenseAll;
-
-  // Calculate Period-based Stats (using Vietnam timezone)
+/** Calculate the date range for a given period */
+function getDateRange(period: string) {
   let startDate = dayjs().tz().startOf('month');
   let endDate = dayjs().tz().endOf('month');
 
@@ -64,53 +30,115 @@ async function fetchDashboardDataRaw(
     endDate = dayjs().tz().endOf('year');
   }
 
-  const periodTransactions = transactions.filter(tx => {
-    const txDate = dayjs.tz(tx.transaction_date);
-    return txDate.isAfter(startDate.subtract(1, 'ms')) && txDate.isBefore(endDate.add(1, 'ms'));
-  });
+  return {
+    startDate: startDate.format('YYYY-MM-DD'),
+    endDate: endDate.format('YYYY-MM-DD'),
+  };
+}
 
-  const totalIncome = periodTransactions
-    .filter(tx => tx.type === 'income')
-    .reduce((sum, tx) => sum + Number(tx.amount), 0);
-    
-  const totalExpense = periodTransactions
-    .filter(tx => tx.type === 'expense')
-    .reduce((sum, tx) => sum + Number(tx.amount), 0);
-    
-  const savings = totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome) * 100 : 0;
+async function fetchDashboardDataRaw(
+  userId: string,
+  userEmail: string,
+  userFullName: string,
+  range: 'recent' | 'month' = 'recent',
+  period: 'this_month' | 'this_week' | 'last_week' | 'last_month' | 'this_year' = 'this_month'
+) {
+  const supabase = createAdminClient();
+  const { startDate, endDate } = getDateRange(period);
 
-  // Chart Data logic (Keep as is but using range)
-  let transactionsForChart = transactions;
-  if (range === 'month') {
-    const startOfMonth = dayjs().tz().startOf('month');
-    const endOfMonth = dayjs().tz().endOf('month');
-    transactionsForChart = transactions.filter(tx => {
-      const txDate = dayjs.tz(tx.transaction_date);
-      return txDate.isAfter(startOfMonth.subtract(1, 'ms')) && txDate.isBefore(endOfMonth.add(1, 'ms'));
-    });
+  // ─── Run ALL queries in parallel via Promise.all ───
+  const chartStartDate = range === 'recent'
+    ? dayjs().tz().subtract(5, 'month').startOf('month').format('YYYY-MM-DD')
+    : dayjs().tz().startOf('month').format('YYYY-MM-DD');
+  const chartEndDate = range === 'recent'
+    ? dayjs().tz().endOf('month').format('YYYY-MM-DD')
+    : dayjs().tz().endOf('month').format('YYYY-MM-DD');
+
+  const [balanceResult, periodResult, recentResult, chartResult] = await Promise.all([
+    // 1. All-time balance (RPC)
+    supabase.rpc('get_balance', { p_user_id: userId }),
+    // 2. Period stats (RPC)
+    supabase.rpc('get_period_stats', {
+      p_user_id: userId,
+      p_start_date: startDate,
+      p_end_date: endDate,
+    }),
+    // 3. Recent 5 transactions (tiny query)
+    supabase
+      .from('transactions')
+      .select('id, amount, type, category, transaction_date, title, description')
+      .eq('user_id', userId)
+      .order('transaction_date', { ascending: false })
+      .limit(5),
+    // 4. Chart data (RPC — monthly or daily)
+    range === 'recent'
+      ? supabase.rpc('get_monthly_chart', {
+          p_user_id: userId,
+          p_start_date: chartStartDate,
+          p_end_date: chartEndDate,
+        })
+      : supabase.rpc('get_daily_chart', {
+          p_user_id: userId,
+          p_start_date: chartStartDate,
+          p_end_date: chartEndDate,
+        }),
+  ]);
+
+  // ─── Handle errors ───
+  if (balanceResult.error) {
+    console.error('Error fetching balance:', balanceResult.error);
+    return null;
+  }
+  if (periodResult.error) {
+    console.error('Error fetching period stats:', periodResult.error);
+    return null;
+  }
+  if (recentResult.error) {
+    console.error('Error fetching recent transactions:', recentResult.error);
+    return null;
+  }
+  if (chartResult.error) {
+    console.error('Error fetching chart data:', chartResult.error);
+    return null;
   }
 
+  // ─── Extract results ───
+  const balanceData = balanceResult.data?.[0] || { total_income: 0, total_expense: 0, balance: 0 };
+  const periodData = periodResult.data?.[0] || { total_income: 0, total_expense: 0 };
+  const recentTransactions = (recentResult.data || []).map(tx => ({
+    ...tx,
+    amount: Number(tx.amount),
+  }));
+
+  const totalIncome = Number(periodData.total_income);
+  const totalExpense = Number(periodData.total_expense);
+  const savings = totalIncome > 0 ? ((totalIncome - totalExpense) / totalIncome) * 100 : 0;
+
+  // ─── Build chart data ───
+  const chartRawData = chartResult.data || [];
   let chartData: any[] = [];
+
   if (range === 'recent') {
+    // Build 6-month skeleton, fill with RPC results
     chartData = Array.from({ length: 6 }, (_, i) => {
       const d = dayjs().tz().subtract(i, 'month');
       return {
         name: `Th ${d.month() + 1}`,
         month: d.format('YYYY-MM'),
         income: 0,
-        expenses: 0
+        expenses: 0,
       };
     }).reverse();
 
-    transactions.forEach(tx => {
-      const txMonth = dayjs.tz(tx.transaction_date).format('YYYY-MM');
-      const monthData = chartData.find(m => m.month === txMonth);
+    chartRawData.forEach((row: any) => {
+      const monthData = chartData.find(m => m.month === row.month);
       if (monthData) {
-        if (tx.type === 'income') monthData.income += Number(tx.amount);
-        else monthData.expenses += Number(tx.amount);
+        monthData.income = Number(row.income);
+        monthData.expenses = Number(row.expenses);
       }
     });
   } else {
+    // Build daily skeleton for current month, fill with RPC results
     const daysInMonth = dayjs().tz().daysInMonth();
     chartData = Array.from({ length: daysInMonth }, (_, i) => {
       const d = dayjs().tz().date(i + 1);
@@ -118,16 +146,15 @@ async function fetchDashboardDataRaw(
         name: d.format('DD/MM'),
         date: d.format('YYYY-MM-DD'),
         income: 0,
-        expenses: 0
+        expenses: 0,
       };
     });
 
-    transactionsForChart.forEach(tx => {
-      const txDate = dayjs.tz(tx.transaction_date).format('YYYY-MM-DD');
-      const dayData = chartData.find(d => d.date === txDate);
+    chartRawData.forEach((row: any) => {
+      const dayData = chartData.find(d => d.date === row.day);
       if (dayData) {
-        if (tx.type === 'income') dayData.income += Number(tx.amount);
-        else dayData.expenses += Number(tx.amount);
+        dayData.income = Number(row.income);
+        dayData.expenses = Number(row.expenses);
       }
     });
   }
@@ -139,12 +166,12 @@ async function fetchDashboardDataRaw(
       fullName: userFullName,
     },
     stats: {
-      balance,
+      balance: Number(balanceData.balance),
       totalIncome,
       totalExpense,
-      savings: Math.max(0, Math.round(savings))
+      savings: Math.max(0, Math.round(savings)),
     },
-    recentTransactions: transactions.slice(0, 5),
+    recentTransactions,
     chartData,
   };
 }
@@ -160,8 +187,8 @@ export const getDashboardData = async (
     () => fetchDashboardDataRaw(user.id, user.email, user.full_name || 'Admin', range, period),
     [`dashboard-${user.id}-${range}-${period}`],
     {
-      revalidate: 3600, // Cache for 1 hour
-      tags: ['dashboard']
+      revalidate: 300, // Cache for 5 minutes for better freshness
+      tags: ['dashboard'],
     }
   )();
 };

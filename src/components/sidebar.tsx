@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -12,7 +11,7 @@ import {
   User,
   LogOut
 } from 'lucide-react';
-import { signOut, getUser } from '@/app/auth/actions';
+import { signOut } from '@/app/auth/actions';
 
 const menuItems = [
   { icon: LayoutDashboard, label: 'Bảng điều khiển', href: '/' },
@@ -22,17 +21,17 @@ const menuItems = [
   { icon: Settings, label: 'Cài đặt', href: '/settings' },
 ];
 
-const Sidebar = () => {
-  const pathname = usePathname();
-  const [userData, setUserData] = useState<any>(null);
+interface SidebarProps {
+  /** Pre-fetched user data from the server layout — avoids client-side waterfall */
+  userData?: {
+    full_name?: string;
+    email?: string;
+    avatar_url?: string;
+  } | null;
+}
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await getUser();
-      setUserData(user);
-    };
-    fetchUser();
-  }, []);
+const Sidebar = ({ userData }: SidebarProps) => {
+  const pathname = usePathname();
 
   // Hide sidebar on auth pages - Move this AFTER all hooks
   const isAuthPage = pathname === '/login' || pathname === '/signup';
@@ -82,7 +81,7 @@ const Sidebar = () => {
               </div>
               <div className="overflow-hidden">
                 <p className="text-xs font-bold truncate text-slate-900">
-                  {userData?.full_name || userData?.email?.split('@')[0] || 'Đang tải...'}
+                  {userData?.full_name || userData?.email?.split('@')[0] || 'User'}
                 </p>
                 <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider">Thành viên</p>
               </div>
