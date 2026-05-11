@@ -41,6 +41,7 @@ CREATE INDEX IF NOT EXISTS idx_transactions_user_created
 CREATE OR REPLACE FUNCTION get_balance(p_user_id uuid)
 RETURNS TABLE(total_income numeric, total_expense numeric, balance numeric)
 LANGUAGE sql STABLE
+SET search_path = public
 AS $$
   SELECT
     COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS total_income,
@@ -60,6 +61,7 @@ CREATE OR REPLACE FUNCTION get_period_stats(
 )
 RETURNS TABLE(total_income numeric, total_expense numeric)
 LANGUAGE sql STABLE
+SET search_path = public
 AS $$
   SELECT
     COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS total_income,
@@ -79,6 +81,7 @@ CREATE OR REPLACE FUNCTION get_monthly_chart(
 )
 RETURNS TABLE(month text, income numeric, expenses numeric)
 LANGUAGE sql STABLE
+SET search_path = public
 AS $$
   SELECT
     to_char(transaction_date, 'YYYY-MM') AS month,
@@ -101,6 +104,7 @@ CREATE OR REPLACE FUNCTION get_daily_chart(
 )
 RETURNS TABLE(day text, income numeric, expenses numeric)
 LANGUAGE sql STABLE
+SET search_path = public
 AS $$
   SELECT
     to_char(transaction_date, 'YYYY-MM-DD') AS day,
@@ -123,15 +127,16 @@ CREATE OR REPLACE FUNCTION get_category_distribution(
 )
 RETURNS TABLE(name text, value numeric)
 LANGUAGE sql STABLE
+SET search_path = public
 AS $$
   SELECT
-    COALESCE(category, 'Khác') AS name,
+    COALESCE(category, 'other') AS name,
     SUM(amount) AS value
   FROM transactions
   WHERE user_id = p_user_id
     AND type = 'expense'
     AND (p_start_date IS NULL OR transaction_date >= p_start_date)
     AND (p_end_date IS NULL OR transaction_date <= p_end_date)
-  GROUP BY COALESCE(category, 'Khác')
+  GROUP BY COALESCE(category, 'other')
   ORDER BY value DESC;
 $$;
