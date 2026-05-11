@@ -92,31 +92,6 @@ function TransactionFormFields() {
       </Form.Item>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 mt-6">
-        <Form.Item
-          name="title"
-          label={<span className={labelClass}>Tên giao dịch</span>}
-          rules={[{ required: true, message: 'Vui lòng nhập tên giao dịch!' }]}
-        >
-          <Input size="large" placeholder="VD: Lương tháng, Mua sắm..." className="bg-slate-50 border-slate-200 hover:border-aura-indigo focus:border-aura-indigo transition-all" />
-        </Form.Item>
-
-        <Form.Item
-          name="category"
-          label={<span className={labelClass}>Danh mục</span>}
-          rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
-        >
-          <Select
-            size="large"
-            placeholder="Chọn danh mục"
-            className="w-full"
-            styles={{ popup: { root: { borderRadius: '8px' } } }}
-            classNames={{ popup: { root: 'shadow-2xl' } }}
-            options={categorySelectOptions}
-          />
-        </Form.Item>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
         <div>
           <Form.Item
             name="amount"
@@ -125,6 +100,8 @@ function TransactionFormFields() {
             style={suggestions.length > 0 ? { marginBottom: '8px' } : undefined}
           >
             <InputNumber
+              id="amount_input_field"
+              inputMode="decimal"
               size="large"
               className="w-full bg-slate-50 border-slate-200 hover:border-aura-indigo focus:border-aura-indigo transition-all"
               style={{ width: '100%' }}
@@ -152,6 +129,31 @@ function TransactionFormFields() {
             </div>
           )}
         </div>
+
+        <Form.Item
+          name="category"
+          label={<span className={labelClass}>Danh mục</span>}
+          rules={[{ required: true, message: 'Vui lòng chọn danh mục!' }]}
+        >
+          <Select
+            size="large"
+            placeholder="Chọn danh mục"
+            className="w-full"
+            styles={{ popup: { root: { borderRadius: '8px' } } }}
+            classNames={{ popup: { root: 'shadow-2xl' } }}
+            options={categorySelectOptions}
+          />
+        </Form.Item>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+        <Form.Item
+          name="title"
+          label={<span className={labelClass}>Tên giao dịch</span>}
+          rules={[{ required: true, message: 'Vui lòng nhập tên giao dịch!' }]}
+        >
+          <Input size="large" placeholder="VD: Lương tháng, Mua sắm..." className="bg-slate-50 border-slate-200 hover:border-aura-indigo focus:border-aura-indigo transition-all" />
+        </Form.Item>
 
         <Form.Item
           name="transactionDate"
@@ -299,6 +301,13 @@ export default function AddTransactionModal({ trigger }: { trigger?: React.React
           className="transaction-drawer"
           styles={{ body: { padding: 0 } }}
           destroyOnHidden
+          afterOpenChange={(open) => {
+            if (open) {
+              setTimeout(() => {
+                document.getElementById('amount_input_field')?.focus();
+              }, 100);
+            }
+          }}
         >
           {formContent}
         </Drawer>
@@ -312,6 +321,13 @@ export default function AddTransactionModal({ trigger }: { trigger?: React.React
           centered
           width={600}
           className="transaction-modal"
+          afterOpenChange={(open) => {
+            if (open) {
+              setTimeout(() => {
+                document.getElementById('amount_input_field')?.focus();
+              }, 100);
+            }
+          }}
         >
           {formContent}
         </Modal>
@@ -432,6 +448,13 @@ export function EditTransactionModal({
           className="transaction-drawer"
           styles={{ body: { padding: 0 } }}
           destroyOnHidden
+          afterOpenChange={(open) => {
+            if (open) {
+              setTimeout(() => {
+                document.getElementById('amount_input_field')?.focus();
+              }, 100);
+            }
+          }}
         >
           {formContent}
         </Drawer>
@@ -445,6 +468,13 @@ export function EditTransactionModal({
           centered
           width={600}
           className="transaction-modal"
+          afterOpenChange={(open) => {
+            if (open) {
+              setTimeout(() => {
+                document.getElementById('amount_input_field')?.focus();
+              }, 100);
+            }
+          }}
         >
           {formContent}
         </Modal>
