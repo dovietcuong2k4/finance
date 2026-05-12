@@ -255,9 +255,20 @@ export default function AddTransactionModal({ trigger }: { trigger?: React.React
     startTransition(async () => {
       const result = await createTransaction(formData);
       if (result.error) {
-        toast.error(result.error);
+        if (isMobile) {
+          Modal.error({
+            title: 'Lỗi',
+            content: result.error,
+            centered: true,
+            okButtonProps: { className: 'bg-primary' }
+          });
+        } else {
+          toast.error(result.error);
+        }
       } else {
-        toast.success('Thêm giao dịch thành công!');
+        if (!isMobile) {
+          toast.success('Thêm giao dịch thành công!');
+        }
         setIsOpen(false);
         form.resetFields();
       }
@@ -420,9 +431,20 @@ export function EditTransactionModal({
         exclude_from_limit: values.type === 'expense' ? !values.includeInLimit : false,
       });
       if (result.error) {
-        toast.error(result.error);
+        if (isMobile) {
+          Modal.error({
+            title: 'Lỗi',
+            content: result.error,
+            centered: true,
+            okButtonProps: { className: 'bg-primary' }
+          });
+        } else {
+          toast.error(result.error);
+        }
       } else {
-        toast.success('Cập nhật giao dịch thành công!');
+        if (!isMobile) {
+          toast.success('Cập nhật giao dịch thành công!');
+        }
         onSaved();
       }
     });
