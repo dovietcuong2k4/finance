@@ -18,7 +18,7 @@ export const viewport: Viewport = {
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Aura Finance | Modern Corporate Expense Manager",
+  title: "Aura Moni | Modern Personal Expense Manager",
   description: "Quản lý tài chính cá nhân thông minh với sự hỗ trợ của AI.",
 };
 

@@ -1,5 +1,5 @@
 -- =============================================
--- Aura Finance: Performance Optimization Migration
+-- Aura Moni: Performance Optimization Migration
 -- Run this SQL in Supabase Dashboard > SQL Editor
 -- =============================================
 

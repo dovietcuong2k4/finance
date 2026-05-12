@@ -20,11 +20,11 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
         <div className="bento-card static-card p-8 md:p-10 border border-border bg-white shadow-2xl shadow-black/2">
           <div className="flex flex-col items-center mb-8">
             <div className="w-16 h-16 overflow-hidden relative mb-4">
-              <Image src="/logo.png" alt="Aura Logo" fill className="object-cover" />
+              <Image src="/logo.png" alt="Aura Moni Logo" fill className="object-cover" />
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Chào mừng trở lại</h1>
             <p className="text-muted-foreground text-sm mt-2 text-center">
-              Nhập thông tin để truy cập vào bảng điều khiển Aura của bạn
+              Nhập thông tin để truy cập vào bảng điều khiển Aura Moni của bạn
             </p>
           </div>
 
@@ -74,7 +74,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ error?:
         </div>
         
         <p className="mt-8 text-center text-xs text-muted-foreground/60">
-          © 2026 Aura Finance. All rights reserved.
+          © 2026 Aura Moni. All rights reserved.
         </p>
       </div>
     </div>

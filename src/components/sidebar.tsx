@@ -43,9 +43,9 @@ const Sidebar = ({ userData }: SidebarProps) => {
         <div className="p-6 mb-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 overflow-hidden relative">
-              <Image src="/logo.png" alt="Aura Logo" fill className="object-cover" />
+              <Image src="/logo.png" alt="Aura Moni Logo" fill className="object-cover" />
             </div>
-            <span className="font-bold text-lg tracking-tight">Aura</span>
+            <span className="font-bold text-lg tracking-tight">Aura Moni</span>
           </Link>
         </div>
         

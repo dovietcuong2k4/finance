@@ -166,7 +166,7 @@ export default async function Home({ searchParams }: PageProps) {
 
       {/* Footer minimal info */}
       <footer className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row gap-2 justify-between items-center text-[10px] text-muted-foreground font-medium uppercase tracking-[0.2em]">
-        <div>Aura Finance v2.0.4</div>
+        <div>Aura Moni v2.0.4</div>
         <div className="flex gap-6">
           <a href="#" className="hover:text-foreground transition-colors">Privacy</a>
           <a href="#" className="hover:text-foreground transition-colors">Terms</a>

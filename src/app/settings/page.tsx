@@ -13,7 +13,7 @@ export default function SettingsPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Cài đặt</h1>
-          <p className="text-muted-foreground mt-1 text-sm">Tùy chỉnh trải nghiệm Aura Finance theo cách của bạn</p>
+          <p className="text-muted-foreground mt-1 text-sm">Tùy chỉnh trải nghiệm Aura Moni theo cách của bạn</p>
         </div>
 
         {/* Coming Soon Card */}
@@ -58,7 +58,7 @@ export default function SettingsPage() {
           {/* Version info */}
           <div className="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
             <Settings className="w-3.5 h-3.5" />
-            <span>Aura Finance v2.0.4 — Coming Soon</span>
+            <span>Aura Moni v2.0.4 — Coming Soon</span>
           </div>
         </div>
       </div>

@@ -8,7 +8,7 @@ const AIAdvisor = () => {
           <div className="p-2 bg-indigo-500/20 rounded-lg backdrop-blur-md border border-indigo-400/20">
             <Sparkles className="w-4 h-4 text-indigo-400" />
           </div>
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400/80">Aura AI Advisor</span>
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400/80">Aura Moni AI Advisor</span>
         </div>
         
         <h3 className="text-base md:text-2xl font-bold mb-4 leading-tight text-gray-700 tracking-tight">

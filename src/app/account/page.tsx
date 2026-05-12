@@ -51,7 +51,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Hồ sơ cá nhân</h1>
-            <p className="text-muted-foreground mt-1 text-sm">Quản lý thông tin và bảo mật tài khoản Aura của bạn</p>
+            <p className="text-muted-foreground mt-1 text-sm">Quản lý thông tin và bảo mật tài khoản Aura Moni của bạn</p>
           </div>
           <div className="hidden md:block">
             <LogoutButton variant="desktop" />
@@ -71,7 +71,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
               )}
             </div>
             <div className="flex-1 w-full text-center sm:text-left pt-2">
-              <h2 className="text-2xl font-bold text-slate-800">{user.full_name || 'Người dùng Aura'}</h2>
+              <h2 className="text-2xl font-bold text-slate-800">{user.full_name || 'Người dùng Aura Moni'}</h2>
               <div className="flex items-center justify-center sm:justify-start gap-2 text-muted-foreground mt-2 bg-slate-50 w-fit sm:mx-0 mx-auto px-3 py-1.5 rounded-lg border border-slate-100">
                 <Mail size={14} />
                 <span className="text-sm">{user.email}</span>
@@ -227,7 +227,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
                 </div>
               </div>
               <p className="text-xs text-muted-foreground mt-4 leading-relaxed">
-                Tài khoản của bạn được sử dụng đầy đủ các tính năng cơ bản của Aura Finance.
+                Tài khoản của bạn được sử dụng đầy đủ các tính năng cơ bản của Aura Moni.
               </p>
             </div>
           </div>

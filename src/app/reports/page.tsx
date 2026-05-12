@@ -144,7 +144,7 @@ export default async function ReportsPage({ searchParams }: PageProps) {
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-4 opacity-60 text-[10px] font-bold uppercase tracking-widest text-indigo-500">
                 <Info className="w-4 h-4" />
-                Gợi ý từ Aura AI
+                Gợi ý từ Aura Moni AI
               </div>
               <h4 className="text-lg font-bold mb-2 text-indigo-500">Tối ưu hóa ngân sách</h4>
               <p className="text-sm text-slate-600 leading-relaxed">

@@ -1,5 +1,5 @@
 -- =============================================
--- Aura Finance: Full Database Schema Setup
+-- Aura Moni: Full Database Schema Setup
 -- Run this SQL in Supabase Dashboard > SQL Editor
 -- =============================================
 

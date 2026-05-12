@@ -1,6 +1,6 @@
-# Aura Finance - Design System & UI Guidelines
+# Aura Moni - Design System & UI Guidelines
 
-Tài liệu này đóng vai trò như một cẩm nang thiết kế (Design System) dành cho các Agent AI hoặc các lập trình viên khi tiếp tục phát triển ứng dụng Aura Finance. Tuân thủ nghiêm ngặt các quy tắc dưới đây để đảm bảo ứng dụng luôn giữ được vẻ đẹp hiện đại, cao cấp và thống nhất.
+Tài liệu này đóng vai trò như một cẩm nang thiết kế (Design System) dành cho các Agent AI hoặc các lập trình viên khi tiếp tục phát triển ứng dụng Aura Moni. Tuân thủ nghiêm ngặt các quy tắc dưới đây để đảm bảo ứng dụng luôn giữ được vẻ đẹp hiện đại, cao cấp và thống nhất.
 
 ## 1. Phong cách thiết kế chung (Aesthetics)
 - **Cảm hứng:** Bảng điều khiển tài chính cao cấp (Premium Financial Dashboard), Apple Design, Modern Fintech.
