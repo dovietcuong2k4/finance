@@ -74,7 +74,7 @@ async function fetchReportDataRaw(
         .eq('type', 'expense')
         .or('exclude_from_limit.is.null,exclude_from_limit.eq.false')
         .order('amount', { ascending: false })
-        .limit(1);
+        .limit(5);
       if (startDate) q = q.gte('transaction_date', startDate);
       if (endDate) q = q.lte('transaction_date', endDate);
       return q;
@@ -137,6 +137,12 @@ async function fetchReportDataRaw(
   return {
     categoryData,
     monthlyTrend,
+    topTransactions: (largestExpenseResult.data || []).map((row: any) => ({
+      amount: Number(row.amount),
+      category: row.category,
+      title: row.title,
+      description: row.description,
+    })),
     stats: {
       totalIncome,
       totalExpense,

@@ -5,11 +5,11 @@ import ReportSummaryCards from '@/components/report-summary-cards';
 import { 
   BarChart3, 
   Calendar,
-  Filter,
   Download,
   Info,
   AlertTriangle,
-  CheckCircle2
+  CheckCircle2,
+  Trophy
 } from 'lucide-react';
 import dayjs from 'dayjs';
 import Link from 'next/link';
@@ -29,7 +29,7 @@ export default async function ReportsPage({ searchParams }: PageProps) {
     return <div className="p-8 text-center">Đang tải dữ liệu hoặc lỗi xác thực...</div>;
   }
 
-  const { categoryData, monthlyTrend, stats, metadata } = data;
+  const { categoryData, monthlyTrend, stats, metadata, topTransactions } = data;
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
@@ -163,16 +163,33 @@ export default async function ReportsPage({ searchParams }: PageProps) {
 
         <div>
           <MonthlyComparisonChart data={monthlyTrend} />
-          
-          <div className="mt-8 bento-card border-dashed border-2 bg-transparent hover:border-aura-indigo group cursor-pointer transition-all">
-            <div className="flex flex-col items-center justify-center py-6 text-center">
-              <div className="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                <Filter className="w-6 h-6 text-slate-400 group-hover:text-aura-indigo" />
+          <div className="mt-8 bento-card bg-white shadow-xl shadow-black/2 border border-border">
+            <div className="flex items-center gap-2 mb-4 md:mb-6">
+              <div className="p-1.5 bg-amber-50 text-amber-600 rounded-lg">
+                <Trophy className="w-4.5 h-4.5" />
               </div>
-              <h5 className="font-bold text-slate-900">Thêm bộ lọc tùy chỉnh</h5>
-              <p className="text-xs text-muted-foreground mt-1 max-w-[200px]">
-                Sắp có: Khả năng lọc báo cáo theo tài khoản và thẻ cụ thể.
-              </p>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-800">Top 5 Giao dịch lớn nhất</h3>
+            </div>
+            
+            <div className="space-y-3">
+              {topTransactions && topTransactions.length > 0 ? (
+                topTransactions.map((tx, idx) => (
+                  <div key={idx} className="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-xl transition-colors border border-transparent hover:border-slate-100 group">
+                    <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 font-bold text-slate-500 text-xs group-hover:bg-amber-50 group-hover:text-amber-600 transition-colors">
+                      #{idx + 1}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-slate-800 text-sm truncate">{tx.title}</p>
+                      <p className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mt-0.5">{tx.category}</p>
+                    </div>
+                    <div className="font-bold text-rose-600 text-sm whitespace-nowrap">
+                      {formatCurrency(tx.amount)}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-xs text-muted-foreground italic text-center py-4">Chưa có giao dịch chi tiêu nào trong kỳ.</p>
+              )}
             </div>
           </div>
         </div>
