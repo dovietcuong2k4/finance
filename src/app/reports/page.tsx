@@ -1,7 +1,9 @@
 import { getReportData } from './actions';
+import { getInsights } from '@/app/dashboard/insight-actions';
 import CategoryDistributionChart from '@/components/category-distribution-chart';
 import MonthlyComparisonChart from '@/components/monthly-comparison-chart';
 import ReportSummaryCards from '@/components/report-summary-cards';
+import AIAdvisor from '@/components/ai-advisor';
 import { 
   BarChart3, 
   Calendar,
@@ -23,7 +25,10 @@ interface PageProps {
 export default async function ReportsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const period = (params.period as any) || 'this_month';
-  const data = await getReportData(period);
+  const [data, insights] = await Promise.all([
+    getReportData(period),
+    getInsights()
+  ]);
 
   if (!data) {
     return <div className="p-8 text-center">Đang tải dữ liệu hoặc lỗi xác thực...</div>;
@@ -140,25 +145,7 @@ export default async function ReportsPage({ searchParams }: PageProps) {
         <div className="space-y-4 md:space-y-6">
           <CategoryDistributionChart data={categoryData} />
           
-          <div className="bento-card bg-slate-900 text-white border-none overflow-hidden relative">
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-4 opacity-60 text-[10px] font-bold uppercase tracking-widest text-indigo-500">
-                <Info className="w-4 h-4" />
-                Gợi ý từ Aura Moni AI
-              </div>
-              <h4 className="text-lg font-bold mb-2 text-indigo-500">Tối ưu hóa ngân sách</h4>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                Dựa trên báo cáo {periodLabels[period].toLowerCase()}, bạn đang chi tiêu nhiều nhất vào 
-                <span className="text-aura-indigo font-bold"> {categoryData[0]?.name || '...'}</span>. 
-                Hãy thử đặt hạn mức cho danh mục này để tiết kiệm thêm khoảng 15% vào tháng tới.
-              </p>
-              <button className="mt-6 px-5 py-2 bg-white/10 hover:bg-white/20 border border-indigo-500 rounded-xl text-xs font-bold text-indigo-500 transition-all">
-                Xem chi tiết gợi ý
-              </button>
-            </div>
-            {/* Decorative background element */}
-            <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-aura-indigo/20 blur-[80px] rounded-full"></div>
-          </div>
+          <AIAdvisor insights={insights} />
         </div>
 
         <div>

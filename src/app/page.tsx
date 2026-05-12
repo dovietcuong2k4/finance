@@ -1,4 +1,5 @@
 import { getDashboardData } from '@/app/dashboard/actions';
+import { getInsights } from '@/app/dashboard/insight-actions';
 import StatCard from '@/components/stat-card';
 import AIAdvisor from '@/components/ai-advisor';
 import TransactionTable from '@/components/transaction-table';
@@ -34,7 +35,10 @@ export default async function Home({ searchParams }: PageProps) {
   const params = await searchParams;
   const range = (params.range as 'recent' | 'month') || 'recent';
   const period = (params.period as any) || 'this_month';
-  const data = await getDashboardData(range, period);
+  const [data, insights] = await Promise.all([
+    getDashboardData(range, period),
+    getInsights()
+  ]);
 
   if (!data) {
     return <div className="p-8 text-center">Đang tải dữ liệu hoặc lỗi xác thực...</div>;
@@ -139,7 +143,7 @@ export default async function Home({ searchParams }: PageProps) {
         </div>
         
         <div className="col-span-2 lg:col-span-1">
-          <AIAdvisor />
+          <AIAdvisor insights={insights} />
         </div>
         
         {/* Goals or Quick Action Bento Card */}
