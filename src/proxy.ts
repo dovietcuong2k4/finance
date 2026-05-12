@@ -9,6 +9,13 @@ export async function proxy(request: NextRequest) {
     user = await verifyToken(token)
   }
 
+  // Allow SEO files through without authentication
+  const isSEOFile = request.nextUrl.pathname === '/sitemap.xml' || 
+                    request.nextUrl.pathname === '/robots.txt'
+  if (isSEOFile) {
+    return NextResponse.next()
+  }
+
   const isAuthPage = request.nextUrl.pathname.startsWith('/login') || 
                      request.nextUrl.pathname.startsWith('/signup') ||
                      request.nextUrl.pathname.startsWith('/auth')
