@@ -59,13 +59,14 @@ CREATE OR REPLACE FUNCTION get_period_stats(
   p_start_date date,
   p_end_date date
 )
-RETURNS TABLE(total_income numeric, total_expense numeric)
+RETURNS TABLE(total_income numeric, total_expense numeric, limit_expense numeric)
 LANGUAGE sql STABLE
 SET search_path = public
 AS $$
   SELECT
     COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) AS total_income,
-    COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS total_expense
+    COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) AS total_expense,
+    COALESCE(SUM(CASE WHEN type = 'expense' AND (exclude_from_limit IS NULL OR exclude_from_limit = false) THEN amount ELSE 0 END), 0) AS limit_expense
   FROM transactions
   WHERE user_id = p_user_id
     AND transaction_date >= p_start_date

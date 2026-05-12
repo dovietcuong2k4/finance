@@ -42,7 +42,7 @@ export async function getTransactions({
   // Build query for data
   let dataQuery = supabase
     .from('transactions')
-    .select('id, title, category, amount, transaction_date, type, description, created_at')
+    .select('id, title, category, amount, transaction_date, type, description, created_at, exclude_from_limit')
     .eq('user_id', payload.userId)
     .order('created_at', { ascending: false })
 
@@ -129,6 +129,7 @@ export async function updateTransaction(id: string, data: {
   amount: number
   transaction_date: string
   description?: string | null
+  exclude_from_limit?: boolean
 }) {
   const cookieStore = await cookies()
   const token = cookieStore.get('auth_token')?.value
@@ -153,6 +154,7 @@ export async function updateTransaction(id: string, data: {
       amount: data.amount,
       transaction_date: dayjs(data.transaction_date).format('YYYY-MM-DD'),
       description: data.description || null,
+      exclude_from_limit: data.exclude_from_limit ?? false,
     })
     .eq('id', id)
     .eq('user_id', payload.userId)
@@ -188,6 +190,7 @@ export async function createTransaction(formData: FormData) {
   const transactionDate = formData.get('transactionDate') as string
   const description = formData.get('description') as string
   const category = formData.get('category') as string
+  const excludeFromLimit = formData.get('exclude_from_limit') === 'true'
 
   if (!title || isNaN(amount) || !transactionDate || !type || !category) {
     return { error: 'Vui lòng điền đầy đủ các thông tin bắt buộc' }
@@ -205,7 +208,8 @@ export async function createTransaction(formData: FormData) {
         category: category,
         amount: amount,
         transaction_date: dayjs(transactionDate).format('YYYY-MM-DD'),
-        description: description || null
+        description: description || null,
+        exclude_from_limit: excludeFromLimit
       }
     ])
 

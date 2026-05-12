@@ -69,9 +69,10 @@ async function fetchReportDataRaw(
     (() => {
       let q = supabase
         .from('transactions')
-        .select('amount, category, description')
+        .select('amount, category, description, title')
         .eq('user_id', userId)
         .eq('type', 'expense')
+        .or('exclude_from_limit.is.null,exclude_from_limit.eq.false')
         .order('amount', { ascending: false })
         .limit(1);
       if (startDate) q = q.gte('transaction_date', startDate);
@@ -122,14 +123,15 @@ async function fetchReportDataRaw(
   });
 
   // Period stats
-  const statsData = periodStatsResult.data?.[0] || { total_income: 0, total_expense: 0 };
+  const statsData = periodStatsResult.data?.[0] || { total_income: 0, total_expense: 0, limit_expense: 0 };
   const totalIncome = Number(statsData.total_income);
   const totalExpense = Number(statsData.total_expense);
+  const limitExpense = statsData.limit_expense !== undefined ? Number(statsData.limit_expense) : totalExpense;
 
   // Largest expense
   const largestExpenseRow = largestExpenseResult.data?.[0] || null;
 
-  const averageDaily = totalExpense / (period === 'this_month' ? dayjs().tz().date() : 30);
+  const averageDaily = limitExpense / (period === 'this_month' ? dayjs().tz().date() : 30);
   const estimatedMonthlyExpense = averageDaily * (period === 'this_month' ? dayjs().tz().daysInMonth() : 30);
 
   return {
@@ -138,11 +140,13 @@ async function fetchReportDataRaw(
     stats: {
       totalIncome,
       totalExpense,
+      limitExpense,
       netSavings: totalIncome - totalExpense,
       savingsRate: totalIncome > 0 ? Math.round(((totalIncome - totalExpense) / totalIncome) * 100) : 0,
       largestExpense: largestExpenseRow ? {
         amount: Number(largestExpenseRow.amount),
         category: largestExpenseRow.category,
+        title: largestExpenseRow.title,
         note: largestExpenseRow.description,
       } : null,
       averageDaily: Math.round(averageDaily),

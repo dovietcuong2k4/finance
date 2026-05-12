@@ -2,7 +2,7 @@
 
 import { useState, useTransition, useEffect } from 'react';
 import { Plus, ChevronLeft } from 'lucide-react';
-import { Modal, Drawer, Form, Input, InputNumber, DatePicker, Button, Select, ConfigProvider } from 'antd';
+import { Modal, Drawer, Form, Input, InputNumber, DatePicker, Button, Select, ConfigProvider, Switch } from 'antd';
 import { createTransaction, updateTransaction } from '@/app/transactions/actions';
 import { toast } from 'react-hot-toast';
 import dayjs from 'dayjs';
@@ -15,6 +15,7 @@ export interface TransactionData {
   amount: number;
   transaction_date: string;
   description?: string;
+  exclude_from_limit?: boolean;
 }
 
 function TypeSelector({ value, onChange }: { value?: string, onChange?: (val: string) => void }) {
@@ -68,6 +69,7 @@ const labelClass = "font-bold text-slate-500 uppercase tracking-widest text-[10p
 function TransactionFormFields() {
   const form = Form.useFormInstance();
   const amount = Form.useWatch('amount', form);
+  const type = Form.useWatch('type', form);
 
   const getAmountSuggestions = () => {
     if (!amount || amount >= 10000000) return [];
@@ -180,6 +182,24 @@ function TransactionFormFields() {
           className="bg-slate-50 border-slate-200 hover:border-aura-indigo focus:border-aura-indigo transition-all rounded-xl"
         />
       </Form.Item>
+
+      {type === 'expense' && (
+        <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-100 rounded-xl mb-2">
+          <div>
+            <span className="font-bold text-slate-700 text-sm">Tính vào giới hạn chi tiêu</span>
+            <p className="text-xs text-muted-foreground mt-0.5">Khoản chi này sẽ được cộng vào để tính cảnh báo ngân sách</p>
+          </div>
+          <Form.Item
+            name="includeInLimit"
+            valuePropName="checked"
+            initialValue={true}
+            className="mb-0"
+            noStyle
+          >
+            <Switch />
+          </Form.Item>
+        </div>
+      )}
     </>
   );
 }
@@ -217,6 +237,10 @@ export default function AddTransactionModal({ trigger }: { trigger?: React.React
     formData.append('transactionDate', values.transactionDate.format('YYYY-MM-DD'));
     formData.append('category', values.category);
     if (values.description) formData.append('description', values.description);
+    
+    // Convert includeInLimit to exclude_from_limit
+    const excludeFromLimit = values.type === 'expense' ? !values.includeInLimit : false;
+    formData.append('exclude_from_limit', String(excludeFromLimit));
 
     startTransition(async () => {
       const result = await createTransaction(formData);
@@ -368,6 +392,7 @@ export function EditTransactionModal({
         amount: transaction.amount,
         transactionDate: dayjs(transaction.transaction_date),
         description: transaction.description || '',
+        includeInLimit: transaction.exclude_from_limit === undefined ? true : !transaction.exclude_from_limit,
       });
     }
   }, [transaction, open, form]);
@@ -382,6 +407,7 @@ export function EditTransactionModal({
         amount: values.amount,
         transaction_date: values.transactionDate.format('YYYY-MM-DD'),
         description: values.description || null,
+        exclude_from_limit: values.type === 'expense' ? !values.includeInLimit : false,
       });
       if (result.error) {
         toast.error(result.error);

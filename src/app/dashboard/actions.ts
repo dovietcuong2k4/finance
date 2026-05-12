@@ -66,7 +66,7 @@ async function fetchDashboardDataRaw(
     // 3. Recent 5 transactions (tiny query)
     supabase
       .from('transactions')
-      .select('id, amount, type, category, transaction_date, title, description')
+      .select('id, amount, type, category, transaction_date, title, description, exclude_from_limit')
       .eq('user_id', userId)
       .order('transaction_date', { ascending: false })
       .limit(5),

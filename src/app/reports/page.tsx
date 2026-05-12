@@ -84,12 +84,12 @@ export default async function ReportsPage({ searchParams }: PageProps) {
       {/* Reminders / Alerts */}
       {(metadata?.dailyLimit || metadata?.monthlyLimit) && period === 'this_month' && (
         <div className="mb-6 md:mb-10 space-y-3">
-          {metadata.monthlyLimit > 0 && stats.totalExpense > metadata.monthlyLimit ? (
+          {metadata.monthlyLimit > 0 && stats.limitExpense > metadata.monthlyLimit ? (
             <div className="p-3 md:p-4 rounded-xl flex items-start gap-3 border bg-red-50 border-red-100 text-red-800 shadow-sm">
               <AlertTriangle className="w-5 h-5 shrink-0 text-red-500" />
               <div>
                 <p className="text-sm font-bold">Vượt ngân sách tháng!</p>
-                <p className="text-xs mt-1">Tổng chi tiêu ({formatCurrency(stats.totalExpense)}) đã vượt quá giới hạn tháng của bạn ({formatCurrency(metadata.monthlyLimit)}).</p>
+                <p className="text-xs mt-1">Chi tiêu tính vào giới hạn ({formatCurrency(stats.limitExpense)}) đã vượt quá ngân sách tháng của bạn ({formatCurrency(metadata.monthlyLimit)}).</p>
               </div>
             </div>
           ) : metadata.monthlyLimit > 0 && stats.estimatedMonthlyExpense > metadata.monthlyLimit ? (
