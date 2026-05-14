@@ -4,11 +4,11 @@ import CategoryDistributionChart from '@/components/category-distribution-chart'
 import MonthlyComparisonChart from '@/components/monthly-comparison-chart';
 import ReportSummaryCards from '@/components/report-summary-cards';
 import AIAdvisor from '@/components/ai-advisor';
+import { Suspense } from 'react';
 import { 
   BarChart3, 
   Calendar,
   Download,
-  Info,
   AlertTriangle,
   CheckCircle2,
   Trophy
@@ -22,13 +22,15 @@ interface PageProps {
   }>;
 }
 
+async function ReportAIAdvisor() {
+  const insights = await getInsights();
+  return <AIAdvisor insights={insights} />;
+}
+
 export default async function ReportsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const period = (params.period as any) || 'this_month';
-  const [data, insights] = await Promise.all([
-    getReportData(period),
-    getInsights()
-  ]);
+  const data = await getReportData(period);
 
   if (!data) {
     return <div className="p-8 text-center">Đang tải dữ liệu hoặc lỗi xác thực...</div>;
@@ -145,7 +147,16 @@ export default async function ReportsPage({ searchParams }: PageProps) {
         <div className="space-y-4 md:space-y-6">
           <CategoryDistributionChart data={categoryData} />
           
-          <AIAdvisor insights={insights} />
+          <Suspense fallback={
+            <div className="bento-card bg-slate-900 border-none shadow-2xl h-[200px] animate-pulse rounded-2xl flex flex-col items-center justify-center text-indigo-400/50">
+              <div className="w-8 h-8 mb-3 rounded-full bg-indigo-500/20 border border-indigo-400/20 flex items-center justify-center">
+                <div className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Đang phân tích AI...</span>
+            </div>
+          }>
+            <ReportAIAdvisor />
+          </Suspense>
         </div>
 
         <div>

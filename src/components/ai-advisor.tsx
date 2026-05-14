@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Sparkles, ArrowRight, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sparkles, Zap, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Insight } from '@/lib/insights/types';
 
 interface AIAdvisorProps {

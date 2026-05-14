@@ -6,6 +6,7 @@ import TransactionTable from '@/components/transaction-table';
 import AddTransactionModal from '@/components/add-transaction-modal';
 import DashboardSearch from '@/components/dashboard-search';
 import DashboardChartSection from '@/components/dashboard-chart-section';
+import { Suspense } from 'react';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
@@ -31,14 +32,16 @@ interface PageProps {
   }>;
 }
 
+async function DashboardAIAdvisor() {
+  const insights = await getInsights();
+  return <AIAdvisor insights={insights} />;
+}
+
 export default async function Home({ searchParams }: PageProps) {
   const params = await searchParams;
   const range = (params.range as 'recent' | 'month') || 'recent';
   const period = (params.period as any) || 'this_month';
-  const [data, insights] = await Promise.all([
-    getDashboardData(range, period),
-    getInsights()
-  ]);
+  const data = await getDashboardData(range, period);
 
   if (!data) {
     return <div className="p-8 text-center">Đang tải dữ liệu hoặc lỗi xác thực...</div>;
@@ -143,7 +146,16 @@ export default async function Home({ searchParams }: PageProps) {
         </div>
         
         <div className="col-span-2 lg:col-span-1">
-          <AIAdvisor insights={insights} />
+          <Suspense fallback={
+            <div className="bento-card bg-slate-900 border-none shadow-2xl h-full min-h-[160px] animate-pulse rounded-2xl flex flex-col items-center justify-center text-indigo-400/50">
+              <div className="w-8 h-8 mb-3 rounded-full bg-indigo-500/20 border border-indigo-400/20 flex items-center justify-center">
+                <div className="w-4 h-4 border-2 border-indigo-400 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-widest">Đang phân tích AI...</span>
+            </div>
+          }>
+            <DashboardAIAdvisor />
+          </Suspense>
         </div>
         
         {/* Goals or Quick Action Bento Card */}
