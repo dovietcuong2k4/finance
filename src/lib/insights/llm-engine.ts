@@ -11,7 +11,7 @@ const GEMINI_API_URL =
  * Returns null on any failure — caller should fallback to rule engine.
  */
 export async function generateLLMInsights(data: InsightData): Promise<Insight[] | null> {
-  const apiKey = process.env.GEMINI_API_KEY;
+  const apiKey = process.env.AI_API_KEY;
   if (!apiKey) return null;
 
   const fmt = (n: number) =>

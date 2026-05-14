@@ -8,7 +8,7 @@ export type { Insight, InsightData };
  * Main orchestrator: tries Gemini LLM first, falls back to rule-based engine.
  *
  * Strategy:
- * 1. If GEMINI_API_KEY exists → call LLM engine
+ * 1. If AI_API_KEY exists → call LLM engine
  * 2. If LLM fails (network, parse error, timeout) → fallback to rule engine
  * 3. If no API key → rule engine directly
  */
@@ -28,7 +28,7 @@ export async function generateInsights(data: InsightData): Promise<Insight[]> {
   }
 
   // Try LLM engine first
-  const hasApiKey = !!process.env.GEMINI_API_KEY;
+  const hasApiKey = !!process.env.AI_API_KEY;
   if (hasApiKey) {
     try {
       const llmInsights = await generateLLMInsights(data);
