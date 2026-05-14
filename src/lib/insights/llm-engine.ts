@@ -1,7 +1,7 @@
 import type { Insight, InsightData } from './types';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const OPENROUTER_MODEL = 'openai/gpt-4o-mini';
+const OPENROUTER_MODEL = 'nvidia/nemotron-3-super-120b-a12b:free';
 
 /**
  * LLM-powered insight engine using OpenRouter API (OpenAI-compatible).
@@ -32,7 +32,8 @@ Phong cách:
 - Tiêu đề ngắn gọn, bắt mắt — có thể hơi dí dỏm
 - Mô tả 1-2 câu thôi, đọc xong phải thấy "à, đúng rồi!"
 - KHÔNG bịa số liệu, chỉ dùng data được cung cấp
-- Trả về đúng JSON, không thêm gì ngoài JSON
+- Trả về đúng JSON, không thêm bất kỳ văn bản nào khác ngoài JSON. Không bao gồm các khối mã markdown (\`\`\`json).
+- Phải bắt đầu bằng { và kết thúc bằng }.
 
 JSON format:
 {
@@ -66,10 +67,10 @@ JSON format:
           { role: 'user', content: userPrompt },
         ],
         temperature: 0.7,
-        max_tokens: 1024,
+        max_tokens: 2048,
         response_format: { type: 'json_object' },
       }),
-      signal: AbortSignal.timeout(15_000),
+      signal: AbortSignal.timeout(45_000),
     });
 
     if (!response.ok) {
@@ -88,10 +89,46 @@ JSON format:
       return null;
     }
 
-    const parsed = JSON.parse(text);
+    // Robust JSON extraction & Repair
+    let parsed: any = null;
+    try {
+      parsed = JSON.parse(text);
+    } catch (e) {
+      // Try to extract JSON block
+      let jsonPart = text.match(/\{[\s\S]*\}/)?.[0] || text.match(/\{[\s\S]*/)?.[0];
+      
+      if (jsonPart) {
+        try {
+          parsed = JSON.parse(jsonPart);
+        } catch (e2) {
+          // Truncated JSON repair: Try adding closing braces/brackets
+          console.warn('JSON truncated, attempting repair...');
+          let repaired = jsonPart;
+          const openBraces = (repaired.match(/\{/g) || []).length;
+          const closeBraces = (repaired.match(/\}/g) || []).length;
+          const openBrackets = (repaired.match(/\[/g) || []).length;
+          const closeBrackets = (repaired.match(/\]/g) || []).length;
+
+          // Close open strings if any
+          if ((repaired.match(/"/g) || []).length % 2 !== 0) repaired += '"';
+          // Close brackets and braces
+          for (let i = 0; i < openBrackets - closeBrackets; i++) repaired += ']';
+          for (let i = 0; i < openBraces - closeBraces; i++) repaired += '}';
+
+          try {
+            parsed = JSON.parse(repaired);
+          } catch (e3) {
+            console.error('JSON repair failed:', e3);
+            return null;
+          }
+        }
+      }
+    }
+
     const rawInsights = parsed?.insights;
+
     if (!Array.isArray(rawInsights) || rawInsights.length === 0) {
-      console.error('OpenRouter API: invalid insights format');
+      console.error('OpenRouter API: invalid insights format or no insights array');
       return null;
     }
 
@@ -99,10 +136,10 @@ JSON format:
     return rawInsights
       .filter(
         (i: any) =>
-          i.type && i.title && i.description && typeof i.priority === 'number'
+          i && i.type && i.title && i.description && typeof i.priority === 'number'
       )
       .map((i: any, idx: number) => ({
-        id: `llm-${idx}`,
+        id: `llm-${idx}-${Date.now()}`,
         type: i.type as Insight['type'],
         emoji: i.emoji || '💡',
         title: String(i.title).slice(0, 60),
@@ -113,7 +150,11 @@ JSON format:
       .sort((a: Insight, b: Insight) => b.priority - a.priority)
       .slice(0, 5);
   } catch (err) {
-    console.error('OpenRouter API call failed:', err);
+    if (err instanceof Error && err.name === 'TimeoutError') {
+      console.error('OpenRouter API call timed out after 45s');
+    } else {
+      console.error('OpenRouter API call failed:', err);
+    }
     return null;
   }
 }
