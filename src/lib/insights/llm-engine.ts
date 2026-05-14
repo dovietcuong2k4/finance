@@ -1,11 +1,11 @@
 import type { Insight, InsightData } from './types';
 
-const GEMINI_API_URL =
-  'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
+const OPENROUTER_MODEL = 'openai/gpt-4o-mini';
 
 /**
- * LLM-powered insight engine using Gemini API.
- * Sends aggregated data (no raw transactions) to Gemini and receives
+ * LLM-powered insight engine using OpenRouter API (OpenAI-compatible).
+ * Sends aggregated data (no raw transactions) to the LLM and receives
  * personalized financial insights in Vietnamese.
  *
  * Returns null on any failure — caller should fallback to rule engine.
@@ -20,65 +20,80 @@ export async function generateLLMInsights(data: InsightData): Promise<Insight[] 
   // Build a concise financial summary for the prompt
   const financialSummary = buildFinancialSummary(data, fmt);
 
-  const systemPrompt = `Bạn là Aura Moni AI — cố vấn tài chính cá nhân thông minh, thân thiện và chuyên nghiệp.
-Phân tích dữ liệu tài chính người dùng và đưa ra 3-5 insights (gợi ý, cảnh báo, thành tích).
+  const systemPrompt = `Bạn là Aura Moni — một người bạn thân thiết rành về tài chính cá nhân.
+Bạn nói chuyện tự nhiên, gần gũi như nhắn tin với bạn bè — không cứng nhắc, không hàn lâm.
+Nhìn vào dữ liệu chi tiêu và đưa ra 3-5 nhận xét (gợi ý, cảnh báo nhẹ nhàng, khen ngợi, xu hướng).
 
-Quy tắc:
-- Viết bằng tiếng Việt, ngắn gọn, tự nhiên, dễ hiểu
-- Mỗi insight phải cụ thể, có con số, tránh chung chung
-- Dùng giọng điệu tích cực, khuyến khích — kể cả khi cảnh báo
-- Không bịa thêm số liệu ngoài dữ liệu được cung cấp
-- Trả về đúng JSON format, không thêm text ngoài JSON
+Phong cách:
+- Viết tiếng Việt tự nhiên, đời thường — như đang trò chuyện, có thể dùng từ thân mật
+- Dùng con số cụ thể từ dữ liệu, nhưng diễn đạt nhẹ nhàng (vd: "Tháng này bạn tiêu khoảng 2 triệu cho ăn uống đó")
+- Khi cảnh báo thì nhẹ nhàng, động viên — đừng phán xét
+- Khi khen thì chân thành, vui vẻ
+- Tiêu đề ngắn gọn, bắt mắt — có thể hơi dí dỏm
+- Mô tả 1-2 câu thôi, đọc xong phải thấy "à, đúng rồi!"
+- KHÔNG bịa số liệu, chỉ dùng data được cung cấp
+- Trả về đúng JSON, không thêm gì ngoài JSON
 
-Trả về JSON theo format:
+JSON format:
 {
   "insights": [
     {
       "type": "warning | tip | achievement | trend",
       "emoji": "<1 emoji phù hợp>",
-      "title": "<tiêu đề ngắn, tối đa 40 ký tự>",
-      "description": "<mô tả 1-2 câu, tối đa 120 ký tự>",
+      "title": "<tiêu đề bắt mắt, tối đa 40 ký tự>",
+      "description": "<nhận xét tự nhiên 1-2 câu, tối đa 150 ký tự>",
       "priority": <1-10, 10 là quan trọng nhất>,
       "category": "<tên danh mục liên quan hoặc null>"
     }
   ]
 }`;
 
-  const userPrompt = `Dữ liệu tài chính của tôi:\n\n${financialSummary}\n\nHãy phân tích và đưa ra 3-5 insights quan trọng nhất.`;
+  const userPrompt = `Đây là dữ liệu tài chính của mình:\n\n${financialSummary}\n\nBạn thấy có gì đáng chú ý không? Cho mình 3-5 nhận xét nha!`;
 
   try {
-    const response = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+    const response = await fetch(OPENROUTER_API_URL, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+        // 'HTTP-Referer': 'https://finance-flame-delta.vercel.app/',
+        // 'X-Title': 'Aura Moni',
+      },
       body: JSON.stringify({
-        contents: [
-          { role: 'user', parts: [{ text: `${systemPrompt}\n\n${userPrompt}` }] },
+        model: OPENROUTER_MODEL,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userPrompt },
         ],
-        generationConfig: {
-          responseMimeType: 'application/json',
-          temperature: 0.7,
-          maxOutputTokens: 1024,
-        },
+        temperature: 0.7,
+        max_tokens: 1024,
+        response_format: { type: 'json_object' },
       }),
-      signal: AbortSignal.timeout(10_000), // 10s timeout
+      signal: AbortSignal.timeout(15_000),
     });
 
     if (!response.ok) {
-      console.error(`Gemini API error: ${response.status} ${response.statusText}`);
+      const errorBody = await response.text().catch(() => '');
+      console.error(
+        `OpenRouter API error: ${response.status} ${response.statusText}`,
+        errorBody
+      );
       return null;
     }
 
     const result = await response.json();
-    const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+    const text = result?.choices?.[0]?.message?.content;
     if (!text) {
-      console.error('Gemini API: empty response');
+      console.error('OpenRouter API: empty response');
       return null;
     }
+
+    console.log(text)
 
     const parsed = JSON.parse(text);
     const rawInsights = parsed?.insights;
     if (!Array.isArray(rawInsights) || rawInsights.length === 0) {
-      console.error('Gemini API: invalid insights format');
+      console.error('OpenRouter API: invalid insights format');
       return null;
     }
 
@@ -100,7 +115,7 @@ Trả về JSON theo format:
       .sort((a: Insight, b: Insight) => b.priority - a.priority)
       .slice(0, 5);
   } catch (err) {
-    console.error('Gemini API call failed:', err);
+    console.error('OpenRouter API call failed:', err);
     return null;
   }
 }

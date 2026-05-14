@@ -142,7 +142,7 @@ export async function getInsights(): Promise<Insight[]> {
     () => fetchInsightsRaw(user.id, user.metadata || {}),
     [`insights-${user.id}`],
     {
-      revalidate: 3600 * 6, // Cache for 1 hour
+      revalidate: 3600 * 6,
       tags: ['insights'],
     }
   )();

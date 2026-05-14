@@ -5,7 +5,7 @@ import { generateLLMInsights } from './llm-engine';
 export type { Insight, InsightData };
 
 /**
- * Main orchestrator: tries Gemini LLM first, falls back to rule-based engine.
+ * Main orchestrator: tries OpenRouter LLM first, falls back to rule-based engine.
  *
  * Strategy:
  * 1. If AI_API_KEY exists → call LLM engine
