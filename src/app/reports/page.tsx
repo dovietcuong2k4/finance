@@ -6,14 +6,11 @@ import ReportSummaryCards from '@/components/report-summary-cards';
 import AIAdvisor from '@/components/ai-advisor';
 import { Suspense } from 'react';
 import { 
-  BarChart3, 
-  Calendar,
   Download,
   AlertTriangle,
   CheckCircle2,
   Trophy
 } from 'lucide-react';
-import dayjs from 'dayjs';
 import Link from 'next/link';
 
 interface PageProps {
@@ -30,6 +27,7 @@ async function ReportAIAdvisor() {
 export default async function ReportsPage({ searchParams }: PageProps) {
   const params = await searchParams;
   const period = (params.period as any) || 'this_month';
+  
   const data = await getReportData(period);
 
   if (!data) {
@@ -50,43 +48,30 @@ export default async function ReportsPage({ searchParams }: PageProps) {
   };
 
   return (
-    <div className="max-w-none mx-auto p-3 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-      {/* Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6 md:mb-10 pt-4 md:pt-0">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <BarChart3 className="w-4 h-4 text-aura-indigo" />
-            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Phân tích chuyên sâu</span>
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            Báo cáo <span className="text-aura-indigo">Tài chính</span>
-          </h1>
-          <p className="text-muted-foreground text-[13px] mt-1">Cái nhìn tổng quan và chi tiết về thói quen chi tiêu của bạn.</p>
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+      {/* General Report Filters */}
+      <div className="flex items-center gap-3 w-full md:w-auto min-w-0 mb-6">
+        <div className="flex bg-white border border-border p-1 rounded-lg md:rounded-xl shadow-sm overflow-x-auto snap-x hide-scrollbar max-w-full w-full sm:w-auto">
+          {Object.entries(periodLabels).map(([key, label]) => (
+            <Link
+              key={key}
+              href={`/reports?period=${key}`}
+              className={`px-4 py-1.5 rounded md:rounded-[12px] text-[10px] md:text-xs text-nowrap font-bold transition-all ${
+                period === key 
+                  ? 'bg-slate-900 text-white shadow-md' 
+                  : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              {label}
+            </Link>
+          ))}
         </div>
         
-        <div className="flex items-center gap-3 w-full md:w-auto min-w-0">
-          <div className="flex bg-white border border-border p-1 rounded-lg md:rounded-xl shadow-sm overflow-x-auto snap-x hide-scrollbar max-w-full w-full sm:w-auto">
-            {Object.entries(periodLabels).map(([key, label]) => (
-              <Link
-                key={key}
-                href={`/reports?period=${key}`}
-                className={`px-4 py-1.5 rounded md:rounded-[12px] text-[10px] md:text-xs text-nowrap font-bold transition-all ${
-                  period === key 
-                    ? 'bg-slate-900 text-white shadow-md' 
-                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
-                }`}
-              >
-                {label}
-              </Link>
-            ))}
-          </div>
-          
-          <button className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-white border border-border rounded-xl text-xs font-bold hover:border-aura-indigo transition-all shadow-sm">
-            <Download className="w-4 h-4" />
-            Xuất PDF
-          </button>
-        </div>
-      </header>
+        <button className="hidden sm:flex items-center gap-2 px-4 py-2.5 bg-white border border-border rounded-xl text-xs font-bold hover:border-aura-indigo transition-all shadow-sm">
+          <Download className="w-4 h-4" />
+          Xuất PDF
+        </button>
+      </div>
 
       {/* Reminders / Alerts */}
       {(metadata?.dailyLimit || metadata?.monthlyLimit) && period === 'this_month' && (
@@ -171,7 +156,7 @@ export default async function ReportsPage({ searchParams }: PageProps) {
             
             <div className="space-y-3">
               {topTransactions && topTransactions.length > 0 ? (
-                topTransactions.map((tx, idx) => (
+                topTransactions.map((tx: any, idx: number) => (
                   <div key={idx} className="flex items-start gap-3 p-3 hover:bg-slate-50 rounded-xl transition-colors border border-transparent hover:border-slate-100 group">
                     <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0 font-bold text-slate-500 text-xs group-hover:bg-amber-50 group-hover:text-amber-600 transition-colors">
                       #{idx + 1}
@@ -192,15 +177,6 @@ export default async function ReportsPage({ searchParams }: PageProps) {
           </div>
         </div>
       </div>
-
-      {/* Footer minimal info */}
-      <footer className="mt-12 pt-8 border-t border-border flex flex-col sm:flex-row gap-2 justify-between items-center text-[10px] text-muted-foreground font-medium uppercase tracking-[0.2em]">
-        <div>Aura Intelligence Engine</div>
-        <div className="flex gap-2 items-center">
-          <Calendar className="w-3 h-3" />
-          <span>Cập nhật lần cuối: {dayjs().format('HH:mm DD/MM/YYYY')}</span>
-        </div>
-      </footer>
     </div>
   );
 }

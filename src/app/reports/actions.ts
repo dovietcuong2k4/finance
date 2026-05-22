@@ -181,3 +181,43 @@ export const getReportData = async (
   }
   return null;
 };
+
+export async function getMonthlyExpenses(
+  monthString: string,
+  categories: string[] = []
+) {
+  const user = await getUser();
+  if (!user) return { data: [], total: 0 };
+
+  const supabase = createAdminClient();
+  
+  const startDate = dayjs(monthString).startOf('month').format('YYYY-MM-DD');
+  const endDate = dayjs(monthString).endOf('month').format('YYYY-MM-DD');
+
+  let query = supabase
+    .from('transactions')
+    .select('id, title, category, amount, transaction_date')
+    .eq('user_id', user.id)
+    .eq('type', 'expense')
+    .gte('transaction_date', startDate)
+    .lte('transaction_date', endDate)
+    .order('transaction_date', { ascending: false });
+
+  if (categories && categories.length > 0) {
+    query = query.in('category', categories);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Error fetching monthly expenses:', error);
+    return { data: [], total: 0 };
+  }
+
+  const total = (data || []).reduce((sum, tx) => sum + Number(tx.amount || 0), 0);
+
+  return {
+    data: data || [],
+    total,
+  };
+}
