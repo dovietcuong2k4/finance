@@ -51,6 +51,7 @@ const FinancialChart: React.FC<FinancialChartProps> = ({ data, currentRange, onR
                 { value: 'recent', label: 'Các tháng gần đây' },
                 { value: 'month', label: 'Tháng này' },
               ]}
+              classNames={{ popup: { root: "overscroll-contain" }}}
             />
           </ConfigProvider>
         </div>

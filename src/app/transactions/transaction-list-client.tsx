@@ -225,6 +225,7 @@ export default function TransactionListClient({
                   { value: '', label: 'Tất cả danh mục' },
                   ...categorySelectOptions
                 ]}
+                classNames={{ popup: { root: "overscroll-contain" }}}
               />
             </div>
 

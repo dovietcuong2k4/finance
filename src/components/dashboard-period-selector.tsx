@@ -39,6 +39,7 @@ export default function DashboardPeriodSelector() {
             { value: 'this_year', label: 'Năm nay' },
           ]}
           suffixIcon={<CalendarDays className="w-3.5 h-3.5 text-slate-400" />}
+          classNames={{ popup: { root: "overscroll-contain" }}}
         />
       </ConfigProvider>
     </div>

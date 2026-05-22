@@ -142,7 +142,7 @@ function TransactionFormFields() {
             placeholder="Chọn danh mục"
             className="w-full"
             styles={{ popup: { root: { borderRadius: '8px' } } }}
-            classNames={{ popup: { root: 'shadow-2xl' } }}
+            classNames={{ popup: { root: 'shadow-2xl overscroll-contain' } }}
             options={CATEGORIES.map(c => ({
               value: c.value,
               label: (
