@@ -85,12 +85,12 @@ export default function MonthlyExpenseReport() {
           </ConfigProvider>
         </div>
 
-        <div className="bento-card bg-gradient-to-br from-indigo-500 to-indigo-600 border-none shadow-xl shadow-indigo-500/20 p-6 flex flex-col justify-center text-white">
-          <h3 className="text-indigo-100 text-sm font-medium mb-1">Tổng chi tiêu</h3>
-          <p className="text-3xl font-bold tracking-tight">
+        <div className="bento-card br-white border-none shadow-xl shadow-indigo-500/20 p-6 flex flex-col justify-center text-white">
+          <h3 className="text-indigo-500 text-sm font-medium mb-1">Tổng chi tiêu</h3>
+          <p className="text-3xl font-bold tracking-tight text-gray-800">
             {formatCurrency(total)}
           </p>
-          <div className="mt-4 flex items-center gap-2 text-indigo-200 text-xs font-medium">
+          <div className="mt-4 flex items-center gap-2 text-indigo-500 text-xs font-medium">
             <Calendar className="w-4 h-4" />
             <span>Tháng {month.format('MM/YYYY')}</span>
           </div>

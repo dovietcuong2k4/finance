@@ -1,5 +1,6 @@
 import { Calendar } from 'lucide-react';
 import dayjs from 'dayjs';
+import MobileReportTabs from './mobile-report-tabs';
 
 export default function ReportsLayout({
   children,
@@ -7,7 +8,8 @@ export default function ReportsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="max-w-none mx-auto p-3 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+    <div className="max-w-none p-3 pt-10 md:p-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <MobileReportTabs />
       {children}
 
       {/* Footer minimal info */}

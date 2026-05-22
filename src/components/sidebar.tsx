@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -49,10 +50,31 @@ interface SidebarProps {
 
 const Sidebar = ({ userData }: SidebarProps) => {
   const pathname = usePathname();
+  const [expandedItems, setExpandedItems] = useState<string[]>(() => {
+    // Auto-expand items whose href matches current path on mount
+    return menuItems
+      .filter(item => item.children && pathname.startsWith(item.href))
+      .map(item => item.href);
+  });
+
+  // Auto-expand when navigating to a child route
+  useEffect(() => {
+    menuItems.forEach(item => {
+      if (item.children && pathname.startsWith(item.href)) {
+        setExpandedItems(prev => prev.includes(item.href) ? prev : [...prev, item.href]);
+      }
+    });
+  }, [pathname]);
 
   // Hide sidebar on auth pages - Move this AFTER all hooks
   const isAuthPage = pathname === '/login' || pathname === '/signup';
   if (isAuthPage) return null;
+
+  const toggleExpand = (href: string) => {
+    setExpandedItems(prev =>
+      prev.includes(href) ? prev.filter(h => h !== href) : [...prev, href]
+    );
+  };
 
   return (
     <>
@@ -72,17 +94,18 @@ const Sidebar = ({ userData }: SidebarProps) => {
             const isParentActive = hasChildren
               ? pathname.startsWith(item.href)
               : pathname === item.href;
-            const isExpanded = hasChildren && pathname.startsWith(item.href);
+            const isExpanded = hasChildren && expandedItems.includes(item.href);
 
             return (
               <div key={item.href + item.label}>
                 {hasChildren ? (
-                  /* Parent with children — acts as a non-navigating toggle header */
+                  /* Parent with children — clickable toggle */
                   <div
-                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 cursor-default select-none ${
+                    onClick={() => toggleExpand(item.href)}
+                    className={`flex items-center justify-between px-3.5 py-2.5 rounded-xl text-[13px] font-medium transition-all duration-200 cursor-pointer select-none hover:bg-secondary ${
                       isParentActive
                         ? 'text-foreground'
-                        : 'text-muted-foreground'
+                        : 'text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     <span className="flex items-center gap-3">
