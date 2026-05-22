@@ -239,6 +239,16 @@ export default function AddTransactionModal({ trigger }: { trigger?: React.React
     return () => window.removeEventListener('closeAllModals', handleClose);
   }, []);
 
+  // Lock body scroll when modal/drawer is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
   const handleFinish = (values: any) => {
     const formData = new FormData();
     formData.append('type', values.type);
@@ -304,7 +314,7 @@ export default function AddTransactionModal({ trigger }: { trigger?: React.React
       className="flex flex-col h-full"
       requiredMark={false}
     >
-      <div className="flex-1 overflow-y-auto pt-4 px-4 pb-8 md:pb-0">
+      <div className="flex-1 overflow-y-auto pt-4 px-4 pb-24 md:pb-0">
         <TransactionFormFields />
       </div>
 
@@ -403,6 +413,16 @@ export function EditTransactionModal({
     return () => window.removeEventListener('closeAllModals', handleClose);
   }, [onClose]);
 
+  // Lock body scroll when modal/drawer is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
   // Populate form when transaction changes
   useEffect(() => {
     if (transaction && open) {
@@ -478,7 +498,7 @@ export function EditTransactionModal({
       className="flex flex-col h-full"
       requiredMark={false}
     >
-      <div className="flex-1 overflow-y-auto pt-4 px-4 pb-8 md:pb-0">
+      <div className="flex-1 overflow-y-auto pt-4 px-4 pb-24 md:pb-0">
         <TransactionFormFields />
       </div>
 
