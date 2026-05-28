@@ -6,6 +6,7 @@ import { createAdminClient } from '@/utils/supabase/admin'
 import bcrypt from 'bcryptjs'
 import { cookies } from 'next/headers'
 import { signToken, verifyToken } from '@/utils/auth'
+import { CATEGORIES } from '@/constants/categories'
 
 export async function getUser() {
   const cookieStore = await cookies()
@@ -140,13 +141,21 @@ export async function updateProfile(formData: FormData) {
 
   const supabase = createAdminClient()
 
-  // Fetch existing metadata to preserve other settings
+  const categoryLimits: Record<string, number | null> = {}
+  CATEGORIES.forEach(c => {
+    if (c.type === 'expense') {
+      const val = formData.get(`budget_${c.value}`) as string
+      categoryLimits[c.value] = parseLimit(val)
+    }
+  })
+
   const { data: user } = await supabase.from('users').select('metadata').eq('id', payload.userId).single()
   const existingMetadata = user?.metadata || {}
   const newMetadata = {
     ...existingMetadata,
     dailyLimit,
-    monthlyLimit
+    monthlyLimit,
+    categoryLimits
   }
 
   const { error } = await supabase

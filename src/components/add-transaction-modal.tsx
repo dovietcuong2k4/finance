@@ -71,6 +71,18 @@ function TransactionFormFields() {
   const amount = Form.useWatch('amount', form);
   const type = Form.useWatch('type', form);
 
+  useEffect(() => {
+    if (form && type) {
+      const currentCategory = form.getFieldValue('category');
+      if (currentCategory) {
+        const isValid = CATEGORIES.some(c => c.value === currentCategory && c.type === type);
+        if (!isValid) {
+          form.setFieldValue('category', undefined);
+        }
+      }
+    }
+  }, [type, form]);
+
   const getAmountSuggestions = () => {
     if (!amount || amount >= 10000000) return [];
     return Array.from(new Set([
@@ -82,6 +94,8 @@ function TransactionFormFields() {
   };
 
   const suggestions = getAmountSuggestions();
+
+  const filteredCategories = CATEGORIES.filter(c => c.type === type);
 
   return (
     <>
@@ -111,8 +125,8 @@ function TransactionFormFields() {
               controls={false}
               keyboard={false}
               changeOnWheel={false}
-              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              parser={(value) => value ? value.replace(/,/g, '') as any : ''}
+              formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+              parser={(value) => value ? value.replace(/\./g, '') as any : ''}
               placeholder="0"
             />
           </Form.Item>
@@ -143,7 +157,7 @@ function TransactionFormFields() {
             className="w-full"
             styles={{ popup: { root: { borderRadius: '8px' } } }}
             classNames={{ popup: { root: 'shadow-2xl overscroll-contain' } }}
-            options={CATEGORIES.map(c => ({
+            options={filteredCategories.map(c => ({
               value: c.value,
               label: (
                 <div className="flex items-center gap-2">

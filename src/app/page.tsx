@@ -22,6 +22,7 @@ import {
   Bell,
   Calendar
 } from 'lucide-react';
+import { CATEGORIES } from '@/constants/categories';
 
 import DashboardPeriodSelector from '@/components/dashboard-period-selector';
 
@@ -171,6 +172,82 @@ export default async function Home({ searchParams }: PageProps) {
           <p className="text-[10px] text-indigo-900/50 mt-4 font-medium italic">
             {stats.savings > 20 ? '"Bạn đang làm rất tốt, hãy duy trì nhé!"' : '"Cố gắng cắt giảm chi tiêu không cần thiết nào!"'}
           </p>
+        </div>
+
+        {/* Hệ thống Túi tiền (Pocket Budgets) */}
+        <div className="col-span-2 lg:col-span-4 bento-card bg-white border border-slate-100 shadow-xl shadow-slate-100/50 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h3 className="text-base md:text-lg font-bold text-slate-800">Quản lý Túi tiền (Số tiền định chi)</h3>
+              <p className="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Sắp xếp theo mức độ ưu tiên tăng dần từ trái qua phải, dưới lên trên</p>
+            </div>
+            <span className="px-3 py-1 bg-indigo-50 text-aura-indigo rounded-full text-xs font-semibold border border-indigo-100/50">
+              Tháng {dayjs().tz().format('MM/YYYY')}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {CATEGORIES.filter(c => c.type === 'expense').map((c) => {
+              const Icon = c.icon;
+              const limit = user.metadata?.categoryLimits?.[c.value];
+              const spent = data.categoryDistribution?.find((cat: any) => cat.name === c.value)?.value || 0;
+              const hasLimit = limit !== undefined && limit !== null && limit > 0;
+              const percent = hasLimit ? Math.min(100, Math.round((spent / limit) * 100)) : 0;
+              
+              // Progress bar color based on percentage
+              let barColor = 'bg-aura-indigo';
+              if (percent > 90) barColor = 'bg-red-500 animate-pulse';
+              else if (percent > 75) barColor = 'bg-amber-500';
+
+              return (
+                <div key={c.value} className="p-4 bg-slate-50/50 rounded-2xl border border-slate-100 hover:border-aura-indigo/30 transition-all duration-300 flex flex-col justify-between group">
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className={`p-2 rounded-xl ${c.className} shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                        <Icon className="w-4.5 h-4.5" />
+                      </div>
+                      <span className="text-sm font-bold text-slate-800 truncate">{c.label}</span>
+                    </div>
+                    {hasLimit && (
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
+                        percent > 90 ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-600'
+                      }`}>
+                        {percent}%
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-2 mt-auto">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-slate-400 font-medium">Đã chi:</span>
+                      <span className="font-bold text-slate-700">
+                        {new Intl.NumberFormat('vi-VN').format(spent)}đ
+                      </span>
+                    </div>
+                    
+                    {hasLimit ? (
+                      <>
+                        <div className="flex justify-between text-[11px]">
+                          <span className="text-slate-400 font-medium">Định chi:</span>
+                          <span className="font-semibold text-slate-500">
+                            {new Intl.NumberFormat('vi-VN').format(limit)}đ
+                          </span>
+                        </div>
+                        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div 
+                            className={`h-full ${barColor} rounded-full transition-all duration-500`} 
+                            style={{ width: `${percent}%` }}
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="text-[11px] text-slate-400 italic">Chưa gán định chi</div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         {/* Full width Transaction Table */}

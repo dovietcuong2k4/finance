@@ -15,7 +15,7 @@ import { deleteTransaction } from './actions';
 import { toast } from 'react-hot-toast';
 import { DatePicker, Select, ConfigProvider, Modal } from 'antd';
 import { EditTransactionModal, TransactionData, default as AddTransactionModal } from '@/components/add-transaction-modal';
-import { getCategoryIcon, getCategoryColor, categorySelectOptions } from '@/constants/categories';
+import { getCategoryIcon, getCategoryColor, categorySelectOptions, getCategoryByValue } from '@/constants/categories';
 
 dayjs.locale('vi');
 
@@ -301,7 +301,7 @@ export default function TransactionListClient({
                   {/* Category */}
                   <div className="hidden sm:block col-span-2">
                     <span className={`inline-flex px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${colorClass}`}>
-                      {tx.category}
+                      {getCategoryByValue(tx.category).label}
                     </span>
                   </div>
 

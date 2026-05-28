@@ -9,6 +9,8 @@ import ErrorToast from '@/components/error-toast'
 import AccountDangerActions from './account-danger-actions'
 import LogoutButton from './logout-button'
 import Image from 'next/image'
+import { CATEGORIES } from '@/constants/categories'
+import FormattedAmountInput from '@/components/formatted-amount-input'
 
 export default async function AccountPage(props: { searchParams: Promise<{ error?: string, success?: string }> }) {
   const searchParams = await props.searchParams
@@ -146,11 +148,9 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
                   <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="dailyLimit">
                     Giới hạn chi tiêu / ngày (VNĐ)
                   </label>
-                  <input
+                  <FormattedAmountInput
                     className="w-full minimal-input bg-slate-50/50"
                     name="dailyLimit"
-                    type="text"
-                    inputMode="numeric"
                     defaultValue={user.metadata?.dailyLimit ? new Intl.NumberFormat('vi-VN').format(user.metadata.dailyLimit) : ''}
                     placeholder="Ví dụ: 200.000"
                   />
@@ -160,15 +160,41 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
                   <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1" htmlFor="monthlyLimit">
                     Giới hạn chi tiêu / tháng (VNĐ)
                   </label>
-                  <input
+                  <FormattedAmountInput
                     className="w-full minimal-input bg-slate-50/50"
                     name="monthlyLimit"
-                    type="text"
-                    inputMode="numeric"
                     defaultValue={user.metadata?.monthlyLimit ? new Intl.NumberFormat('vi-VN').format(user.metadata.monthlyLimit) : ''}
                     placeholder="Ví dụ: 5.000.000"
                   />
                 </div>
+              </div>
+
+              <div className="mt-8 mb-4 pt-6 border-t border-slate-100">
+                <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-800 mb-1">Số tiền định chi cho từng Túi tiền</h4>
+                <p className="text-xs text-muted-foreground">Thiết lập số tiền định chi (ngân sách) cho từng danh mục chi tiêu riêng biệt (để trống nếu không muốn gán).</p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {CATEGORIES.filter(c => c.type === 'expense').map(c => {
+                  const Icon = c.icon;
+                  const currentLimit = user.metadata?.categoryLimits?.[c.value];
+                  return (
+                    <div key={c.value} className="space-y-2">
+                      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1 flex items-center gap-1.5" htmlFor={`budget_${c.value}`}>
+                        <span className={`p-1 rounded-md ${c.className} inline-flex items-center justify-center shrink-0`}>
+                          <Icon size={12} />
+                        </span>
+                        {c.label} (VNĐ)
+                      </label>
+                      <FormattedAmountInput
+                        className="w-full minimal-input bg-slate-50/50"
+                        name={`budget_${c.value}`}
+                        defaultValue={currentLimit ? new Intl.NumberFormat('vi-VN').format(currentLimit) : ''}
+                        placeholder="Không giới hạn"
+                      />
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="pt-4 flex justify-end">

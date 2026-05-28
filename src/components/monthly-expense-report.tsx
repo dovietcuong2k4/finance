@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { DatePicker, Select, ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
 import { getMonthlyExpenses } from '@/app/reports/actions';
-import { categorySelectOptions, getCategoryColor, getCategoryIcon } from '@/constants/categories';
+import { categorySelectOptions, getCategoryColor, getCategoryIcon, getCategoryByValue } from '@/constants/categories';
 import { Calendar, Layers, SearchX } from 'lucide-react';
 
 const formatCurrency = (value: number) => {
@@ -129,7 +129,7 @@ export default function MonthlyExpenseReport() {
                         <p className="text-sm font-bold text-slate-800 truncate">{tx.title}</p>
                         <div className="flex items-center gap-2 mt-0.5">
                           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                            {tx.category}
+                            {getCategoryByValue(tx.category).label}
                           </span>
                           <span className="w-1 h-1 rounded-full bg-slate-300"></span>
                           <span className="text-xs text-slate-400 truncate">

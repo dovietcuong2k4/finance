@@ -41,7 +41,8 @@ async function fetchDashboardDataRaw(
   userEmail: string,
   userFullName: string,
   range: 'recent' | 'month' = 'recent',
-  period: 'this_month' | 'this_week' | 'last_week' | 'last_month' | 'this_year' = 'this_month'
+  period: 'this_month' | 'this_week' | 'last_week' | 'last_month' | 'this_year' = 'this_month',
+  userMetadata: Record<string, any> = {}
 ) {
   const supabase = createAdminClient();
   const { startDate, endDate } = getDateRange(period);
@@ -54,7 +55,7 @@ async function fetchDashboardDataRaw(
     ? dayjs().tz().endOf('month').format('YYYY-MM-DD')
     : dayjs().tz().endOf('month').format('YYYY-MM-DD');
 
-  const [balanceResult, periodResult, recentResult, chartResult] = await Promise.all([
+  const [balanceResult, periodResult, recentResult, chartResult, categoryResult] = await Promise.all([
     // 1. All-time balance (RPC)
     supabase.rpc('get_balance', { p_user_id: userId }),
     // 2. Period stats (RPC)
@@ -82,6 +83,12 @@ async function fetchDashboardDataRaw(
           p_start_date: chartStartDate,
           p_end_date: chartEndDate,
         }),
+    // 5. Category distribution
+    supabase.rpc('get_category_distribution', {
+      p_user_id: userId,
+      p_start_date: startDate,
+      p_end_date: endDate,
+    }),
   ]);
 
   // ─── Handle errors ───
@@ -99,6 +106,10 @@ async function fetchDashboardDataRaw(
   }
   if (chartResult.error) {
     console.error('Error fetching chart data:', chartResult.error);
+    return null;
+  }
+  if (categoryResult.error) {
+    console.error('Error fetching categories data:', categoryResult.error);
     return null;
   }
 
@@ -159,11 +170,17 @@ async function fetchDashboardDataRaw(
     });
   }
 
+  const categoryDistribution = (categoryResult.data || []).map((row: any) => ({
+    name: row.name,
+    value: Number(row.value),
+  }));
+
   return {
     user: {
       id: userId,
       email: userEmail,
       fullName: userFullName,
+      metadata: userMetadata,
     },
     stats: {
       balance: Number(balanceData.balance),
@@ -173,6 +190,7 @@ async function fetchDashboardDataRaw(
     },
     recentTransactions,
     chartData,
+    categoryDistribution,
   };
 }
 
@@ -184,7 +202,7 @@ export const getDashboardData = async (
   if (!user) return null;
 
   return unstable_cache(
-    () => fetchDashboardDataRaw(user.id, user.email, user.full_name || 'Admin', range, period),
+    () => fetchDashboardDataRaw(user.id, user.email, user.full_name || 'Admin', range, period, user.metadata || {}),
     [`dashboard-${user.id}-${range}-${period}`],
     {
       revalidate: 300, // Cache for 5 minutes for better freshness

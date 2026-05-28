@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import { getCategoryIcon, getCategoryColor } from '@/constants/categories';
+import { getCategoryIcon, getCategoryColor, getCategoryByValue } from '@/constants/categories';
 import Link from 'next/link';
 
 dayjs.extend(utc);
@@ -45,6 +45,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => 
           transactions.map((tx) => {
             const Icon = getCategoryIcon(tx.category);
             const colorClass = getCategoryColor(tx.category);
+            const categoryLabel = getCategoryByValue(tx.category).label;
             return (
               <div key={tx.id} className="flex items-center justify-between group cursor-pointer p-2 -mx-2 rounded-xl hover:bg-slate-50 transition-colors duration-200">
                 <div className="flex items-center gap-4">
@@ -53,7 +54,7 @@ const TransactionTable: React.FC<TransactionTableProps> = ({ transactions }) => 
                   </div>
                   <div>
                     <p className="text-sm font-bold text-foreground">{tx.title}</p>
-                    <p className="text-xs text-muted-foreground uppercase text-[10px] tracking-wider">{tx.category}</p>
+                    <p className="text-xs text-muted-foreground uppercase text-[10px] tracking-wider">{categoryLabel}</p>
                   </div>
                 </div>
                 <div className="text-right">
