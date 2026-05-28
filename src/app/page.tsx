@@ -3,8 +3,6 @@ import { getInsights } from '@/app/dashboard/insight-actions';
 import StatCard from '@/components/stat-card';
 import AIAdvisor from '@/components/ai-advisor';
 import TransactionTable from '@/components/transaction-table';
-import AddTransactionModal from '@/components/add-transaction-modal';
-import DashboardSearch from '@/components/dashboard-search';
 import DashboardChartSection from '@/components/dashboard-chart-section';
 import { Suspense } from 'react';
 import dayjs from 'dayjs';
@@ -14,13 +12,11 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
-import { 
-  Wallet, 
-  ArrowUpRight, 
-  ArrowDownLeft, 
-  TrendingUp,
-  Bell,
-  Calendar
+import {
+  Wallet,
+  ArrowUpRight,
+  ArrowDownLeft,
+  TrendingUp
 } from 'lucide-react';
 import { CATEGORIES } from '@/constants/categories';
 
@@ -78,31 +74,15 @@ export default async function Home({ searchParams }: PageProps) {
             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground">Live Dashboard</span>
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground">
-            {greeting}, <span className="text-aura-indigo">{user.fullName || 'Admin'}</span>
+            {greeting}, <span className="text-aura-indigo">{user.fullName || 'Cường Việt'}</span>
           </h1>
           <p className="text-muted-foreground text-[13px] mt-1 hidden md:block">Dưới đây là tóm lược tình hình tài chính của bạn.</p>
-        </div>
-        
-        <div className="flex items-center gap-2 sm:gap-3 w-full md:w-auto mt-4 md:mt-0">
-          <div className="hidden lg:flex items-center gap-2 bg-white border border-border px-3 py-2 rounded-xl text-sm font-medium text-muted-foreground shrink-0">
-            <Calendar className="w-5 h-5" />
-            <span>{dayjs().tz().format('DD [Th] MM, YYYY')}</span>
-          </div>
-          
-          <DashboardSearch />
-          
-          <button className="p-2 bg-white border border-border rounded-xl text-muted-foreground hover:text-foreground hover:border-aura-indigo transition-all relative shrink-0">
-            <Bell className="w-5 h-5" />
-            <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
-          </button>
-          
-          <AddTransactionModal />
         </div>
       </header>
 
       {/* Bento Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 auto-rows-min">
-        
+
         {/* Section Header */}
         <div className="col-span-2 lg:col-span-4 flex items-center justify-between">
           <div>
@@ -113,31 +93,31 @@ export default async function Home({ searchParams }: PageProps) {
         </div>
 
         {/* KPI Row */}
-        <StatCard 
-          title="Tổng số dư" 
-          value={stats.balance} 
-          icon={Wallet} 
+        <StatCard
+          title="Tổng số dư"
+          value={stats.balance}
+          icon={Wallet}
           variant="indigo"
         />
-        <StatCard 
-          title="Thu nhập" 
-          value={stats.totalIncome} 
-          trend="up" 
-          icon={ArrowUpRight} 
+        <StatCard
+          title="Thu nhập"
+          value={stats.totalIncome}
+          trend="up"
+          icon={ArrowUpRight}
           variant="emerald"
         />
-        <StatCard 
-          title="Chi tiêu" 
-          value={stats.totalExpense} 
-          trend="down" 
-          icon={ArrowDownLeft} 
+        <StatCard
+          title="Chi tiêu"
+          value={stats.totalExpense}
+          trend="down"
+          icon={ArrowDownLeft}
           variant="rose"
         />
-        <StatCard 
-          title="Tỷ lệ tiết kiệm" 
-          value={`${stats.savings}%`} 
-          trend="up" 
-          icon={TrendingUp} 
+        <StatCard
+          title="Tỷ lệ tiết kiệm"
+          value={`${stats.savings}%`}
+          trend="up"
+          icon={TrendingUp}
           variant="amber"
         />
 
@@ -145,7 +125,7 @@ export default async function Home({ searchParams }: PageProps) {
         <div className="col-span-2 lg:col-span-3 lg:row-span-2">
           <DashboardChartSection data={chartData} />
         </div>
-        
+
         <div className="col-span-2 lg:col-span-1">
           <Suspense fallback={
             <div className="bento-card bg-slate-900 border-none shadow-2xl h-full min-h-[160px] animate-pulse rounded-2xl flex flex-col items-center justify-center text-indigo-400/50">
@@ -158,7 +138,7 @@ export default async function Home({ searchParams }: PageProps) {
             <DashboardAIAdvisor />
           </Suspense>
         </div>
-        
+
         {/* Goals or Quick Action Bento Card */}
         <div className="bento-card col-span-2 lg:col-span-1 bg-linear-to-br from-indigo-50 to-white">
           <h3 className="text-sm font-bold mb-4 uppercase tracking-wider text-indigo-900/60">Mục tiêu tiết kiệm</h3>
@@ -193,7 +173,7 @@ export default async function Home({ searchParams }: PageProps) {
               const spent = data.categoryDistribution?.find((cat: any) => cat.name === c.value)?.value || 0;
               const hasLimit = limit !== undefined && limit !== null && limit > 0;
               const percent = hasLimit ? Math.min(100, Math.round((spent / limit) * 100)) : 0;
-              
+
               // Progress bar color based on percentage
               let barColor = 'bg-aura-indigo';
               if (percent > 90) barColor = 'bg-red-500 animate-pulse';
@@ -209,9 +189,8 @@ export default async function Home({ searchParams }: PageProps) {
                       <span className="text-sm font-bold text-slate-800 truncate">{c.label}</span>
                     </div>
                     {hasLimit && (
-                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${
-                        percent > 90 ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-600'
-                      }`}>
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md ${percent > 90 ? 'bg-red-50 text-red-600' : 'bg-slate-100 text-slate-600'
+                        }`}>
                         {percent}%
                       </span>
                     )}
@@ -224,7 +203,7 @@ export default async function Home({ searchParams }: PageProps) {
                         {new Intl.NumberFormat('vi-VN').format(spent)}đ
                       </span>
                     </div>
-                    
+
                     {hasLimit ? (
                       <>
                         <div className="flex justify-between text-[11px]">
@@ -234,8 +213,8 @@ export default async function Home({ searchParams }: PageProps) {
                           </span>
                         </div>
                         <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full ${barColor} rounded-full transition-all duration-500`} 
+                          <div
+                            className={`h-full ${barColor} rounded-full transition-all duration-500`}
                             style={{ width: `${percent}%` }}
                           />
                         </div>

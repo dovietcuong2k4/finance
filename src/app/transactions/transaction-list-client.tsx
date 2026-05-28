@@ -13,9 +13,9 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/vi';
 import { deleteTransaction } from './actions';
 import { toast } from 'react-hot-toast';
-import { DatePicker, Select, ConfigProvider, Modal } from 'antd';
+import { DatePicker, ConfigProvider, Modal } from 'antd';
 import { EditTransactionModal, TransactionData, default as AddTransactionModal } from '@/components/add-transaction-modal';
-import { getCategoryIcon, getCategoryColor, categorySelectOptions, getCategoryByValue } from '@/constants/categories';
+import { getCategoryIcon, getCategoryColor, getCategoryByValue } from '@/constants/categories';
 
 dayjs.locale('vi');
 
@@ -188,7 +188,6 @@ export default function TransactionListClient({
               fontFamily: 'inherit',
             },
             components: {
-              Select: { controlHeight: 36, fontSize: 13 },
               DatePicker: { controlHeight: 36, fontSize: 13 },
             }
           }}
@@ -209,24 +208,6 @@ export default function TransactionListClient({
                   {filter.label}
                 </button>
               ))}
-            </div>
-
-            <div className="h-6 w-px bg-slate-200 mx-2 hidden md:block" />
-
-            {/* Category Filter */}
-            <div className="w-full md:w-auto flex items-center gap-2 justify-between md:justify-start">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Danh mục:</span>
-              <Select
-                placeholder="Tất cả danh mục"
-                className="w-40"
-                value={currentCategory || ''}
-                onChange={(val) => updateParams({ category: val || undefined })}
-                options={[
-                  { value: '', label: 'Tất cả danh mục' },
-                  ...categorySelectOptions
-                ]}
-                classNames={{ popup: { root: "overscroll-contain" }}}
-              />
             </div>
 
             <div className="h-6 w-px bg-slate-200 mx-2 hidden md:block" />

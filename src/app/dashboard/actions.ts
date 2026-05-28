@@ -74,15 +74,15 @@ async function fetchDashboardDataRaw(
     // 4. Chart data (RPC — monthly or daily)
     range === 'recent'
       ? supabase.rpc('get_monthly_chart', {
-          p_user_id: userId,
-          p_start_date: chartStartDate,
-          p_end_date: chartEndDate,
-        })
+        p_user_id: userId,
+        p_start_date: chartStartDate,
+        p_end_date: chartEndDate,
+      })
       : supabase.rpc('get_daily_chart', {
-          p_user_id: userId,
-          p_start_date: chartStartDate,
-          p_end_date: chartEndDate,
-        }),
+        p_user_id: userId,
+        p_start_date: chartStartDate,
+        p_end_date: chartEndDate,
+      }),
     // 5. Category distribution
     supabase.rpc('get_category_distribution', {
       p_user_id: userId,
@@ -202,7 +202,7 @@ export const getDashboardData = async (
   if (!user) return null;
 
   return unstable_cache(
-    () => fetchDashboardDataRaw(user.id, user.email, user.full_name || 'Admin', range, period, user.metadata || {}),
+    () => fetchDashboardDataRaw(user.id, user.email, user.full_name || 'Cường Việt', range, period, user.metadata || {}),
     [`dashboard-${user.id}-${range}-${period}`],
     {
       revalidate: 300, // Cache for 5 minutes for better freshness
