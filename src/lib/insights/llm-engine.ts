@@ -1,7 +1,7 @@
 import type { Insight, InsightData } from './types';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const OPENROUTER_MODEL = 'openai/gpt-oss-20b:free';
+const OPENROUTER_MODEL = 'google/gemma-4-31b-it:free';
 
 /**
  * LLM-powered insight engine using OpenRouter API (OpenAI-compatible).

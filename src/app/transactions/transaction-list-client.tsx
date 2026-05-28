@@ -66,7 +66,7 @@ export default function TransactionListClient({
 
   const updateParams = (updates: Record<string, string | undefined>) => {
     const params = new URLSearchParams();
-    
+
     // Set current values first
     if (currentType) params.set('type', currentType);
     if (currentSearch) params.set('search', currentSearch);
@@ -107,12 +107,12 @@ export default function TransactionListClient({
       content: 'Hành động này không thể hoàn tác. Bạn có chắc chắn muốn xóa giao dịch này không?',
       okText: 'Xóa ngay',
       cancelText: 'Hủy',
-      okButtonProps: { 
-        danger: true, 
-        className: 'bg-red-500 hover:bg-red-600! border-none h-10! px-6! font-bold rounded-xl!' 
+      okButtonProps: {
+        danger: true,
+        className: 'bg-red-500 hover:bg-red-600! border-none h-10! px-6! font-bold rounded-xl!'
       },
-      cancelButtonProps: { 
-        className: 'h-10! px-6! font-bold rounded-xl! border-slate-200' 
+      cancelButtonProps: {
+        className: 'h-10! px-6! font-bold rounded-xl! border-slate-200'
       },
       centered: true,
       mask: { closable: true },
@@ -199,11 +199,10 @@ export default function TransactionListClient({
                 <button
                   key={filter.label}
                   onClick={() => updateParams({ type: filter.value })}
-                  className={`w-full md:w-auto px-4 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${
-                    currentType === filter.value
-                      ? 'bg-white text-foreground shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground'
-                  }`}
+                  className={`w-full md:w-auto px-4 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${currentType === filter.value
+                    ? 'bg-white text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                    }`}
                 >
                   {filter.label}
                 </button>
@@ -213,10 +212,11 @@ export default function TransactionListClient({
             <div className="h-6 w-px bg-slate-200 mx-2 hidden md:block" />
 
             {/* Date Range Filter */}
-            <div className="w-full md:w-auto flex items-center gap-2">
+            <div className="w-full md:w-auto flex items-center gap-2 justify-center">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Từ:</span>
               <DatePicker
                 className="w-32 md:w-36"
+
                 placeholder="Ngày bắt đầu"
                 format="DD/MM/YYYY"
                 value={currentStartDate ? dayjs(currentStartDate) : undefined}
@@ -365,11 +365,10 @@ export default function TransactionListClient({
                     <button
                       key={item}
                       onClick={() => updateParams({ page: String(item) })}
-                      className={`w-10 h-10 rounded-2xl text-sm font-bold transition-all ${
-                        currentPage === item
-                          ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/20'
-                          : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'
-                      }`}
+                      className={`w-10 h-10 rounded-2xl text-sm font-bold transition-all ${currentPage === item
+                        ? 'bg-slate-900 text-white shadow-xl shadow-slate-900/20'
+                        : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:border-slate-300'
+                        }`}
                     >
                       {item}
                     </button>

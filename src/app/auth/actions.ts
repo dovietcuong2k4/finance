@@ -141,21 +141,12 @@ export async function updateProfile(formData: FormData) {
 
   const supabase = createAdminClient()
 
-  const categoryLimits: Record<string, number | null> = {}
-  CATEGORIES.forEach(c => {
-    if (c.type === 'expense') {
-      const val = formData.get(`budget_${c.value}`) as string
-      categoryLimits[c.value] = parseLimit(val)
-    }
-  })
-
   const { data: user } = await supabase.from('users').select('metadata').eq('id', payload.userId).single()
   const existingMetadata = user?.metadata || {}
   const newMetadata = {
     ...existingMetadata,
     dailyLimit,
-    monthlyLimit,
-    categoryLimits
+    monthlyLimit
   }
 
   const { error } = await supabase
@@ -174,6 +165,60 @@ export async function updateProfile(formData: FormData) {
   revalidatePath('/reports')
   revalidatePath('/account')
   redirect(`/account?success=${encodeURIComponent('Cập nhật thông tin thành công')}`)
+}
+
+export async function updateCategoryBudgets(formData: FormData) {
+  const parseLimit = (val: string) => {
+    if (!val) return null;
+    const cleanVal = val.replace(/\D/g, '');
+    return cleanVal ? Number(cleanVal) : null;
+  }
+
+  const cookieStore = await cookies()
+  const token = cookieStore.get('auth_token')?.value
+
+  if (!token) {
+    return redirect('/login')
+  }
+
+  const payload = await verifyToken(token)
+  if (!payload || !payload.userId) {
+    return redirect('/login')
+  }
+
+  const supabase = createAdminClient()
+
+  const categoryLimits: Record<string, number | null> = {}
+  CATEGORIES.forEach(c => {
+    if (c.type === 'expense') {
+      const val = formData.get(`budget_${c.value}`) as string
+      categoryLimits[c.value] = parseLimit(val)
+    }
+  })
+
+  const { data: user } = await supabase.from('users').select('metadata').eq('id', payload.userId).single()
+  const existingMetadata = user?.metadata || {}
+  const newMetadata = {
+    ...existingMetadata,
+    categoryLimits
+  }
+
+  const { error } = await supabase
+    .from('users')
+    .update({ 
+      metadata: newMetadata,
+      updated_at: new Date().toISOString() 
+    })
+    .eq('id', payload.userId)
+
+  if (error) {
+    return redirect(`/account/budgets?error=${encodeURIComponent(error.message)}`)
+  }
+
+  revalidatePath('/')
+  revalidatePath('/reports')
+  revalidatePath('/account')
+  redirect(`/account/budgets?success=${encodeURIComponent('Cập nhật định chi Túi tiền thành công')}`)
 }
 
 export async function changePassword(formData: FormData) {

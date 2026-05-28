@@ -4,7 +4,7 @@ import { verifyToken } from '@/utils/auth'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { signOut, updateProfile } from '@/app/auth/actions'
 import Link from 'next/link'
-import { User, Shield, Activity, LogOut, Settings, Save, Mail, Key, Crown, AlertTriangle } from 'lucide-react'
+import { User, Shield, Activity, LogOut, Settings, Save, Mail, Key, Crown, AlertTriangle, Wallet } from 'lucide-react'
 import ErrorToast from '@/components/error-toast'
 import AccountDangerActions from './account-danger-actions'
 import LogoutButton from './logout-button'
@@ -37,6 +37,12 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
     return redirect('/login')
   }
 
+  const pocketCount = CATEGORIES.filter(c => c.type === 'expense').length;
+  const configuredCount = CATEGORIES.filter(c => c.type === 'expense').filter(c => {
+    const limit = user.metadata?.categoryLimits?.[c.value];
+    return limit !== undefined && limit !== null && limit > 0;
+  }).length;
+
   return (
     <div className="flex-1 bg-[#fdfdfe] p-4 lg:p-8 relative flex flex-col">
       <ErrorToast message={searchParams?.error} type="error" />
@@ -57,6 +63,15 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
           </div>
           <div className="hidden md:block">
             <LogoutButton variant="desktop" />
+          </div>
+          <div className="md:hidden">
+            <Link 
+              href="/account/budgets" 
+              className="flex items-center justify-center w-10 h-10 bg-indigo-50 hover:bg-indigo-100 text-aura-indigo rounded-xl transition-all shadow-sm active:scale-[0.98]"
+              title="Định chi Túi tiền"
+            >
+              <Wallet size={18} />
+            </Link>
           </div>
         </div>
 
@@ -169,34 +184,6 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
                 </div>
               </div>
 
-              <div className="mt-8 mb-4 pt-6 border-t border-slate-100">
-                <h4 className="text-sm font-semibold uppercase tracking-wider text-slate-800 mb-1">Số tiền định chi cho từng Túi tiền</h4>
-                <p className="text-xs text-muted-foreground">Thiết lập số tiền định chi (ngân sách) cho từng danh mục chi tiêu riêng biệt (để trống nếu không muốn gán).</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {CATEGORIES.filter(c => c.type === 'expense').map(c => {
-                  const Icon = c.icon;
-                  const currentLimit = user.metadata?.categoryLimits?.[c.value];
-                  return (
-                    <div key={c.value} className="space-y-2">
-                      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1 flex items-center gap-1.5" htmlFor={`budget_${c.value}`}>
-                        <span className={`p-1 rounded-md ${c.className} inline-flex items-center justify-center shrink-0`}>
-                          <Icon size={12} />
-                        </span>
-                        {c.label} (VNĐ)
-                      </label>
-                      <FormattedAmountInput
-                        className="w-full minimal-input bg-slate-50/50"
-                        name={`budget_${c.value}`}
-                        defaultValue={currentLimit ? new Intl.NumberFormat('vi-VN').format(currentLimit) : ''}
-                        placeholder="Không giới hạn"
-                      />
-                    </div>
-                  );
-                })}
-              </div>
-
               <div className="pt-4 flex justify-end">
                 <button className="flex items-center gap-2 bg-slate-900 text-white h-10 px-6 rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 active:scale-[0.98]">
                   <Save size={16} />
@@ -204,6 +191,27 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
                 </button>
               </div>
             </form>
+          </div>
+
+          {/* Pocket Budgets Card */}
+          <div className="bento-card p-6 bg-white shadow-xl shadow-black/2 border border-border flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-aura-indigo animate-pulse">
+                  <Wallet size={16} />
+                </div>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Định chi Túi tiền</h3>
+              </div>
+              <p className="text-xs text-muted-foreground mb-2">Trạng thái thiết lập ngân sách</p>
+              <div className="flex items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                <span className="font-bold text-sm text-slate-700">Đã gán: {configuredCount} / {pocketCount} Túi</span>
+              </div>
+            </div>
+            <div className="mt-6 pt-4 border-t border-slate-100">
+              <Link href="/account/budgets" className="text-xs font-semibold text-aura-indigo hover:underline flex items-center gap-1">
+                Cấu hình ngân sách &rarr;
+              </Link>
+            </div>
           </div>
 
           {/* Activity Card */}

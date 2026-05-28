@@ -103,14 +103,14 @@ export default async function Home({ searchParams }: PageProps) {
           title="Thu nhập"
           value={stats.totalIncome}
           trend="up"
-          icon={ArrowUpRight}
+          icon={ArrowDownLeft}
           variant="emerald"
         />
         <StatCard
           title="Chi tiêu"
           value={stats.totalExpense}
           trend="down"
-          icon={ArrowDownLeft}
+          icon={ArrowUpRight}
           variant="rose"
         />
         <StatCard

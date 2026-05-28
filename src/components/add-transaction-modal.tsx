@@ -176,7 +176,6 @@ function TransactionFormFields() {
         <Form.Item
           name="title"
           label={<span className={labelClass}>Tên giao dịch</span>}
-          rules={[{ required: true, message: 'Vui lòng nhập tên giao dịch!' }]}
         >
           <Input size="large" placeholder="VD: Lương tháng, Mua sắm..." className="bg-slate-50 border-slate-200 hover:border-aura-indigo focus:border-aura-indigo transition-all" />
         </Form.Item>
@@ -266,7 +265,9 @@ export default function AddTransactionModal({ trigger }: { trigger?: React.React
   const handleFinish = (values: any) => {
     const formData = new FormData();
     formData.append('type', values.type);
-    formData.append('title', values.title);
+    const selectedCategory = CATEGORIES.find(c => c.value === values.category);
+    const resolvedTitle = values.title?.trim() || selectedCategory?.label || 'Giao dịch';
+    formData.append('title', resolvedTitle);
     formData.append('amount', values.amount.toString());
     formData.append('transactionDate', values.transactionDate.format('YYYY-MM-DD'));
     formData.append('category', values.category);
@@ -453,17 +454,19 @@ export function EditTransactionModal({
   }, [transaction, open, form]);
 
   const handleFinish = (values: any) => {
-    if (!transaction) return;
-    startTransition(async () => {
-      const result = await updateTransaction(transaction.id, {
-        type: values.type,
-        title: values.title,
-        category: values.category,
-        amount: values.amount,
-        transaction_date: values.transactionDate.format('YYYY-MM-DD'),
-        description: values.description || null,
-        exclude_from_limit: values.type === 'expense' ? !values.includeInLimit : false,
-      });
+     if (!transaction) return;
+     const selectedCategory = CATEGORIES.find(c => c.value === values.category);
+     const resolvedTitle = values.title?.trim() || selectedCategory?.label || 'Giao dịch';
+     startTransition(async () => {
+       const result = await updateTransaction(transaction.id, {
+         type: values.type,
+         title: resolvedTitle,
+         category: values.category,
+         amount: values.amount,
+         transaction_date: values.transactionDate.format('YYYY-MM-DD'),
+         description: values.description || null,
+         exclude_from_limit: values.type === 'expense' ? !values.includeInLimit : false,
+       });
       if (result.error) {
         if (isMobile) {
           Modal.error({

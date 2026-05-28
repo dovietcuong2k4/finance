@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend
 } from 'recharts';
+import { getCategoryByValue } from '@/constants/categories';
 
 interface CategoryData {
   name: string;
@@ -31,6 +32,11 @@ const COLORS = [
 ];
 
 const CategoryDistributionChart: React.FC<Props> = ({ data }) => {
+  const formattedData = data.map(item => ({
+    ...item,
+    name: getCategoryByValue(item.name).label
+  }));
+
   return (
     <div className="bento-card h-[400px] flex flex-col">
       <div className="mb-6">
@@ -42,7 +48,7 @@ const CategoryDistributionChart: React.FC<Props> = ({ data }) => {
         <ResponsiveContainer width="100%" height="100%">
           <PieChart style={{ outline: 'none' }}>
             <Pie
-              data={data}
+              data={formattedData}
               cx="50%"
               cy="50%"
               innerRadius={80}
@@ -52,7 +58,7 @@ const CategoryDistributionChart: React.FC<Props> = ({ data }) => {
               animationBegin={0}
               animationDuration={1500}
             >
-              {data.map((entry, index) => (
+              {formattedData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="none" />
               ))}
             </Pie>
@@ -81,3 +87,4 @@ const CategoryDistributionChart: React.FC<Props> = ({ data }) => {
 };
 
 export default CategoryDistributionChart;
+
