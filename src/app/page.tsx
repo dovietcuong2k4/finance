@@ -65,7 +65,7 @@ export default async function Home({ searchParams }: PageProps) {
   const greeting = getGreeting();
 
   return (
-    <div className="max-w-none p-3 md:p-8 animate-in fade-in duration-1000">
+    <div className="max-w-none p-3 pt-0 md:p-8 animate-in fade-in duration-1000">
       {/* Premium Header */}
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6 md:mb-10 pt-4 md:pt-0">
         <div>

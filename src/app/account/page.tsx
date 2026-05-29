@@ -44,7 +44,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
   }).length;
 
   return (
-    <div className="flex-1 bg-[#fdfdfe] p-4 lg:p-8 relative flex flex-col">
+    <div className="flex-1 bg-[#fdfdfe] p-4 pt-0 lg:p-8 relative flex flex-col">
       <ErrorToast message={searchParams?.error} type="error" />
       <ErrorToast message={searchParams?.success} type="success" />
 
@@ -65,8 +65,8 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
             <LogoutButton variant="desktop" />
           </div>
           <div className="md:hidden">
-            <Link 
-              href="/account/budgets" 
+            <Link
+              href="/account/budgets"
               className="flex items-center justify-center w-10 h-10 bg-indigo-50 hover:bg-indigo-100 text-aura-indigo rounded-xl transition-all shadow-sm active:scale-[0.98]"
               title="Định chi Túi tiền"
             >

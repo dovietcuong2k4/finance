@@ -38,7 +38,7 @@ export default async function BudgetsPage(props: { searchParams: Promise<{ error
     <div className="flex-1 bg-[#fdfdfe] p-4 lg:p-8 relative flex flex-col">
       <ErrorToast message={searchParams?.error} type="error" />
       <ErrorToast message={searchParams?.success} type="success" />
-      
+
       {/* Background decoration */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] overflow-hidden">
         <div className="absolute top-[-10%] right-[-10%] w-[40%] h-[40%] bg-aura-violet rounded-full blur-[120px]" />
@@ -46,7 +46,7 @@ export default async function BudgetsPage(props: { searchParams: Promise<{ error
       </div>
 
       <div className="max-w-3xl w-full relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-        
+
         {/* Desktop Navigation */}
         <Link href="/account" className="hidden md:inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6">
           <ArrowLeft size={16} />
@@ -78,7 +78,7 @@ export default async function BudgetsPage(props: { searchParams: Promise<{ error
             <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">Cấu hình chi tiết ngân sách</h3>
             <p className="text-xs text-muted-foreground mt-1">Để trống mục nếu bạn không muốn thiết lập giới hạn chi tiêu (ngân sách) cho Túi tiền đó.</p>
           </div>
-          
+
           <form action={updateCategoryBudgets} className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {CATEGORIES.filter(c => c.type === 'expense').map(c => {
@@ -102,7 +102,7 @@ export default async function BudgetsPage(props: { searchParams: Promise<{ error
                 );
               })}
             </div>
-            
+
             <div className="pt-6 border-t border-slate-100 flex justify-end">
               <button className="flex items-center gap-2 bg-slate-900 text-white h-11 px-6 rounded-xl font-medium hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 active:scale-[0.98] w-full sm:w-auto justify-center">
                 <Save size={16} />
