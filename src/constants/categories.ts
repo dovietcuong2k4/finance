@@ -21,7 +21,7 @@ export interface CategoryItem {
 export const CATEGORIES: CategoryItem[] = [
   // 1. Chi tiêu (túi tiền) - Mức độ quan trọng tăng dần từ trên xuống dưới
   { value: 'development',           label: 'Phát triển',             icon: Sparkles,       className: 'bg-indigo-100 text-indigo-700',      type: 'expense' },
-  { value: 'entertainment_shopping', label: 'Giải trí & Mua sắm',     icon: Gamepad2,       className: 'bg-pink-100 text-pink-700',          type: 'expense' },
+  { value: 'entertainment_shopping', label: 'Mua sắm & Giải trí',     icon: Gamepad2,       className: 'bg-pink-100 text-pink-700',          type: 'expense' },
   { value: 'unexpected_expenses',    label: 'Chi phí phát sinh',       icon: AlertCircle,    className: 'bg-slate-100 text-slate-700',        type: 'expense' },
   { value: 'transportation',        label: 'Di chuyển',              icon: Car,            className: 'bg-violet-100 text-violet-700',      type: 'expense' },
   { value: 'food_beverage',         label: 'Ăn uống',                icon: Coffee,         className: 'bg-emerald-100 text-emerald-700',    type: 'expense' },
