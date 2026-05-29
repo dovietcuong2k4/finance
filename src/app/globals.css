@@ -3,28 +3,28 @@
 :root {
   --background: #fdfdfe;
   --foreground: #09090b;
-  
+
   --card: #ffffff;
   --card-foreground: #09090b;
-  
+
   --primary: #18181b;
   --primary-foreground: #fafafa;
-  
+
   --secondary: #f4f4f5;
   --secondary-foreground: #18181b;
-  
+
   --muted: #f4f4f5;
   --muted-foreground: #71717a;
-  
+
   --accent: #f4f4f5;
   --accent-foreground: #18181b;
-  
+
   --border: #e4e4e7;
   --input: #e4e4e7;
   --ring: #18181b;
-  
+
   --radius: 1rem;
-  
+
   /* Aura Moni Specific Premium Colors */
   --aura-indigo: #6366f1;
   --aura-violet: #8b5cf6;
@@ -35,22 +35,22 @@
 .dark {
   --background: #09090b;
   --foreground: #fafafa;
-  
+
   --card: #09090b;
   --card-foreground: #fafafa;
-  
+
   --primary: #fafafa;
   --primary-foreground: #18181b;
-  
+
   --secondary: #27272a;
   --secondary-foreground: #fafafa;
-  
+
   --muted: #27272a;
   --muted-foreground: #a1a1aa;
-  
+
   --accent: #27272a;
   --accent-foreground: #fafafa;
-  
+
   --border: #27272a;
   --input: #27272a;
   --ring: #d4d4d8;
@@ -71,7 +71,7 @@
   --color-aura-indigo: var(--aura-indigo);
   --color-aura-violet: var(--aura-violet);
   --radius-xl: var(--radius);
-  
+
   --animate-in: in 0.5s ease-out;
   --animate-out: out 0.5s ease-in;
 }
@@ -80,6 +80,7 @@
   * {
     border-color: var(--border);
   }
+
   body {
     background-color: var(--background);
     color: var(--foreground);
@@ -160,22 +161,26 @@
   ::-webkit-scrollbar {
     display: none;
   }
+
   * {
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
   }
 }
 
 /* Fix Recharts focus border */
-.recharts-wrapper, 
-.recharts-surface, 
-.recharts-legend-wrapper, 
+.recharts-wrapper,
+.recharts-surface,
+.recharts-legend-wrapper,
 .recharts-tooltip-wrapper {
   outline: none !important;
 }
 
 /* Transaction Fullscreen Modal for Mobile */
 @media (max-width: 768px) {
+
   /* Common styles for both Modal and Drawer on mobile if needed */
   .transaction-modal .ant-modal,
   .transaction-drawer .ant-drawer-content {
@@ -195,7 +200,7 @@
     right: 0 !important;
     width: 100% !important;
     padding: 0 16px !important;
-    padding-top: calc(env(safe-area-inset-top, 20px) + 20px) !important;
+    padding-top: 32px !important;
     padding-bottom: 16px !important;
     margin-bottom: 0 !important;
     border-bottom: 1px solid var(--border) !important;
@@ -206,7 +211,7 @@
 
   .transaction-drawer .ant-drawer-body {
     padding: 0 !important;
-    padding-top: calc(env(safe-area-inset-top, 20px) + 90px) !important;
+    padding-top: calc(env(safe-area-inset-top, 20px) + 80px) !important;
     display: flex;
     flex-direction: column;
   }
