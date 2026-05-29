@@ -36,7 +36,7 @@ async function DashboardAIAdvisor() {
 
 export default async function Home({ searchParams }: PageProps) {
   const params = await searchParams;
-  const range = (params.range as 'recent' | 'month') || 'recent';
+  const range = (params.range as 'recent' | 'month') || 'month';
   const period = (params.period as any) || 'this_month';
   const data = await getDashboardData(range, period);
 

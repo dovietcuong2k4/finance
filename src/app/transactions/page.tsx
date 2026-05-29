@@ -1,5 +1,6 @@
 import { getTransactions } from './actions';
 import TransactionListClient from './transaction-list-client';
+import dayjs from 'dayjs';
 
 interface PageProps {
   searchParams: Promise<{
@@ -9,6 +10,7 @@ interface PageProps {
     category?: string;
     startDate?: string;
     endDate?: string;
+    all?: string;
   }>;
 }
 
@@ -18,8 +20,10 @@ export default async function TransactionsPage({ searchParams }: PageProps) {
   const type = params.type as 'income' | 'expense' | undefined;
   const search = params.search || '';
   const category = params.category || '';
-  const startDate = params.startDate || '';
-  const endDate = params.endDate || '';
+  
+  const showAll = params.all === 'true';
+  const startDate = showAll ? '' : (params.startDate || dayjs().subtract(30, 'day').format('YYYY-MM-DD'));
+  const endDate = showAll ? '' : (params.endDate || dayjs().format('YYYY-MM-DD'));
   const pageSize = 10;
 
   const { data, total } = await getTransactions({ 

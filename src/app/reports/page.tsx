@@ -12,6 +12,7 @@ import {
   Trophy
 } from 'lucide-react';
 import Link from 'next/link';
+import { getCategoryByValue } from '@/constants/categories';
 
 interface PageProps {
   searchParams: Promise<{
@@ -163,7 +164,7 @@ export default async function ReportsPage({ searchParams }: PageProps) {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-bold text-slate-800 text-sm truncate">{tx.title}</p>
-                      <p className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mt-0.5">{tx.category}</p>
+                      <p className="text-[10px] uppercase tracking-wider font-bold text-slate-500 mt-0.5">{getCategoryByValue(tx.category).label}</p>
                     </div>
                     <div className="font-bold text-rose-600 text-sm whitespace-nowrap">
                       {formatCurrency(tx.amount)}

@@ -103,7 +103,7 @@ export default async function RootLayout({
         <FlutterHandler />
         <Toaster position="top-center" />
         <Sidebar userData={user} />
-        <main className="flex-1 flex flex-col min-w-0 overflow-auto pb-[calc(env(safe-area-inset-bottom)+4rem)] md:pb-0">
+        <main className="flex-1 flex flex-col min-w-0 overflow-auto pt-[calc(env(safe-area-inset-top)+1rem)] md:pt-0 pb-[calc(env(safe-area-inset-bottom)+4rem)] md:pb-0">
           {children}
         </main>
         <BottomNav />

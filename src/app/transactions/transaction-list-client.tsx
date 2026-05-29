@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { useState, useTransition } from 'react';
 import {
   Search,
@@ -60,6 +60,7 @@ export default function TransactionListClient({
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const [search, setSearch] = useState(currentSearch);
   const [isPending, startTransition] = useTransition();
   const [editingTx, setEditingTx] = useState<TransactionData | null>(null);
@@ -73,6 +74,7 @@ export default function TransactionListClient({
     if (currentCategory) params.set('category', currentCategory);
     if (currentStartDate) params.set('startDate', currentStartDate);
     if (currentEndDate) params.set('endDate', currentEndDate);
+    if (searchParams.get('all') === 'true') params.set('all', 'true');
     params.set('page', String(currentPage));
 
     // Apply updates
@@ -84,8 +86,19 @@ export default function TransactionListClient({
       }
     }
 
+    // If 'all' is being set to 'true', clear 'startDate' and 'endDate'
+    if (updates.all === 'true') {
+      params.delete('startDate');
+      params.delete('endDate');
+    }
+
+    // If 'startDate' or 'endDate' are explicitly set in updates, clear 'all'
+    if (updates.startDate !== undefined || updates.endDate !== undefined) {
+      params.delete('all');
+    }
+
     // Reset page to 1 if any filter (besides page itself) changes
-    const filterKeys = ['type', 'search', 'category', 'startDate', 'endDate'];
+    const filterKeys = ['type', 'search', 'category', 'startDate', 'endDate', 'all'];
     if (Object.keys(updates).some(key => filterKeys.includes(key))) {
       params.set('page', '1');
     }
@@ -207,6 +220,34 @@ export default function TransactionListClient({
                   {filter.label}
                 </button>
               ))}
+            </div>
+
+            <div className="h-6 w-px bg-slate-200 mx-2 hidden md:block" />
+
+            {/* Date Preset Toggle */}
+            <div className="w-full md:w-auto flex items-center gap-1 p-1 bg-slate-100 rounded-lg">
+              <button
+                type="button"
+                onClick={() => updateParams({ all: undefined, startDate: undefined, endDate: undefined })}
+                className={`w-full md:w-auto px-4 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${
+                  searchParams.get('all') !== 'true' && !searchParams.get('startDate') && !searchParams.get('endDate')
+                    ? 'bg-white text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                30 ngày qua
+              </button>
+              <button
+                type="button"
+                onClick={() => updateParams({ all: 'true' })}
+                className={`w-full md:w-auto px-4 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${
+                  searchParams.get('all') === 'true'
+                    ? 'bg-white text-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                Tất cả
+              </button>
             </div>
 
             <div className="h-6 w-px bg-slate-200 mx-2 hidden md:block" />

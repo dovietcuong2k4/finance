@@ -9,6 +9,7 @@ import {
   AlertCircle,
   Zap
 } from 'lucide-react';
+import { getCategoryByValue } from '@/constants/categories';
 
 interface ReportStats {
   totalIncome: number;
@@ -101,7 +102,7 @@ const ReportSummaryCards: React.FC<Props> = ({ stats, dailyLimit, monthlyLimit }
           <div>
             <h4 className="text-lg md:text-xl font-bold tracking-tight text-rose-900 truncate">{formatCurrency(stats.largestExpense.amount)}</h4>
             <p className="text-[10px] text-rose-600 font-bold mt-1 uppercase tracking-wider truncate">
-              {stats.largestExpense.title ? `${stats.largestExpense.category} - ${stats.largestExpense.title}` : stats.largestExpense.category}
+              {stats.largestExpense.title ? `${getCategoryByValue(stats.largestExpense.category).label} - ${stats.largestExpense.title}` : getCategoryByValue(stats.largestExpense.category).label}
             </p>
             {stats.largestExpense.note && (
               <p className="text-[10px] text-rose-400 italic mt-1 md:mt-2 truncate">&ldquo;{stats.largestExpense.note}&rdquo;</p>

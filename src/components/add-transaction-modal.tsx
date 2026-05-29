@@ -331,6 +331,17 @@ export default function AddTransactionModal({ trigger }: { trigger?: React.React
     >
       <div className="flex-1 overflow-y-auto pt-4 px-4 pb-24 md:pb-0">
         <TransactionFormFields />
+        <div className="md:hidden mt-6 mb-8">
+          <Button 
+            type="primary" 
+            htmlType="submit" 
+            loading={isPending} 
+            size="large" 
+            className="w-full h-12 shadow-xl shadow-indigo-200/50 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl border-none"
+          >
+            Lưu giao dịch
+          </Button>
+        </div>
       </div>
 
       <div className="hidden md:flex justify-end gap-3 mt-auto pt-6 pb-2 md:pb-0 border-t md:border-t-0 border-slate-100 bg-white">
@@ -517,6 +528,17 @@ export function EditTransactionModal({
     >
       <div className="flex-1 overflow-y-auto pt-4 px-4 pb-24 md:pb-0">
         <TransactionFormFields />
+        <div className="md:hidden mt-6 mb-8">
+          <Button 
+            type="primary" 
+            htmlType="submit" 
+            loading={isPending} 
+            size="large" 
+            className="w-full h-12 shadow-xl shadow-indigo-200/50 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl border-none"
+          >
+            Lưu thay đổi
+          </Button>
+        </div>
       </div>
 
       <div className="hidden md:flex justify-end gap-3 mt-auto pt-6 pb-2 md:pb-0 border-t md:border-t-0 border-slate-100 bg-white">
