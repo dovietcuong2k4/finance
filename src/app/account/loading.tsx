@@ -7,7 +7,7 @@ export default function AccountLoading() {
         <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-aura-indigo rounded-full blur-[120px]" />
       </div>
 
-      <div className="max-w-none w-full relative z-10 animate-in fade-in duration-500 pt-1 md:pt-0">
+      <div className="max-w-none w-full relative z-10 animate-in fade-in duration-500 pt-6 md:pt-0">
         {/* Header Skeleton */}
         <div className="flex justify-between items-center mb-8">
           <div>

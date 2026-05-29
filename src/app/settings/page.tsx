@@ -9,7 +9,7 @@ export default function SettingsPage() {
         <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-aura-indigo rounded-full blur-[120px]" />
       </div>
 
-      <div className="max-w-none w-full relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 pt-1 md:pt-0">
+      <div className="max-w-none w-full relative z-10 animate-in fade-in slide-in-from-bottom-4 duration-1000 pt-6 md:pt-0">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-2xl font-bold tracking-tight text-foreground">Cài đặt</h1>

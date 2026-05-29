@@ -67,7 +67,7 @@ export default async function Home({ searchParams }: PageProps) {
   return (
     <div className="max-w-none p-3 md:p-8 animate-in fade-in duration-1000">
       {/* Premium Header */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6 md:mb-10 pt-1 md:pt-0">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6 md:mb-10 pt-4 md:pt-0">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>

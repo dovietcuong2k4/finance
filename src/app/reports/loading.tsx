@@ -2,7 +2,7 @@ export default function ReportsLoading() {
   return (
     <div className="max-w-none p-4 md:p-8 animate-in fade-in duration-500">
       {/* Header Skeleton */}
-      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pt-1 md:pt-0">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pt-6 md:pt-0">
         <div>
           <div className="flex items-center gap-2 mb-2">
             <div className="w-4 h-4 bg-slate-200 rounded animate-pulse"></div>

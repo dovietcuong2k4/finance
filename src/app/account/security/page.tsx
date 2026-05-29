@@ -40,7 +40,7 @@ export default async function SecurityPage(props: { searchParams: Promise<{ erro
         </Link>
 
         {/* Mobile Header */}
-        <div className="md:hidden flex items-center gap-3 mb-6 pt-1">
+        <div className="md:hidden flex items-center gap-3 mb-6 pt-6">
           <Link href="/account" className="p-1 -ml-1 text-foreground transition-colors shrink-0">
             <ChevronLeft size={28} strokeWidth={2.5} />
           </Link>

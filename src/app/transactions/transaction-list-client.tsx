@@ -166,7 +166,7 @@ export default function TransactionListClient({
       />
 
       {/* Modern Horizontal Header (Dashboard Style) */}
-      <div className="flex flex-col gap-6 mb-8 pt-1 md:pt-0">
+      <div className="flex flex-col gap-6 mb-8 pt-6 md:pt-0">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div className="shrink-0">
             <h1 className="text-2xl font-bold tracking-tight text-foreground">Giao dịch</h1>
