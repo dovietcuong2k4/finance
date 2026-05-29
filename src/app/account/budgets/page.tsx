@@ -54,7 +54,7 @@ export default async function BudgetsPage(props: { searchParams: Promise<{ error
         </Link>
 
         {/* Mobile Header */}
-        <div className="md:hidden flex items-center gap-3 mb-6 pt-6">
+        <div className="md:hidden flex items-center gap-3 mb-6 pt-1">
           <Link href="/account" className="p-1 -ml-1 text-foreground transition-colors shrink-0">
             <ChevronLeft size={28} strokeWidth={2.5} />
           </Link>
