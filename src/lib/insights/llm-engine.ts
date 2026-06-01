@@ -1,4 +1,5 @@
 import type { Insight, InsightData } from './types';
+import { getCategoryByValue } from '@/constants/categories';
 
 const OPENROUTER_API_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const OPENROUTER_MODEL = 'google/gemma-4-31b-it:free';
@@ -24,8 +25,9 @@ export async function generateLLMInsights(data: InsightData): Promise<Insight[] 
 Bạn nói chuyện tự nhiên, gần gũi như nhắn tin với bạn bè — không cứng nhắc, không hàn lâm.
 Nhìn vào dữ liệu chi tiêu và đưa ra 3-5 nhận xét (gợi ý, cảnh báo nhẹ nhàng, khen ngợi, xu hướng).
 
-Phong cách:
-- Viết tiếng Việt tự nhiên, đời thường — như đang trò chuyện, có thể dùng từ thân mật
+Phong cách & Quy tắc danh mục:
+- Viết tiếng Việt tự nhiên, đời thường — như đang trò chuyện, có thể dùng từ thân mật.
+- LUÔN LUÔN dùng tên tiếng Việt hiển thị của danh mục (ví dụ: "Ăn uống", "Mua sắm & Giải trí", "Nhà cửa & Chi phí cố định") trong "title" và "description" của insight. TUYỆT ĐỐI không dùng tên tiếng Anh/tên biến kỹ thuật (như "food_beverage", "shopping_entertainment") khi nói chuyện với người dùng.
 - Dùng con số cụ thể từ dữ liệu, nhưng diễn đạt nhẹ nhàng (vd: "Tháng này bạn tiêu khoảng 2 triệu cho ăn uống đó")
 - Khi cảnh báo thì nhẹ nhàng, động viên — đừng phán xét
 - Khi khen thì chân thành, vui vẻ
@@ -44,7 +46,7 @@ JSON format:
       "title": "<tiêu đề bắt mắt, tối đa 40 ký tự>",
       "description": "<nhận xét tự nhiên 1-2 câu, tối đa 150 ký tự>",
       "priority": <1-10, 10 là quan trọng nhất>,
-      "category": "<tên danh mục liên quan hoặc null>"
+      "category": "<bắt buộc điền tên biến tiếng Anh kỹ thuật của danh mục liên quan, ví dụ: 'food_beverage' hoặc 'shopping_entertainment', hoặc null nếu không liên quan>"
     }
   ]
 }`;
@@ -185,7 +187,8 @@ function buildFinancialSummary(
   if (data.currentMonth.categories.length > 0) {
     lines.push('\nChi tiêu theo danh mục (tháng này):');
     data.currentMonth.categories.forEach((c) => {
-      lines.push(`  - ${c.name}: ${fmt(c.value)}`);
+      const label = getCategoryByValue(c.name).label;
+      lines.push(`  - ${label} (${c.name}): ${fmt(c.value)}`);
     });
   }
 
@@ -196,7 +199,8 @@ function buildFinancialSummary(
   if (data.lastMonth.categories.length > 0) {
     lines.push('\nChi tiêu theo danh mục (tháng trước):');
     data.lastMonth.categories.forEach((c) => {
-      lines.push(`  - ${c.name}: ${fmt(c.value)}`);
+      const label = getCategoryByValue(c.name).label;
+      lines.push(`  - ${label} (${c.name}): ${fmt(c.value)}`);
     });
   }
 

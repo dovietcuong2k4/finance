@@ -39,7 +39,7 @@ export default async function AccountPage(props: { searchParams: Promise<{ error
 
   const pocketCount = CATEGORIES.filter(c => c.type === 'expense').length;
   const configuredCount = CATEGORIES.filter(c => c.type === 'expense').filter(c => {
-    const limit = user.metadata?.categoryLimits?.[c.value];
+    const limit = user.metadata?.categoryLimits?.[c.value] ?? (c.value === 'shopping_entertainment' ? user.metadata?.categoryLimits?.['entertainment_shopping'] : undefined);
     return limit !== undefined && limit !== null && limit > 0;
   }).length;
 

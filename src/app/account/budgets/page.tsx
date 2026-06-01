@@ -83,7 +83,7 @@ export default async function BudgetsPage(props: { searchParams: Promise<{ error
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {CATEGORIES.filter(c => c.type === 'expense').map(c => {
                 const Icon = c.icon;
-                const currentLimit = user.metadata?.categoryLimits?.[c.value];
+                const currentLimit = user.metadata?.categoryLimits?.[c.value] ?? (c.value === 'shopping_entertainment' ? user.metadata?.categoryLimits?.['entertainment_shopping'] : undefined);
                 return (
                   <div key={c.value} className="space-y-2">
                     <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground ml-1 flex items-center gap-1.5" htmlFor={`budget_${c.value}`}>

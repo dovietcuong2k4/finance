@@ -1,4 +1,5 @@
 import type { Insight, InsightData, CategorySpending } from './types';
+import { getCategoryByValue } from '@/constants/categories';
 
 /**
  * Rule-based insight engine.
@@ -85,14 +86,15 @@ export function generateRuleInsights(data: InsightData): Insight[] {
     if (prev <= 0) continue;
 
     const changePercent = ((cat.value - prev) / prev) * 100;
+    const catLabel = getCategoryByValue(cat.name).label;
 
     if (changePercent > 30) {
       insights.push({
         id: `cat-increase-${cat.name}`,
         type: 'warning',
         emoji: '📈',
-        title: `"${cat.name}" tăng ${Math.round(changePercent)}%`,
-        description: `Chi tiêu ${cat.name}: ${fmtShort(prev)} → ${fmtShort(cat.value)} so với tháng trước. Nên xem lại các giao dịch mục này.`,
+        title: `"${catLabel}" tăng ${Math.round(changePercent)}%`,
+        description: `Chi tiêu ${catLabel}: ${fmtShort(prev)} → ${fmtShort(cat.value)} so với tháng trước. Nên xem lại các giao dịch mục này.`,
         priority: 7,
         category: cat.name,
       });
@@ -101,8 +103,8 @@ export function generateRuleInsights(data: InsightData): Insight[] {
         id: `cat-decrease-${cat.name}`,
         type: 'achievement',
         emoji: '🎉',
-        title: `Giảm chi "${cat.name}"`,
-        description: `Bạn đã giảm ${Math.round(Math.abs(changePercent))}% chi tiêu ${cat.name} (${fmtShort(prev)} → ${fmtShort(cat.value)}). Tuyệt vời!`,
+        title: `Giảm chi "${catLabel}"`,
+        description: `Bạn đã giảm ${Math.round(Math.abs(changePercent))}% chi tiêu ${catLabel} (${fmtShort(prev)} → ${fmtShort(cat.value)}). Tuyệt vời!`,
         priority: 5,
         category: cat.name,
       });
@@ -160,12 +162,13 @@ export function generateRuleInsights(data: InsightData): Insight[] {
       const topPercent = (topCat.value / currentMonth.totalExpense) * 100;
       if (topPercent > 30) {
         const potentialSaving = topCat.value * 0.15;
+        const topCatLabel = getCategoryByValue(topCat.name).label;
         insights.push({
           id: 'saving-suggestion',
           type: 'tip',
           emoji: '💡',
-          title: `Tiết kiệm từ "${topCat.name}"`,
-          description: `"${topCat.name}" chiếm ${Math.round(topPercent)}% chi tiêu. Giảm 15% mục này sẽ tiết kiệm thêm ~${fmtShort(potentialSaving)}/tháng.`,
+          title: `Tiết kiệm từ "${topCatLabel}"`,
+          description: `"${topCatLabel}" chiếm ${Math.round(topPercent)}% chi tiêu. Giảm 15% mục này sẽ tiết kiệm thêm ~${fmtShort(potentialSaving)}/tháng.`,
           priority: 6,
           category: topCat.name,
         });
