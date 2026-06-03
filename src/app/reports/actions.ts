@@ -184,24 +184,29 @@ export const getReportData = async (
 
 export async function getMonthlyExpenses(
   monthString: string,
-  categories: string[] = []
+  categories: string[] = [],
+  dayString?: string
 ) {
   const user = await getUser();
   if (!user) return { data: [], total: 0 };
 
   const supabase = createAdminClient();
   
-  const startDate = dayjs(monthString).startOf('month').format('YYYY-MM-DD');
-  const endDate = dayjs(monthString).endOf('month').format('YYYY-MM-DD');
-
   let query = supabase
     .from('transactions')
     .select('id, title, category, amount, transaction_date')
     .eq('user_id', user.id)
-    .eq('type', 'expense')
-    .gte('transaction_date', startDate)
-    .lte('transaction_date', endDate)
-    .order('transaction_date', { ascending: false });
+    .eq('type', 'expense');
+
+  if (dayString) {
+    query = query.eq('transaction_date', dayString);
+  } else {
+    const startDate = dayjs(monthString).startOf('month').format('YYYY-MM-DD');
+    const endDate = dayjs(monthString).endOf('month').format('YYYY-MM-DD');
+    query = query.gte('transaction_date', startDate).lte('transaction_date', endDate);
+  }
+
+  query = query.order('transaction_date', { ascending: false });
 
   if (categories && categories.length > 0) {
     query = query.in('category', categories);

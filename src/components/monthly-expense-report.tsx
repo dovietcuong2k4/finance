@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { DatePicker, Select, ConfigProvider } from 'antd';
+import { DatePicker, Select, ConfigProvider, Segmented } from 'antd';
 import dayjs from 'dayjs';
 import { getMonthlyExpenses } from '@/app/reports/actions';
 import { categorySelectOptions, getCategoryColor, getCategoryIcon, getCategoryByValue } from '@/constants/categories';
@@ -12,7 +12,9 @@ const formatCurrency = (value: number) => {
 };
 
 export default function MonthlyExpenseReport() {
+  const [filterType, setFilterType] = useState<'month' | 'day'>('month');
   const [month, setMonth] = useState<dayjs.Dayjs>(dayjs());
+  const [day, setDay] = useState<dayjs.Dayjs>(dayjs());
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   
   const [loading, setLoading] = useState(true);
@@ -25,7 +27,8 @@ export default function MonthlyExpenseReport() {
       setLoading(true);
       const { data, total: sum } = await getMonthlyExpenses(
         month.format('YYYY-MM'), 
-        selectedCategories
+        selectedCategories,
+        filterType === 'day' ? day.format('YYYY-MM-DD') : undefined
       );
       if (isMounted) {
         setExpenses(data);
@@ -35,7 +38,7 @@ export default function MonthlyExpenseReport() {
     };
     fetchData();
     return () => { isMounted = false; };
-  }, [month, selectedCategories]);
+  }, [month, day, filterType, selectedCategories]);
 
   return (
     <div className="space-y-6">
@@ -55,19 +58,46 @@ export default function MonthlyExpenseReport() {
               },
             }}
           >
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="w-full sm:w-48">
-                <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 ml-1">Tháng</p>
-                <DatePicker 
-                  picker="month"
-                  value={month}
-                  onChange={(val) => val && setMonth(val)}
-                  format="MM/YYYY"
-                  className="w-full"
-                  allowClear={false}
-                />
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 items-end">
+                <div className="w-full sm:w-auto">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 ml-1">Kiểu lọc</p>
+                  <Segmented
+                    block
+                    options={[
+                      { label: 'Theo Tháng', value: 'month', className: 'flex-1' },
+                      { label: 'Theo Ngày', value: 'day', className: 'flex-1' }
+                    ]}
+                    value={filterType}
+                    onChange={(val) => setFilterType(val as 'month' | 'day')}
+                    className="w-full sm:w-auto"
+                  />
+                </div>
+                <div className="w-full sm:w-48">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 ml-1">Tháng</p>
+                  <DatePicker 
+                    picker="month"
+                    value={month}
+                    onChange={(val) => val && setMonth(val)}
+                    format="MM/YYYY"
+                    className="w-full"
+                    allowClear={false}
+                    disabled={filterType === 'day'}
+                  />
+                </div>
+                <div className="w-full sm:w-48">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 ml-1">Ngày</p>
+                  <DatePicker 
+                    value={day}
+                    onChange={(val) => val && setDay(val)}
+                    format="DD/MM/YYYY"
+                    className="w-full"
+                    allowClear={false}
+                    disabled={filterType === 'month'}
+                  />
+                </div>
               </div>
-              <div className="flex-1">
+              <div className="w-full">
                 <p className="text-[10px] font-bold text-slate-400 uppercase mb-1.5 ml-1">Danh mục (chọn nhiều)</p>
                 <Select
                   mode="multiple"
@@ -92,7 +122,7 @@ export default function MonthlyExpenseReport() {
           </p>
           <div className="mt-4 flex items-center gap-2 text-indigo-500 text-xs font-medium">
             <Calendar className="w-4 h-4" />
-            <span>Tháng {month.format('MM/YYYY')}</span>
+            <span>{filterType === 'month' ? `Tháng ${month.format('MM/YYYY')}` : `Ngày ${day.format('DD/MM/YYYY')}`}</span>
           </div>
         </div>
       </div>
