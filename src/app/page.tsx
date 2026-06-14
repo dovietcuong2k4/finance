@@ -1,6 +1,5 @@
 import { getDashboardData } from '@/app/dashboard/actions';
 import { getInsights } from '@/app/dashboard/insight-actions';
-import StatCard from '@/components/stat-card';
 import AIAdvisor from '@/components/ai-advisor';
 import TransactionTable from '@/components/transaction-table';
 import DashboardChartSection from '@/components/dashboard-chart-section';
@@ -12,15 +11,10 @@ import timezone from 'dayjs/plugin/timezone';
 dayjs.extend(utc);
 dayjs.extend(timezone);
 dayjs.tz.setDefault('Asia/Ho_Chi_Minh');
-import {
-  Wallet,
-  ArrowUpRight,
-  ArrowDownLeft,
-  TrendingUp
-} from 'lucide-react';
+
 import { CATEGORIES } from '@/constants/categories';
 
-import DashboardPeriodSelector from '@/components/dashboard-period-selector';
+import DashboardKpiSection from '@/components/dashboard-kpi-section';
 
 interface PageProps {
   searchParams: Promise<{
@@ -83,43 +77,7 @@ export default async function Home({ searchParams }: PageProps) {
       {/* Bento Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-6 auto-rows-min">
 
-        {/* Section Header */}
-        <div className="col-span-2 lg:col-span-4 flex items-center justify-between">
-          <div>
-            <h2 className="text-base md:text-lg font-bold text-slate-900">Tổng quan tài chính</h2>
-            <p className="text-[10px] md:text-[11px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Thống kê theo thời gian</p>
-          </div>
-          <DashboardPeriodSelector />
-        </div>
-
-        {/* KPI Row */}
-        <StatCard
-          title="Tổng số dư"
-          value={stats.balance}
-          icon={Wallet}
-          variant="indigo"
-        />
-        <StatCard
-          title="Thu nhập"
-          value={stats.totalIncome}
-          trend="up"
-          icon={ArrowDownLeft}
-          variant="emerald"
-        />
-        <StatCard
-          title="Chi tiêu"
-          value={stats.totalExpense}
-          trend="down"
-          icon={ArrowUpRight}
-          variant="rose"
-        />
-        <StatCard
-          title="Tỷ lệ tiết kiệm"
-          value={`${stats.savings}%`}
-          trend="up"
-          icon={TrendingUp}
-          variant="amber"
-        />
+        <DashboardKpiSection stats={stats} />
 
         {/* Hệ thống Túi tiền (Pocket Budgets) */}
         <div className="col-span-2 lg:col-span-4 bento-card bg-white border border-slate-100 shadow-xl shadow-slate-100/50 p-6">

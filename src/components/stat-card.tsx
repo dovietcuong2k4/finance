@@ -1,5 +1,7 @@
-import React from 'react';
-import { LucideIcon, TrendingUp, TrendingDown } from 'lucide-react';
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import { LucideIcon, TrendingUp, TrendingDown, Eye, EyeOff } from 'lucide-react';
 
 interface StatCardProps {
   title: string;
@@ -8,14 +10,49 @@ interface StatCardProps {
   trend?: 'up' | 'down';
   icon: LucideIcon;
   variant?: 'indigo' | 'emerald' | 'rose' | 'amber';
+  isHideable?: boolean;
+  storageKey?: string;
 }
 
-const StatCard: React.FC<StatCardProps> = ({ title, value, change, trend, icon: Icon, variant = 'indigo' }) => {
+const StatCard: React.FC<StatCardProps> = ({
+  title,
+  value,
+  change,
+  trend,
+  icon: Icon,
+  variant = 'indigo',
+  isHideable = false,
+  storageKey,
+}) => {
   const isUp = trend === 'up';
-  
+  const [isHidden, setIsHidden] = useState(isHideable);
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    if (isHideable && storageKey) {
+      const stored = localStorage.getItem(`aura-moni-hide-${storageKey}`);
+      if (stored !== null) {
+        setIsHidden(stored === 'true');
+      } else {
+        setIsHidden(true);
+      }
+    }
+  }, [isHideable, storageKey]);
+
+  const toggleHidden = () => {
+    const newVal = !isHidden;
+    setIsHidden(newVal);
+    if (storageKey) {
+      localStorage.setItem(`aura-moni-hide-${storageKey}`, String(newVal));
+    }
+  };
+
   const formattedValue = typeof value === 'number' 
     ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value)
     : value;
+
+  const displayValue = isHideable && (!isMounted || isHidden) ? '••••••' : formattedValue;
 
   const variants = {
     indigo: 'bg-indigo-50 text-indigo-600',
@@ -41,8 +78,19 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, trend, icon: 
       </div>
       
       <div>
-        <p className="text-[10px] md:text-[11px] font-bold text-muted-foreground mb-0.5 md:mb-1 uppercase tracking-widest truncate">{title}</p>
-        <h3 className="text-lg md:text-xl font-bold tracking-tight truncate">{formattedValue}</h3>
+        <div className="flex items-center justify-between gap-2 mb-0.5 md:mb-1">
+          <p className="text-[10px] md:text-[11px] font-bold text-muted-foreground uppercase tracking-widest truncate">{title}</p>
+          {isHideable && (
+            <button
+              onClick={toggleHidden}
+              className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100/80 transition-colors cursor-pointer"
+              title={isHidden ? "Hiển thị số tiền" : "Ẩn số tiền"}
+            >
+              {isHidden ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+            </button>
+          )}
+        </div>
+        <h3 className="text-lg md:text-xl font-bold tracking-tight truncate">{displayValue}</h3>
       </div>
       
       {/* Decorative background shape */}
