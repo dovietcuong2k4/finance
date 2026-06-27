@@ -16,6 +16,7 @@ export default function MonthlyExpenseReport() {
   const [month, setMonth] = useState<dayjs.Dayjs>(dayjs());
   const [day, setDay] = useState<dayjs.Dayjs>(dayjs());
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [sortOrder, setSortOrder] = useState<'date_desc' | 'amount_asc' | 'amount_desc'>('date_desc');
   
   const [loading, setLoading] = useState(true);
   const [expenses, setExpenses] = useState<any[]>([]);
@@ -129,11 +130,35 @@ export default function MonthlyExpenseReport() {
 
       {/* Expense List */}
       <div className="bento-card bg-white border border-slate-100 shadow-sm p-0 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between">
-          <h3 className="text-sm font-bold text-slate-800">Danh sách giao dịch</h3>
-          <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
-            {expenses.length} giao dịch
-          </span>
+        <div className="px-6 py-4 bg-slate-50/50 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <h3 className="text-sm font-bold text-slate-800">Danh sách giao dịch</h3>
+            <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">
+              {expenses.length} giao dịch
+            </span>
+          </div>
+          <ConfigProvider
+            theme={{
+              token: {
+                colorPrimary: '#6366f1',
+                borderRadius: 12,
+              },
+            }}
+          >
+            <div className="flex items-center gap-2 self-end sm:self-auto">
+              <span className="text-xs font-bold text-slate-500 uppercase">Sắp xếp:</span>
+              <Segmented
+                options={[
+                  { label: 'Mới nhất', value: 'date_desc' },
+                  { label: 'Tăng dần', value: 'amount_asc' },
+                  { label: 'Giảm dần', value: 'amount_desc' },
+                ]}
+                value={sortOrder}
+                onChange={(val) => setSortOrder(val as any)}
+                className="text-xs font-medium"
+              />
+            </div>
+          </ConfigProvider>
         </div>
 
         <div className={`transition-opacity duration-300 ${loading ? 'opacity-50 pointer-events-none' : 'opacity-100'}`}>
@@ -145,7 +170,11 @@ export default function MonthlyExpenseReport() {
             </div>
           ) : (
             <div className="divide-y divide-slate-50">
-              {expenses.map((tx) => {
+              {[...expenses].sort((a, b) => {
+                if (sortOrder === 'amount_asc') return Number(a.amount) - Number(b.amount);
+                if (sortOrder === 'amount_desc') return Number(b.amount) - Number(a.amount);
+                return dayjs(b.transaction_date).valueOf() - dayjs(a.transaction_date).valueOf();
+              }).map((tx) => {
                 const Icon = getCategoryIcon(tx.category);
                 const colorClass = getCategoryColor(tx.category);
                 

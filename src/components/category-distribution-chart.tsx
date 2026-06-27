@@ -22,20 +22,26 @@ interface Props {
 
 const COLORS = [
   '#6366f1', // Indigo
-  '#8b5cf6', // Violet
-  '#ec4899', // Pink
-  '#f43f5e', // Rose
   '#f59e0b', // Amber
   '#10b981', // Emerald
-  '#3b82f6', // Blue
+  '#f43f5e', // Rose
+  '#06b6d4', // Cyan
+  '#84cc16', // Lime
+  '#d946ef', // Fuchsia
   '#64748b'  // Slate
 ];
 
 const CategoryDistributionChart: React.FC<Props> = ({ data }) => {
-  const formattedData = data.map(item => ({
-    ...item,
-    name: getCategoryByValue(item.name).label
-  }));
+  const formattedData = Object.values(
+    data.reduce((acc, item) => {
+      const label = getCategoryByValue(item.name).label;
+      if (!acc[label]) {
+        acc[label] = { ...item, name: label, value: 0 };
+      }
+      acc[label].value += item.value;
+      return acc;
+    }, {} as Record<string, CategoryData>)
+  );
 
   return (
     <div className="bento-card h-[400px] flex flex-col">
